@@ -23,7 +23,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
 
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.BANE_MODIFIER;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.BANE_MODIFIER;
 
 public class ForceArrowEntity extends Arrow {
 	private static final EntityDataAccessor<Boolean> ENDER = SynchedEntityData.defineId(ForceArrowEntity.class, EntityDataSerializers.BOOLEAN);

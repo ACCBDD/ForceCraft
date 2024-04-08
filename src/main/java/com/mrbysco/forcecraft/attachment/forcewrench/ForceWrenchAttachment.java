@@ -12,7 +12,7 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import java.util.List;
 
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.FORCE_WRENCH;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.FORCE_WRENCH;
 
 public class ForceWrenchAttachment implements IForceWrench, INBTSerializable<CompoundTag> {
 	CompoundTag storedBlockNBT = null;

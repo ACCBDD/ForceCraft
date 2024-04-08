@@ -14,8 +14,8 @@ import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.PLAYER_MOD;
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.TOOL_MODIFIER;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.PLAYER_MOD;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.TOOL_MODIFIER;
 
 public class PlayerCapHandler {
 

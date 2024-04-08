@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.TOOL_MODIFIER;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.TOOL_MODIFIER;
 
 public class ForceSwordItem extends SwordItem implements IForceChargingTool {
 

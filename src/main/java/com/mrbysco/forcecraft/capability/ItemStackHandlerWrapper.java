@@ -1,4 +1,4 @@
-package com.mrbysco.forcecraft.attachment;
+package com.mrbysco.forcecraft.capability;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;

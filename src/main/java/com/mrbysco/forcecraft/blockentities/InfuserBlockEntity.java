@@ -75,8 +75,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.FORCE_ROD;
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.TOOL_MODIFIER;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.FORCE_ROD;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.TOOL_MODIFIER;
 
 public class InfuserBlockEntity extends BlockEntity implements MenuProvider, RecipeCraftingHolder, Container {
 	private static final Set<String> HASHES = new HashSet<>();

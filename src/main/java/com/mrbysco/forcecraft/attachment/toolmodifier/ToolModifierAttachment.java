@@ -15,7 +15,7 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import java.util.List;
 
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.TOOL_MODIFIER;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.TOOL_MODIFIER;
 
 public class ToolModifierAttachment implements IToolModifier, INBTSerializable<CompoundTag> {
 	/**

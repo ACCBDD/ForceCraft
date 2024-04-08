@@ -18,7 +18,7 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.TOOL_MODIFIER;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.TOOL_MODIFIER;
 
 public class SmeltingModifier extends LootModifier {
 	public static final Supplier<Codec<SmeltingModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst).apply(inst, SmeltingModifier::new)));

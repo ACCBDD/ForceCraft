@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.FORCE_WRENCH;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.FORCE_WRENCH;
 
 public class ForceWrenchItem extends BaseItem implements IForceChargingTool {
 

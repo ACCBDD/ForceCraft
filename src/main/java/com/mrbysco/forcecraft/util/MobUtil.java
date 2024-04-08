@@ -7,7 +7,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.PLAYER_MOD;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.PLAYER_MOD;
 
 public class MobUtil {
 	private static final int BLEEDING_SECONDS = 20;

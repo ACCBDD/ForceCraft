@@ -18,9 +18,9 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.BANE_MODIFIER;
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.PLAYER_MOD;
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.TOOL_MODIFIER;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.BANE_MODIFIER;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.PLAYER_MOD;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.TOOL_MODIFIER;
 
 public class ToolModifierHandler {
 

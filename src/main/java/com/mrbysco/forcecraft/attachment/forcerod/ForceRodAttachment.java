@@ -15,7 +15,7 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import java.util.List;
 
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.FORCE_ROD;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.FORCE_ROD;
 
 public class ForceRodAttachment implements IForceRodModifier, INBTSerializable<CompoundTag> {
 	boolean camo = false;

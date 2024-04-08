@@ -8,7 +8,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityTeleportEvent;
 
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.BANE_MODIFIER;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.BANE_MODIFIER;
 
 public class BaneHandler {
 	@SubscribeEvent

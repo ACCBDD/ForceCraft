@@ -27,7 +27,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.TOOL_MODIFIER;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.TOOL_MODIFIER;
 import static com.mrbysco.forcecraft.util.ForceUtils.isLog;
 
 public class ForceAxeItem extends AxeItem implements IForceChargingTool {

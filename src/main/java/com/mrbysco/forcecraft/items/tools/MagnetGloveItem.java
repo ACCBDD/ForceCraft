@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.MAGNET;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.MAGNET;
 
 public class MagnetGloveItem extends BaseItem {
 

@@ -42,7 +42,7 @@ import java.util.function.Consumer;
 
 import static com.mrbysco.forcecraft.Reference.MODIFIERS.MOD_ENDER;
 import static com.mrbysco.forcecraft.Reference.MODIFIERS.MOD_HEALING;
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.FORCE_ROD;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.FORCE_ROD;
 
 public class ForceRodItem extends BaseItem implements IForceChargingTool {
 

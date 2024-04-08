@@ -1,6 +1,6 @@
 package com.mrbysco.forcecraft;
 
-import com.mrbysco.forcecraft.attachment.CapabilityHandler;
+import com.mrbysco.forcecraft.capability.CapabilityHandler;
 import com.mrbysco.forcecraft.client.ClientHandler;
 import com.mrbysco.forcecraft.client.KeybindHandler;
 import com.mrbysco.forcecraft.command.ForceCommands;
@@ -16,6 +16,7 @@ import com.mrbysco.forcecraft.handlers.ToolModifierHandler;
 import com.mrbysco.forcecraft.items.nonburnable.NonBurnableItemEntity;
 import com.mrbysco.forcecraft.networking.PacketHandler;
 import com.mrbysco.forcecraft.recipe.condition.ForceConditions;
+import com.mrbysco.forcecraft.attachment.ForceAttachments;
 import com.mrbysco.forcecraft.registry.ForceEffects;
 import com.mrbysco.forcecraft.registry.ForceEntities;
 import com.mrbysco.forcecraft.registry.ForceFluids;
@@ -71,7 +72,7 @@ public class ForceCraft {
 		ForceRecipeSerializers.RECIPE_SERIALIZERS.register(eventBus);
 		ForceModifiers.BIOME_MODIFIER_SERIALIZERS.register(eventBus);
 		ForceConditions.CONDITION_CODECS.register(eventBus);
-		CapabilityHandler.ATTACHMENT_TYPES.register(eventBus);
+		ForceAttachments.ATTACHMENT_TYPES.register(eventBus);
 
 		NeoForge.EVENT_BUS.register(new HeartHandler());
 		NeoForge.EVENT_BUS.register(new ForceDeathHandler());

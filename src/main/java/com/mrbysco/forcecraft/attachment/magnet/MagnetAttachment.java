@@ -8,7 +8,7 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import java.util.List;
 
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.MAGNET;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.MAGNET;
 
 public class MagnetAttachment implements IMagnet, INBTSerializable<CompoundTag> {
 	boolean active;

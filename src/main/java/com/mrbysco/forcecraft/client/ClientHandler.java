@@ -44,7 +44,7 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
-import static com.mrbysco.forcecraft.attachment.CapabilityHandler.MAGNET;
+import static com.mrbysco.forcecraft.attachment.ForceAttachments.MAGNET;
 
 public class ClientHandler {
 	public static final ModelLayerLocation CREEPER_TOT = new ModelLayerLocation(new ResourceLocation(Reference.MOD_ID, "creeper_tot"), "main");
