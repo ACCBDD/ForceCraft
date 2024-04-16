@@ -12,7 +12,6 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.neoforged.neoforge.common.crafting.CraftingHelper;
 import org.jetbrains.annotations.Nullable;
 
 public class GrindingRecipe extends MultipleOutputFurnaceRecipe {
