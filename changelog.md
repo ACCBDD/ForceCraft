@@ -1,1 +1,1 @@
-* Initial 1.20.4 build (NeoForge) 
+* Fix a crash with the Force Furnace
