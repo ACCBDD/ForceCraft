@@ -45,7 +45,6 @@ import net.minecraft.world.level.block.entity.Hopper;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
@@ -370,7 +369,7 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 						if (this.level.isAreaLoaded(worldPosition, 1)) {
 							BlockEntity foundTile = this.level.getBlockEntity(offPos);
 							IItemHandler itemHandler = this.level.getCapability(Capabilities.ItemHandler.BLOCK, offPos, dir.getOpposite());
-							if (foundTile != null) {
+							if (foundTile != null && itemHandler != null) {
 								ResourceLocation typeLocation = BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(foundTile.getType());
 								boolean flag = foundTile instanceof Hopper || foundTile instanceof AbstractFurnaceBlockEntity || foundTile instanceof AbstractForceFurnaceBlockEntity;
 								boolean flag2 = typeLocation != null && (!hopperBlacklist.contains(typeLocation) && (additionalBlacklist.isEmpty() || !additionalBlacklist.contains(typeLocation.toString())));
@@ -412,7 +411,7 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 					if (this.level.isAreaLoaded(worldPosition, 1)) {
 						BlockEntity foundTile = this.level.getBlockEntity(offPos);
 						IItemHandler itemHandler = this.level.getCapability(Capabilities.ItemHandler.BLOCK, offPos, dir.getOpposite());
-						if (foundTile != null) {
+						if (foundTile != null && itemHandler != null) {
 							ResourceLocation typeLocation = BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(foundTile.getType());
 							boolean flag = foundTile instanceof Hopper || foundTile instanceof AbstractFurnaceBlockEntity || foundTile instanceof AbstractForceFurnaceBlockEntity;
 							boolean flag2 = typeLocation != null && (!hopperBlacklist.contains(typeLocation) && (additionalBlacklist.isEmpty() || !additionalBlacklist.contains(typeLocation.toString())));
@@ -457,7 +456,7 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 		if (fuel.isEmpty()) {
 			return 0;
 		} else {
-			return CommonHooks.getBurnTime(fuel, null);
+			return fuel.getBurnTime(null);
 		}
 	}
 
@@ -471,7 +470,7 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 	}
 
 	public static boolean isFuel(ItemStack stack) {
-		return CommonHooks.getBurnTime(stack, null) > 0;
+		return stack.getBurnTime(null) > 0;
 	}
 
 	@Override
@@ -486,8 +485,8 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 	/**
 	 * Returns true if automation can insert the given item in the given slot from the given side.
 	 */
-	public boolean canPlaceItemThroughFace(int index, ItemStack itemStackIn, @Nullable Direction direction) {
-		return this.canPlaceItem(index, itemStackIn);
+	public boolean canPlaceItemThroughFace(int index, ItemStack stack, @Nullable Direction direction) {
+		return this.canPlaceItem(index, stack);
 	}
 
 	/**
