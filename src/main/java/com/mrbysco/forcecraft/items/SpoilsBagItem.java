@@ -51,15 +51,15 @@ public class SpoilsBagItem extends BaseItem {
 		populateBag(level, stack);
 		BlockPos pos = context.getClickedPos();
 		Direction face = context.getClickedFace();
-		IItemHandler tileInventory = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, face);
+		IItemHandler blockInventory = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, face);
 		IItemHandler handler = stack.getCapability(Capabilities.ItemHandler.ITEM);
-		if (handler != null && tileInventory != null) {
-			if (tileInventory != null && handler instanceof ItemStackHandler itemHandler) {
+		if (handler != null && blockInventory != null) {
+			if (blockInventory != null && handler instanceof ItemStackHandler itemHandler) {
 				for (int i = 0; i < itemHandler.getSlots(); i++) {
 					ItemStack bagStack = itemHandler.getStackInSlot(i);
 					ItemStack remaining = ItemHandlerHelper.copyStackWithSize(bagStack, bagStack.getCount());
 					if (!bagStack.isEmpty()) {
-						remaining = ItemHandlerHelper.insertItem(tileInventory, bagStack, false);
+						remaining = ItemHandlerHelper.insertItem(blockInventory, bagStack, false);
 						itemHandler.setStackInSlot(i, remaining);
 					}
 				}
