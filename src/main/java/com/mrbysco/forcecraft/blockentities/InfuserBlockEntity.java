@@ -272,7 +272,7 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Rec
 		if (canWork) {
 			stopWorkSound();
 			makesSpecialSound = false;
-			if (level.random.nextInt(10) == 0) {
+			if (level != null && level.random.nextInt(10) == 0) {
 				makesSpecialSound = true;
 				playSound(ForceSounds.INFUSER_SPECIAL_BEEP.get(), 1.0F, 1.0F);
 			}
@@ -291,11 +291,12 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Rec
 
 	public void playSound(SoundEvent event, float volume, float pitch) {
 		BlockPos pos = getBlockPos();
-		level.playSound((Player) null, pos.getX(), pos.getY(), pos.getZ(), event, SoundSource.BLOCKS, volume, pitch);
+		if (level != null)
+			level.playSound((Player) null, pos.getX(), pos.getY(), pos.getZ(), event, SoundSource.BLOCKS, volume, pitch);
 	}
 
 	public void stopWorkSound() {
-		if (!level.isClientSide) {
+		if (level != null && !level.isClientSide) {
 			BlockPos pos = getBlockPos();
 			for (Player player : level.players()) {
 				if (player.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < 200) {

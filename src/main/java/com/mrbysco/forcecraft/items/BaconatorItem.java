@@ -14,6 +14,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
@@ -58,7 +59,8 @@ public class BaconatorItem extends BaseItem {
 			if (ItemHandlerUtils.hasItems(handler)) {
 				ItemStack firstStack = ItemHandlerUtils.getFirstItem(handler);
 				if (!firstStack.isEmpty()) {
-					if (playerIn.canEat(firstStack.getItem().getFoodProperties().canAlwaysEat())) {
+					FoodProperties foodProperties = firstStack.getItem().getFoodProperties();
+					if (foodProperties != null && playerIn.canEat(foodProperties.canAlwaysEat())) {
 						playerIn.startUsingItem(handIn);
 					}
 				}
@@ -104,7 +106,8 @@ public class BaconatorItem extends BaseItem {
 		IItemHandler handler = stack.getCapability(Capabilities.ItemHandler.ITEM);
 		ItemStack firstStack = ItemHandlerUtils.getFirstItem(handler);
 		if (!firstStack.isEmpty() && firstStack.getItem().isEdible()) {
-			return firstStack.getItem().getFoodProperties().isFastFood() ? 16 : 32;
+			FoodProperties foodProperties = firstStack.getItem().getFoodProperties();
+			return foodProperties != null && foodProperties.isFastFood() ? 16 : 32;
 		} else {
 			return 0;
 		}

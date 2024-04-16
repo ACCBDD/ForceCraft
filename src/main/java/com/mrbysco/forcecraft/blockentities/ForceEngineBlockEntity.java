@@ -1,9 +1,9 @@
 package com.mrbysco.forcecraft.blockentities;
 
 import com.mrbysco.forcecraft.Reference;
+import com.mrbysco.forcecraft.blocks.engine.ForceEngineBlock;
 import com.mrbysco.forcecraft.capability.FluidHandlerWrapper;
 import com.mrbysco.forcecraft.capability.ItemStackHandlerWrapper;
-import com.mrbysco.forcecraft.blocks.engine.ForceEngineBlock;
 import com.mrbysco.forcecraft.menu.engine.ForceEngineMenu;
 import com.mrbysco.forcecraft.registry.ForceFluids;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
@@ -358,12 +358,14 @@ public class ForceEngineBlockEntity extends BlockEntity implements MenuProvider 
 	}
 
 	public boolean canWork() {
-		BlockPos offsetPos = worldPosition.relative(getFacing());
-		BlockEntity tile = level.getBlockEntity(offsetPos);
-		if (tile != null) {
-			IEnergyStorage cap = level.getCapability(Capabilities.EnergyStorage.BLOCK, offsetPos, getFacing().getOpposite());
-			if (cap != null) {
-				return cap.canReceive() && cap.getEnergyStored() < cap.getMaxEnergyStored() && !tankFuel.getFluid().isEmpty();
+		if (level != null) {
+			BlockPos offsetPos = worldPosition.relative(getFacing());
+			BlockEntity tile = level.getBlockEntity(offsetPos);
+			if (tile != null) {
+				IEnergyStorage cap = level.getCapability(Capabilities.EnergyStorage.BLOCK, offsetPos, getFacing().getOpposite());
+				if (cap != null) {
+					return cap.canReceive() && cap.getEnergyStored() < cap.getMaxEnergyStored() && !tankFuel.getFluid().isEmpty();
+				}
 			}
 		}
 		return false;
@@ -371,12 +373,14 @@ public class ForceEngineBlockEntity extends BlockEntity implements MenuProvider 
 
 	public void insertPower() {
 		BlockPos offsetPos = worldPosition.relative(getFacing());
-		BlockEntity tile = level.getBlockEntity(offsetPos);
-		if (tile != null) {
-			IEnergyStorage cap = level.getCapability(Capabilities.EnergyStorage.BLOCK, offsetPos, getFacing().getOpposite());
-			if (cap != null) {
-				if (cap.canReceive() && cap.getEnergyStored() < cap.getMaxEnergyStored()) {
-					cap.receiveEnergy((int) generating, false);
+		if (level != null) {
+			BlockEntity tile = level.getBlockEntity(offsetPos);
+			if (tile != null) {
+				IEnergyStorage cap = level.getCapability(Capabilities.EnergyStorage.BLOCK, offsetPos, getFacing().getOpposite());
+				if (cap != null) {
+					if (cap.canReceive() && cap.getEnergyStored() < cap.getMaxEnergyStored()) {
+						cap.receiveEnergy((int) generating, false);
+					}
 				}
 			}
 		}
@@ -509,7 +513,8 @@ public class ForceEngineBlockEntity extends BlockEntity implements MenuProvider 
 
 	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket packet) {
-		this.load(packet.getTag());
+		if (packet.getTag() != null)
+			this.load(packet.getTag());
 	}
 
 	@Override
@@ -533,12 +538,14 @@ public class ForceEngineBlockEntity extends BlockEntity implements MenuProvider 
 
 	private void refreshClient() {
 		setChanged();
-		BlockState state = level.getBlockState(worldPosition);
-		level.sendBlockUpdated(worldPosition, state, state, 2);
+		if (level != null) {
+			BlockState state = level.getBlockState(worldPosition);
+			level.sendBlockUpdated(worldPosition, state, state, 2);
+		}
 	}
 
 	public boolean isUsableByPlayer(Player player) {
-		if (this.level.getBlockEntity(this.worldPosition) != this) {
+		if (this.level != null && this.level.getBlockEntity(this.worldPosition) != this) {
 			return false;
 		} else {
 			return !(player.distanceToSqr((double) this.worldPosition.getX() + 0.5D, (double) this.worldPosition.getY() + 0.5D, (double) this.worldPosition.getZ() + 0.5D) > 64.0D);

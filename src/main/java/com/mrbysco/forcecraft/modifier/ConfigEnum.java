@@ -1,6 +1,7 @@
 package com.mrbysco.forcecraft.modifier;
 
 import com.mrbysco.forcecraft.config.ConfigHandler;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -23,7 +24,7 @@ public enum ConfigEnum {
 		return configValue.get();
 	}
 
-	@Nullable
+	@NotNull
 	public static ConfigEnum getByName(@Nullable String value) {
 		for (ConfigEnum captcha : values()) {
 			if (captcha.name.equals(value)) {

@@ -97,9 +97,11 @@ public class EnderTotEntity extends EnderMan {
 			int total = getRandom().nextInt(2) + 1;
 			for (int i = 0; i < total; i++) {
 				AngryEndermanEntity endermanEntity = ForceEntities.ANGRY_ENDERMAN.get().create(this.level());
-				endermanEntity.moveTo(getX(), getY() + 0.5D, getZ(), 0.0F, 0.0F);
-				endermanEntity.setTarget(livingEntity);
-				this.level().addFreshEntity(endermanEntity);
+				if (endermanEntity != null) {
+					endermanEntity.moveTo(getX(), getY() + 0.5D, getZ(), 0.0F, 0.0F);
+					endermanEntity.setTarget(livingEntity);
+					this.level().addFreshEntity(endermanEntity);
+				}
 			}
 		}
 		super.die(cause);

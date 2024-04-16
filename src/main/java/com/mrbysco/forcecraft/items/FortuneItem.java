@@ -25,12 +25,7 @@ public class FortuneItem extends BaseItem {
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
-		CompoundTag tag;
-		if (stack.hasTag()) {
-			tag = stack.getTag();
-		} else {
-			tag = new CompoundTag();
-		}
+		CompoundTag tag = stack.hasTag() ? stack.getTag() : new CompoundTag();
 
 		if (!tag.contains("message")) {
 			addMessage(stack, tag);

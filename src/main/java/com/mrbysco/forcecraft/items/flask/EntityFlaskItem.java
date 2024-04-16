@@ -53,12 +53,13 @@ public class EntityFlaskItem extends BaseItem {
 			tag.remove("EntityData");
 			stack.setTag(tag);
 		} else {
-			playerIn.sendSystemMessage(Component.translatable("item.entity_flask.empty2").withStyle(ChatFormatting.RED));
+			if (playerIn != null)
+				playerIn.sendSystemMessage(Component.translatable("item.entity_flask.empty2").withStyle(ChatFormatting.RED));
 		}
 
 		stack.shrink(1);
 		ItemStack emptyFlask = new ItemStack(ForceRegistry.FORCE_FLASK.get());
-		if (!playerIn.getInventory().add(emptyFlask)) {
+		if (playerIn != null && !playerIn.getInventory().add(emptyFlask)) {
 			playerIn.spawnAtLocation(emptyFlask, 0F);
 		}
 		return super.useOn(context);
@@ -90,14 +91,19 @@ public class EntityFlaskItem extends BaseItem {
 	}
 
 	public boolean hasEntityStored(ItemStack stack) {
-		return stack.getOrCreateTag().contains("StoredEntity");
+		return stack.getTag() != null && stack.getTag().contains("StoredEntity");
 	}
 
 	public Entity getStoredEntity(ItemStack stack, Level level) {
-		EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.tryParse(stack.getTag().getString("StoredEntity")));
+		CompoundTag tag = stack.getTag();
+		if (tag == null) return null;
+		ResourceLocation resourceLocation = ResourceLocation.tryParse(tag.getString("StoredEntity"));
+		if (resourceLocation == null) return null;
+		EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(resourceLocation);
 		if (type != null) {
 			Entity entity = type.create(level);
-			entity.load(stack.getTag().getCompound("EntityData"));
+			if (entity == null) return null;
+			entity.load(tag.getCompound("EntityData"));
 			return entity;
 		}
 		return null;

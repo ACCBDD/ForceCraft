@@ -67,7 +67,7 @@ public class ForceWrenchItem extends BaseItem implements IForceChargingTool {
 		BlockPos pos = context.getClickedPos();
 		InteractionHand hand = context.getHand();
 		if (stack.getItem() instanceof ForceWrenchItem) {
-			if (player.isCrouching()) {
+			if (player != null && player.isCrouching()) {
 				ForceWrenchAttachment attachment = stack.getData(FORCE_WRENCH);
 				if (level.getBlockEntity(pos) instanceof BlockEntity && !attachment.canStoreBlock()) {
 					return serializeNBT(level, pos, player, hand);
@@ -83,7 +83,8 @@ public class ForceWrenchItem extends BaseItem implements IForceChargingTool {
 						fd.write(stack);
 					}
 				} else {
-					player.displayClientMessage(Component.translatable("forcecraft.wrench_rotate.insufficient", 10).withStyle(ChatFormatting.RED), true);
+					if (player != null)
+						player.displayClientMessage(Component.translatable("forcecraft.wrench_rotate.insufficient", 10).withStyle(ChatFormatting.RED), true);
 				}
 			}
 		}
@@ -133,7 +134,7 @@ public class ForceWrenchItem extends BaseItem implements IForceChargingTool {
 			if (state != null) {
 				level.setBlockAndUpdate(offPos, state);
 			}
-			if (attachment.getStoredBlockNBT() != null && state.getBlock() instanceof EntityBlock entityBlock) {
+			if (attachment.getStoredBlockNBT() != null && state != null && state.getBlock() instanceof EntityBlock entityBlock) {
 				CompoundTag blockTag = attachment.getStoredBlockNBT();
 				BlockEntity be = entityBlock.newBlockEntity(offPos, state);
 				if (be != null) {

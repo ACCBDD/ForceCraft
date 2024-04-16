@@ -82,7 +82,8 @@ public class ForceShearsItem extends ShearsItem implements IForceChargingTool {
 				// get drops to test and see the COUNT of how many we should drop
 				for (int i = 0; i < drops.size(); i++) {
 					ItemEntity ent = entity.spawnAtLocation(getRandomWool(world), 1.0F);
-					ent.setDeltaMovement(ent.getDeltaMovement().add((double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double) (rand.nextFloat() * 0.05F), (double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
+					if (ent != null)
+						ent.setDeltaMovement(ent.getDeltaMovement().add((double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double) (rand.nextFloat() * 0.05F), (double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
 				}
 
 				stack.hurtAndBreak(1, entity, e -> e.broadcastBreakEvent(hand));
@@ -103,7 +104,8 @@ public class ForceShearsItem extends ShearsItem implements IForceChargingTool {
 
 				drops.forEach(d -> {
 					ItemEntity ent = entity.spawnAtLocation(d, 1.0F);
-					ent.setDeltaMovement(ent.getDeltaMovement().add((double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double) (rand.nextFloat() * 0.05F), (double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
+					if (ent != null)
+						ent.setDeltaMovement(ent.getDeltaMovement().add((double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double) (rand.nextFloat() * 0.05F), (double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
 				});
 
 				entity.playSound(SoundEvents.SHEEP_SHEAR, 1.0F, 1.0F);
@@ -135,7 +137,8 @@ public class ForceShearsItem extends ShearsItem implements IForceChargingTool {
 
 				drops.forEach(d -> {
 					ItemEntity ent = entity.spawnAtLocation(d, 1.0F);
-					ent.setDeltaMovement(ent.getDeltaMovement().add((double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double) (rand.nextFloat() * 0.05F), (double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
+					if (ent != null)
+						ent.setDeltaMovement(ent.getDeltaMovement().add((double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double) (rand.nextFloat() * 0.05F), (double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
 				});
 
 				entity.playSound(SoundEvents.SHEEP_SHEAR, 1.0F, 1.0F);
@@ -166,7 +169,8 @@ public class ForceShearsItem extends ShearsItem implements IForceChargingTool {
 
 				drops.forEach(d -> {
 					net.minecraft.world.entity.item.ItemEntity ent = entity.spawnAtLocation(d, 1.0F);
-					ent.setDeltaMovement(ent.getDeltaMovement().add((double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double) (rand.nextFloat() * 0.05F), (double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
+					if (ent != null)
+						ent.setDeltaMovement(ent.getDeltaMovement().add((double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double) (rand.nextFloat() * 0.05F), (double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
 				});
 
 				entity.playSound(SoundEvents.SHEEP_SHEAR, 1.0F, 1.0F);
