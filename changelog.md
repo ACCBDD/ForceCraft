@@ -1,1 +1,1 @@
-* Fix a crash with the Force Furnace
+* Add spawn placement for Angry Enderman (In case a pack dev decides to make them spawn in the world)
