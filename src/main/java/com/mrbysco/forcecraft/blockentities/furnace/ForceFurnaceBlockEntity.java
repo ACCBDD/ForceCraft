@@ -1,4 +1,4 @@
-package com.mrbysco.forcecraft.blockentities;
+package com.mrbysco.forcecraft.blockentities.furnace;
 
 import com.mrbysco.forcecraft.Reference;
 import com.mrbysco.forcecraft.menu.furnace.ForceFurnaceMenu;

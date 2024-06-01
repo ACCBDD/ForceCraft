@@ -1,6 +1,6 @@
 package com.mrbysco.forcecraft.menu.furnace;
 
-import com.mrbysco.forcecraft.blockentities.AbstractForceFurnaceBlockEntity;
+import com.mrbysco.forcecraft.blockentities.furnace.AbstractForceFurnaceBlockEntity;
 import com.mrbysco.forcecraft.items.UpgradeCoreItem;
 import com.mrbysco.forcecraft.menu.furnace.slot.ForceFurnaceFuelSlot;
 import com.mrbysco.forcecraft.menu.furnace.slot.ForceFurnaceResultSlot;

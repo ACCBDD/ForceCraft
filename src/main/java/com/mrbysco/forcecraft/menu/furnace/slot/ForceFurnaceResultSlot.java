@@ -1,6 +1,6 @@
 package com.mrbysco.forcecraft.menu.furnace.slot;
 
-import com.mrbysco.forcecraft.blockentities.AbstractForceFurnaceBlockEntity;
+import com.mrbysco.forcecraft.blockentities.furnace.AbstractForceFurnaceBlockEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;

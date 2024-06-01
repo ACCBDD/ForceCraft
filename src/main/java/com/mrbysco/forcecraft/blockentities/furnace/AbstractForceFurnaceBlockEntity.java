@@ -1,4 +1,4 @@
-package com.mrbysco.forcecraft.blockentities;
+package com.mrbysco.forcecraft.blockentities.furnace;
 
 import com.google.common.collect.Lists;
 import com.mrbysco.forcecraft.config.ConfigHandler;
@@ -63,9 +63,9 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 
 	public static final int UPGRADE_SLOT = 0;
 
-	private static final int[] SLOTS_UP = new int[]{INPUT_SLOT};
-	private static final int[] SLOTS_DOWN = new int[]{OUTPUT_SLOT, FUEL_SLOT};
-	private static final int[] SLOTS_HORIZONTAL = new int[]{FUEL_SLOT};
+	protected static final int[] SLOTS_UP = new int[]{INPUT_SLOT};
+	protected static final int[] SLOTS_DOWN = new int[]{OUTPUT_SLOT, FUEL_SLOT};
+	protected static final int[] SLOTS_HORIZONTAL = new int[]{FUEL_SLOT};
 
 	public final ItemStackHandler handler = new ItemStackHandler(3) {
 		@Override
@@ -104,7 +104,7 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 		}
 	};
 
-	private static final List<ResourceLocation> hopperBlacklist = List.of(
+	protected static final List<ResourceLocation> hopperBlacklist = List.of(
 			new ResourceLocation("hopper"),
 			new ResourceLocation("cyclic", "hopper"),
 			new ResourceLocation("cyclic", "hopper_gold"),
@@ -114,12 +114,12 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 			new ResourceLocation("woodenhopper", "wooden_hopper")
 	);
 
-	private int litTime;
-	private int litDuration;
-	private int cookingProgress;
-	private int cookingTotalTime;
-	private int burnSpeed;
-	private int cookingSpeed;
+	protected int litTime;
+	protected int litDuration;
+	protected int cookingProgress;
+	protected int cookingTotalTime;
+	protected int burnSpeed;
+	protected int cookingSpeed;
 	protected final ContainerData furnaceData = new ContainerData() {
 		public int get(int index) {
 			return switch (index) {
@@ -147,7 +147,7 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 	protected RecipeHolder<? extends AbstractCookingRecipe> currentRecipe;
 	protected ItemStack failedMatch = ItemStack.EMPTY;
 
-	private final Object2IntOpenHashMap<ResourceLocation> recipes = new Object2IntOpenHashMap<>();
+	protected final Object2IntOpenHashMap<ResourceLocation> recipes = new Object2IntOpenHashMap<>();
 
 	protected AbstractForceFurnaceBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state) {
 		super(blockEntityType, pos, state);
@@ -209,7 +209,7 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 		}
 	}
 
-	private boolean isLit() {
+	protected boolean isLit() {
 		return this.litTime > 0;
 	}
 
@@ -345,10 +345,9 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 			Recipe<?> recipe = holder.value();
 			ItemStack itemstack = this.handler.getStackInSlot(INPUT_SLOT);
 			List<? extends String> additionalBlacklist = new ArrayList<>();
-			if (ConfigHandler.COMMON.furnaceOutputBlacklist.get() != null) {
-				if (!ConfigHandler.COMMON.furnaceOutputBlacklist.get().isEmpty() && !ConfigHandler.COMMON.furnaceOutputBlacklist.get().get(0).isEmpty()) {
-					additionalBlacklist = ConfigHandler.COMMON.furnaceOutputBlacklist.get();
-				}
+			ConfigHandler.COMMON.furnaceOutputBlacklist.get();
+			if (!ConfigHandler.COMMON.furnaceOutputBlacklist.get().isEmpty() && !ConfigHandler.COMMON.furnaceOutputBlacklist.get().get(0).isEmpty()) {
+				additionalBlacklist = ConfigHandler.COMMON.furnaceOutputBlacklist.get();
 			}
 
 			if (recipe instanceof MultipleOutputFurnaceRecipe multipleRecipe) {
@@ -381,7 +380,7 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 					}
 					inventoryList.sort(Collections.reverseOrder());
 					for (BiggestInventory inventory : inventoryList) {
-						IItemHandler itemHandler = inventory.getIItemHandler(this.level);
+						IItemHandler itemHandler = inventory.getIItemHandler(this.level, this.worldPosition);
 						outputStack = ItemHandlerHelper.insertItem(itemHandler, outputStack, false);
 						if (outputStack.isEmpty()) {
 							break;
@@ -423,7 +422,7 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 				}
 				inventoryList.sort(Collections.reverseOrder());
 				for (BiggestInventory inventory : inventoryList) {
-					IItemHandler itemHandler = inventory.getIItemHandler(this.level);
+					IItemHandler itemHandler = inventory.getIItemHandler(this.level, this.worldPosition);
 					outputStack = ItemHandlerHelper.insertItem(itemHandler, outputStack, false);
 					if (outputStack.isEmpty()) {
 						break;
@@ -632,30 +631,6 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 	public void fillStackedContents(StackedContents helper) {
 		for (int i = 0; i < handler.getSlots(); i++) {
 			helper.accountStack(handler.getStackInSlot(i));
-		}
-	}
-
-	private class BiggestInventory implements Comparable<BiggestInventory> {
-		private final int inventorySize;
-		private final BlockPos tilePos;
-		private final Direction direction;
-
-		public BiggestInventory(BlockPos pos, int size, Direction dir) {
-			this.tilePos = pos;
-			this.inventorySize = size;
-			this.direction = dir;
-		}
-
-		protected IItemHandler getIItemHandler(Level level) {
-			if (level.isAreaLoaded(worldPosition, 1)) {
-				return level.getCapability(Capabilities.ItemHandler.BLOCK, tilePos, direction);
-			}
-			return null;
-		}
-
-		@Override
-		public int compareTo(BiggestInventory otherInventory) {
-			return Integer.compare(this.inventorySize, otherInventory.inventorySize);
 		}
 	}
 

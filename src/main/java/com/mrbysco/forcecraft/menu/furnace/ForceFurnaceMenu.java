@@ -1,6 +1,6 @@
 package com.mrbysco.forcecraft.menu.furnace;
 
-import com.mrbysco.forcecraft.blockentities.AbstractForceFurnaceBlockEntity;
+import com.mrbysco.forcecraft.blockentities.furnace.AbstractForceFurnaceBlockEntity;
 import com.mrbysco.forcecraft.registry.ForceMenus;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;

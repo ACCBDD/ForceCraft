@@ -2,7 +2,7 @@ package com.mrbysco.forcecraft.registry;
 
 import com.mrbysco.forcecraft.Reference;
 import com.mrbysco.forcecraft.blockentities.ForceEngineBlockEntity;
-import com.mrbysco.forcecraft.blockentities.ForceFurnaceBlockEntity;
+import com.mrbysco.forcecraft.blockentities.furnace.ForceFurnaceBlockEntity;
 import com.mrbysco.forcecraft.blockentities.InfuserBlockEntity;
 import com.mrbysco.forcecraft.blockentities.TimeTorchBlockEntity;
 import com.mrbysco.forcecraft.blocks.ForceFluidBlock;

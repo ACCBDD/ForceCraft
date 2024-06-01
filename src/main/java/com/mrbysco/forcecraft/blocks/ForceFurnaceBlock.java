@@ -1,8 +1,8 @@
 package com.mrbysco.forcecraft.blocks;
 
 import com.mojang.serialization.MapCodec;
-import com.mrbysco.forcecraft.blockentities.AbstractForceFurnaceBlockEntity;
-import com.mrbysco.forcecraft.blockentities.ForceFurnaceBlockEntity;
+import com.mrbysco.forcecraft.blockentities.furnace.AbstractForceFurnaceBlockEntity;
+import com.mrbysco.forcecraft.blockentities.furnace.ForceFurnaceBlockEntity;
 import com.mrbysco.forcecraft.items.UpgradeCoreItem;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
 import net.minecraft.core.BlockPos;
