@@ -36,8 +36,8 @@ public class InfuserScreen extends AbstractContainerScreen<InfuserMenu> {
 			new ResourceLocation(Reference.MOD_ID, "infuser/guide_highlighted")
 	);
 	private static final WidgetSprites CHISEL = new WidgetSprites(
-			new ResourceLocation("infuser/chisel"),
-			new ResourceLocation("infuser/chisel_highlight")
+			new ResourceLocation(Reference.MOD_ID, "infuser/chisel"),
+			new ResourceLocation(Reference.MOD_ID, "infuser/chisel_highlight")
 	);
 
 	private Button buttonInfuse;
