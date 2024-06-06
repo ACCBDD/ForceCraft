@@ -1,1 +1,3 @@
-* Add spawn placement for Angry Enderman (In case a pack dev decides to make them spawn in the world)
+* Fix button textures in the Infuser Gui
+* Fix an issue where using a stacked force/milk Force Flask on a full tank would consume one flask
+* Fix Infuser recipes not loading correctly causing the infuser recipes to be invalid
