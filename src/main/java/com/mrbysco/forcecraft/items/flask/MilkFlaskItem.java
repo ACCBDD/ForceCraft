@@ -31,9 +31,9 @@ public class MilkFlaskItem extends BaseItem {
 	public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entityLiving) {
 		if (!level.isClientSide) entityLiving.removeEffectsCuredBy(EffectCures.MILK);
 
-		if (entityLiving instanceof ServerPlayer serverplayerentity) {
-			CriteriaTriggers.CONSUME_ITEM.trigger(serverplayerentity, stack);
-			serverplayerentity.awardStat(Stats.ITEM_USED.get(this));
+		if (entityLiving instanceof ServerPlayer serverPlayer) {
+			CriteriaTriggers.CONSUME_ITEM.trigger(serverPlayer, stack);
+			serverPlayer.awardStat(Stats.ITEM_USED.get(this));
 		}
 
 		ItemStack flaskStack = ForceRegistry.FORCE_FLASK.get().getDefaultInstance();
