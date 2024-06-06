@@ -25,12 +25,12 @@ import net.neoforged.neoforge.items.IItemHandler;
 
 public class InfuseRecipe implements Recipe<InfuserBlockEntity> {
 	private static final int MAX_SLOTS = 8;
-	public Ingredient ingredient = Ingredient.EMPTY;
-	public InfuserModifierType resultModifier;
-	ItemStack output = ItemStack.EMPTY;
-	private UpgradeBookTier tier;
-	private Ingredient center;
-	private int time;
+	protected Ingredient ingredient;
+	protected InfuserModifierType resultModifier;
+	protected ItemStack output;
+	protected UpgradeBookTier tier;
+	protected Ingredient center;
+	protected int time;
 
 	public InfuseRecipe(Ingredient center, Ingredient input, InfuserModifierType resultType, UpgradeBookTier tier, ItemStack outputStack, int time) {
 		this.ingredient = input;

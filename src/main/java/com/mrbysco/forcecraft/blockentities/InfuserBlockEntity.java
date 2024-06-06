@@ -126,7 +126,7 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Rec
 
 		@Override
 		public boolean isFluidValid(FluidStack stack) {
-			return stack.getFluid().is(ForceTags.FORCE);
+			return stack.is(ForceTags.FORCE);
 		}
 	};
 
@@ -550,10 +550,10 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Rec
 		//test the ingredient of this recipe, if it matches me
 
 		InfuseRecipe recipe = recipeHolder.value();
-		if (recipe.resultModifier.apply(tool, modifier, bd)) {
+		if (recipe.getModifier().apply(tool, modifier, bd)) {
 			bd.onRecipeApply(recipeHolder, getBookInSlot());
 
-			if (recipe.resultModifier == InfuserModifierType.ITEM && recipe.hasOutput()) {
+			if (recipe.getModifier() == InfuserModifierType.ITEM && recipe.hasOutput()) {
 				//overwrite / convert item
 				handler.setStackInSlot(SLOT_TOOL, recipe.getResultItem(level.registryAccess()).copy());
 			} else {
@@ -1252,7 +1252,7 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Rec
 		}
 		LEVEL_RECIPE_LIST.get(thisTier).add(recipe);
 		HASHES.add(id.toString());
-		ForceCraft.LOGGER.info("Recipe loaded {} -> {} , {}", id.toString(), recipe.resultModifier, recipe.ingredient);
+		ForceCraft.LOGGER.info("Recipe loaded {} -> {} , {}", id.toString(), recipe.getModifier(), recipe.getIngredient());
 		return true;
 	}
 }
