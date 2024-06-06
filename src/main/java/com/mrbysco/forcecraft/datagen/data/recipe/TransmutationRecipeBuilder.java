@@ -107,7 +107,7 @@ public class TransmutationRecipeBuilder implements RecipeBuilder {
 		return this;
 	}
 
-	public TransmutationRecipeBuilder group(@javax.annotation.Nullable String pGroupName) {
+	public TransmutationRecipeBuilder group(@Nullable String pGroupName) {
 		this.group = pGroupName;
 		return this;
 	}

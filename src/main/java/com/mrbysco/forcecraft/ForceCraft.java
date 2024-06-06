@@ -1,5 +1,6 @@
 package com.mrbysco.forcecraft;
 
+import com.mrbysco.forcecraft.attachment.ForceAttachments;
 import com.mrbysco.forcecraft.capability.CapabilityHandler;
 import com.mrbysco.forcecraft.client.ClientHandler;
 import com.mrbysco.forcecraft.client.KeybindHandler;
@@ -16,7 +17,6 @@ import com.mrbysco.forcecraft.handlers.ToolModifierHandler;
 import com.mrbysco.forcecraft.items.nonburnable.NonBurnableItemEntity;
 import com.mrbysco.forcecraft.networking.PacketHandler;
 import com.mrbysco.forcecraft.recipe.condition.ForceConditions;
-import com.mrbysco.forcecraft.attachment.ForceAttachments;
 import com.mrbysco.forcecraft.registry.ForceEffects;
 import com.mrbysco.forcecraft.registry.ForceEntities;
 import com.mrbysco.forcecraft.registry.ForceFluids;
