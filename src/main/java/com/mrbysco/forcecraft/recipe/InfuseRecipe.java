@@ -98,7 +98,7 @@ public class InfuseRecipe implements Recipe<InfuserBlockEntity> {
 				}
 			}
 		}
-		
+
 		return this.ingredient.test(modifierStack);
 	}
 
