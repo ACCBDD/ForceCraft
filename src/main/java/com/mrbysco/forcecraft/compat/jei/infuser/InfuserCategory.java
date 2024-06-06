@@ -67,13 +67,12 @@ public class InfuserCategory<T extends InfuseRecipe> implements IRecipeCategory<
 
 		if (focused.isPresent() && focused.get().getTypedValue().getIngredient() instanceof ItemStack focusStack &&
 				recipe.getCenter().test(focusStack)) {
-			focusStack.setCount(1); // Infuser only accepts one item
-			builder.addSlot(RecipeIngredientRole.INPUT, 46, 10).addItemStack(focusStack);
+			builder.addSlot(RecipeIngredientRole.INPUT, 46, 47).addItemStack(focusStack);
 
 			List<ItemStack> stacks = new ArrayList<>();
 			ItemStack[] modifierStack = recipe.getIngredient().getItems();
 			if (modifierStack.length > 0) {
-				builder.addSlot(RecipeIngredientRole.CATALYST, 46, 47).addItemStack(modifierStack[0]);
+				builder.addSlot(RecipeIngredientRole.CATALYST, 46, 10).addItemStack(modifierStack[0]);
 			}
 			if (recipe.getResultItem(registryAccess).isEmpty()) {
 				if (modifierStack.length > 0) {
@@ -104,12 +103,12 @@ public class InfuserCategory<T extends InfuseRecipe> implements IRecipeCategory<
 				builder.addSlot(RecipeIngredientRole.OUTPUT, 120, 47).addItemStack(recipe.getResultItem(registryAccess));
 			}
 		} else {
-			builder.addSlot(RecipeIngredientRole.INPUT, 46, 10).addIngredients(recipe.getIngredients().get(0));
+			builder.addSlot(RecipeIngredientRole.INPUT, 46, 47).addIngredients(recipe.getIngredients().get(0));
 
 			List<ItemStack> stacks = new ArrayList<>();
 			ItemStack[] modifierStack = recipe.getIngredient().getItems();
 			if (modifierStack.length > 0) {
-				builder.addSlot(RecipeIngredientRole.CATALYST, 46, 47).addItemStack(modifierStack[0]);
+				builder.addSlot(RecipeIngredientRole.CATALYST, 46, 10).addItemStack(modifierStack[0]);
 			}
 			if (recipe.getResultItem(registryAccess).isEmpty()) {
 				if (modifierStack.length > 0) {
