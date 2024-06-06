@@ -98,7 +98,7 @@ public class InfuseRecipe implements Recipe<InfuserBlockEntity> {
 				}
 			}
 		}
-
+		
 		return this.ingredient.test(modifierStack);
 	}
 
@@ -178,8 +178,8 @@ public class InfuseRecipe implements Recipe<InfuserBlockEntity> {
 	public static class SerializeInfuserRecipe implements RecipeSerializer<InfuseRecipe> {
 		private static final Codec<InfuseRecipe> CODEC = RecordCodecBuilder.create(
 				instance -> instance.group(
-								Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
 								Ingredient.CODEC_NONEMPTY.fieldOf("center").forGetter(recipe -> recipe.center),
+								Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
 								InfuserModifierType.CODEC.fieldOf("resultType").forGetter(recipe -> recipe.resultModifier),
 								UpgradeBookTier.CODEC.fieldOf("tier").forGetter(recipe -> recipe.tier),
 								ExtraCodecs.strictOptionalField(ItemStack.ITEM_WITH_COUNT_CODEC, "output", ItemStack.EMPTY).forGetter(recipe -> recipe.output),
@@ -209,7 +209,9 @@ public class InfuseRecipe implements Recipe<InfuserBlockEntity> {
 			Ingredient ing = Ingredient.fromNetwork(buffer);
 			InfuserModifierType infuserType = buffer.readEnum(InfuserModifierType.class);
 			UpgradeBookTier tier = buffer.readEnum(UpgradeBookTier.class);
-			return new InfuseRecipe(center, ing, infuserType, tier, buffer.readItem(), buffer.readInt());
+			ItemStack output = buffer.readItem();
+			int time = buffer.readInt();
+			return new InfuseRecipe(center, ing, infuserType, tier, output, time);
 		}
 	}
 }
