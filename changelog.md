@@ -1,1 +1,1 @@
-* Fix fortune infusion infusing damage instead
+* Change the icon for the Heat Upgrade Patchouli page
