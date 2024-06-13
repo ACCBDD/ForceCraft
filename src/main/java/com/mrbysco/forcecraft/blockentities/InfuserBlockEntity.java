@@ -146,7 +146,7 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 				// non ingredients into the circle
 			} else if (slot == SLOT_TOOL) {
 				// don't hardcode validation here, check recipe "center" tag or item
-				return matchesTool(stack);
+				return matchesTool(stack);// stack.getItem().isIn(ForceTags.VALID_INFUSER_TOOLS);
 			} else if (slot == SLOT_BOOK) {
 				return stack.getItem() == ForceRegistry.UPGRADE_TOME.get();
 			} else if (slot == SLOT_GEM) {

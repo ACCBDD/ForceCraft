@@ -19,6 +19,8 @@ public class ForceTags {
 	public static final TagKey<Block> MINEABLE_WITH_MITTS = forceBlockTag("mineable_with_mitts");
 	public static final TagKey<Block> FORCE_BRICK = forceBlockTag("force_brick");
 
+	public static final TagKey<Item> VALID_INFUSER_MODIFIERS = ItemTags.create(new ResourceLocation(Reference.MOD_ID, "valid_infuser_modifiers"));
+	public static final TagKey<Item> VALID_INFUSER_TOOLS = ItemTags.create(new ResourceLocation(Reference.MOD_ID, "valid_infuser_tools"));
 	public static final TagKey<Item> VALID_INFUSER_CHARGE = ItemTags.create(new ResourceLocation(Reference.MOD_ID, "valid_infuser_charge"));
 	public static final TagKey<Item> TOOLS = ItemTags.create(new ResourceLocation(Reference.MOD_ID, "tools"));
 	public static final TagKey<Item> FORCE_FUELS = ItemTags.create(new ResourceLocation(Reference.MOD_ID, "force_fuel"));
@@ -31,6 +33,7 @@ public class ForceTags {
 	public static final TagKey<Item> VALID_STURDY_TOOLS = ItemTags.create(new ResourceLocation(Reference.MOD_ID, "valid_sturdy_tools"));
 	public static final TagKey<Item> VALID_ENDER_TOOLS = ItemTags.create(new ResourceLocation(Reference.MOD_ID, "valid_ender_tools"));
 	public static final TagKey<Item> VALID_LIGHT_TOOLS = ItemTags.create(new ResourceLocation(Reference.MOD_ID, "valid_light_tools"));
+	public static final TagKey<Item> VALID_TREASURE_TOOLS = ItemTags.create(new ResourceLocation(Reference.MOD_ID, "valid_treasure_tools"));
 	public static final TagKey<Item> VALID_BLEEDING_TOOLS = ItemTags.create(new ResourceLocation(Reference.MOD_ID, "valid_bleeding_tools"));
 	public static final TagKey<Item> VALID_SILKY_TOOLS = ItemTags.create(new ResourceLocation(Reference.MOD_ID, "valid_silky_tools"));
 	public static final TagKey<Item> VALID_CAMO_TOOLS = ItemTags.create(new ResourceLocation(Reference.MOD_ID, "valid_camo_tools"));
