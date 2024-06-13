@@ -17,7 +17,7 @@ public class EnderTotHeldBlockLayer extends RenderLayer<EnderTotEntity, EnderTot
 	}
 
 	public void render(PoseStack poseStack, MultiBufferSource bufferSource, int packedLightIn, EnderTotEntity enderTot,
-					   float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+	                   float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
 		BlockState blockstate = enderTot.getCarriedBlock();
 		if (blockstate != null) {
 			poseStack.pushPose();

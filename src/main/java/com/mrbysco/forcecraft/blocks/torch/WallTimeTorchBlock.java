@@ -42,8 +42,8 @@ public class WallTimeTorchBlock extends WallTorchBlock implements EntityBlock {
 
 	@Nullable
 	protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityType<A> blockEntityType,
-																											BlockEntityType<E> entityType,
-																											BlockEntityTicker<? super E> entityTicker) {
+	                                                                                                        BlockEntityType<E> entityType,
+	                                                                                                        BlockEntityTicker<? super E> entityTicker) {
 		return entityType == blockEntityType ? (BlockEntityTicker<A>) entityTicker : null;
 	}
 

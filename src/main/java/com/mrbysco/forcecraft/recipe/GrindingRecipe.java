@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public class GrindingRecipe extends MultipleOutputFurnaceRecipe {
 
 	public GrindingRecipe(String groupIn, Ingredient ingredientIn, NonNullList<ItemStack> results,
-						  float secondaryChance, float experience, int processTime) {
+	                      float secondaryChance, float experience, int processTime) {
 		super(ForceRecipes.GRINDING.get(), groupIn, ingredientIn, results, secondaryChance, experience, processTime);
 	}
 

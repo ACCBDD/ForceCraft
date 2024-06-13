@@ -22,7 +22,7 @@ import static com.mrbysco.forcecraft.registry.ForceRegistry.POWER_ORE_ITEM;
 
 public class ForceItemTagProvider extends ItemTagsProvider {
 	public ForceItemTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider,
-								TagsProvider<Block> blockTagProvider, ExistingFileHelper existingFileHelper) {
+	                            TagsProvider<Block> blockTagProvider, ExistingFileHelper existingFileHelper) {
 		super(output, lookupProvider, blockTagProvider.contentsGetter(), Reference.MOD_ID, existingFileHelper);
 	}
 
