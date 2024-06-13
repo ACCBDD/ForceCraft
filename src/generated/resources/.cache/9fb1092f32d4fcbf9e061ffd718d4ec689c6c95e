@@ -1,4 +1,4 @@
-// 1.20.4	2024-06-13T22:15:33.2568387	Recipes
+// 1.20.4	2024-06-13T22:54:37.9845007	Recipes
 336bd70bf0493a85ea26c5c55c7a0f3c6471dbf0 data/forcecraft/advancements/recipes/building_blocks/force_black_torch.json
 fbc6710f4224d531b5bba07f413f06838cb299ee data/forcecraft/advancements/recipes/building_blocks/force_blue_torch.json
 8e907873e2ff90f9e39f2306846e7dabc767618e data/forcecraft/advancements/recipes/building_blocks/force_brick.json
@@ -522,7 +522,7 @@ d8217dcdd6ce12096f28fe5fc91e3d9dd81739ff data/forcecraft/recipes/infuser/infuse_
 f4bcac04cd8a71994a5293350a77469a1313f5b0 data/forcecraft/recipes/infuser/infuse_camo.json
 0796002d10da6a64e6a5540d21018d04ed95a640 data/forcecraft/recipes/infuser/infuse_damage.json
 10b3bebb86063177bed84eb70bcd9a824e1f44fb data/forcecraft/recipes/infuser/infuse_ender.json
-b153444cb420f43ada2a92e6f48110a360a50fa1 data/forcecraft/recipes/infuser/infuse_fortune.json
+e74c6ea51602a5c76aef171cf8e96abbb4a0a3cb data/forcecraft/recipes/infuser/infuse_fortune.json
 7e7ceacfb4b00c83753a99bbc4d3baf57ab9ef98 data/forcecraft/recipes/infuser/infuse_freezing.json
 94633200f1068d29124dd01d1045c6753a7eed6c data/forcecraft/recipes/infuser/infuse_healing.json
 39fe4eaa9b440497b7b9e4c2cfb0fc664984d0f6 data/forcecraft/recipes/infuser/infuse_heat.json

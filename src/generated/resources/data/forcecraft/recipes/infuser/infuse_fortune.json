@@ -6,7 +6,7 @@
   "ingredient": {
     "tag": "forcecraft:fortune"
   },
-  "resultType": "damage",
+  "resultType": "fortune",
   "tier": "2",
   "time": 20
 }

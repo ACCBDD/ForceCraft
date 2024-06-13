@@ -1024,7 +1024,7 @@ public class ForceRecipeProvider extends RecipeProvider {
 						Ingredient.of(ForceTags.VALID_LUCKY_TOOLS),
 						UpgradeBookTier.TWO,
 						20
-				).modifierType(InfuserModifierType.DAMAGE)
+				).modifierType(InfuserModifierType.FORTUNE)
 				.save(output, new ResourceLocation(Reference.MOD_ID, "infuser/infuse_fortune"));
 		InfuseRecipeBuilder.infuse(
 						Ingredient.of(ForceRegistry.SNOW_COOKIE.get()),
