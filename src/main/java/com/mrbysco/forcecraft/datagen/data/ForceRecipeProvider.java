@@ -1764,13 +1764,13 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.unlockedBy("has_book", has(Items.BOOK))
 				.save(output, new ResourceLocation(Reference.MOD_ID, "transmutation/upgrade_tome"));
 
-		ItemStack upgradeStack = new ItemStack(ForceRegistry.UPGRADE_TOME.get());
+		ItemStack upgradeStack = new ItemStack(ForceRegistry.EXPERIENCE_CORE.get());
 		CompoundTag tag = upgradeStack.getOrCreateTag();
 		tag.putInt("Experience", 100);
 		upgradeStack.setTag(tag);
 		TransmutationRecipeBuilder.transmutation(ForceRegistry.UPGRADE_CORE.get())
 				.requires(NBTIngredient.of(false, upgradeStack))
-				.unlockedBy("has_upgrade_tome", has(ForceRegistry.UPGRADE_TOME.get()))
+				.unlockedBy("has_experience_tome", has(ForceRegistry.EXPERIENCE_CORE.get()))
 				.save(output, new ResourceLocation(Reference.MOD_ID, "transmutation/upgrade_core"));
 
 	}
