@@ -1157,7 +1157,7 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.save(output, new ResourceLocation(Reference.MOD_ID, "infuser/infuse_light"));
 		InfuseRecipeBuilder.infuse(
 						Ingredient.of(ForceRegistry.TREASURE_CORE.get()),
-						Ingredient.of(ForceTags.VALID_LIGHT_TOOLS),
+						Ingredient.of(ForceTags.VALID_TREASURE_TOOLS),
 						UpgradeBookTier.SEVEN,
 						20
 				).modifierType(InfuserModifierType.TREASURE)
