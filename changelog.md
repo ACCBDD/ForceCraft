@@ -1,1 +1,1 @@
-* Change the icon for the Heat Upgrade Patchouli page
+* Fix treasure infusion
