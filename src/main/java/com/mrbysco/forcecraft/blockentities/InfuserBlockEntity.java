@@ -31,7 +31,7 @@ import com.mrbysco.forcecraft.registry.ForceSounds;
 import com.mrbysco.forcecraft.registry.ForceTags;
 import com.mrbysco.forcecraft.util.EnchantUtils;
 import com.mrbysco.forcecraft.util.ItemHandlerUtils;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -51,7 +51,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionUtils;
@@ -78,7 +77,7 @@ import java.util.Set;
 import static com.mrbysco.forcecraft.attachment.ForceAttachments.FORCE_ROD;
 import static com.mrbysco.forcecraft.attachment.ForceAttachments.TOOL_MODIFIER;
 
-public class InfuserBlockEntity extends BlockEntity implements MenuProvider, RecipeCraftingHolder, Container {
+public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Container {
 	private static final Set<String> HASHES = new HashSet<>();
 	public static final Map<Integer, List<InfuseRecipe>> LEVEL_RECIPE_LIST = new HashMap<>();
 
@@ -162,7 +161,7 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Rec
 
 	private final NonNullList<ItemStack> infuserContents = NonNullList.create();
 
-	private Object2IntOpenHashMap<RecipeHolder<InfuseRecipe>> recipesUsed = new Object2IntOpenHashMap<>();
+	private Int2ObjectOpenHashMap<RecipeHolder<InfuseRecipe>> currentRecipes = new Int2ObjectOpenHashMap<>();
 
 	public InfuserBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state) {
 		super(blockEntityType, pos, state);
@@ -309,7 +308,7 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Rec
 	private void setMaxTimeFromRecipes() {
 		maxProcessTime = 0;
 		if (!this.getBookInSlot().isEmpty()) { //Make sure it doesn't run if the book is missing
-			List<RecipeHolder<InfuseRecipe>> recipes = new ArrayList<>(getMatchingRecipes().keySet());
+			List<RecipeHolder<InfuseRecipe>> recipes = new ArrayList<>(getMatchingRecipes().values());
 			if (!recipes.isEmpty()) {
 				for (RecipeHolder<InfuseRecipe> currentHolder : recipes) {
 //					ForceCraft.LOGGER.info(recipeCurrent.getId() + " increase  "+ recipeCurrent.getTime());
@@ -319,11 +318,11 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Rec
 		}
 	}
 
-	protected Object2IntOpenHashMap<RecipeHolder<InfuseRecipe>> getMatchingRecipes() {
-		if (getBookInSlot().isEmpty()) return new Object2IntOpenHashMap<>();
-		if (!recipesUsed.isEmpty() && recipesStillMatch()) return recipesUsed;
+	protected Int2ObjectOpenHashMap<RecipeHolder<InfuseRecipe>> getMatchingRecipes() {
+		if (getBookInSlot().isEmpty()) return new Int2ObjectOpenHashMap<>();
+		if (!currentRecipes.isEmpty() && recipesStillMatch()) return currentRecipes;
 		else {
-			Object2IntOpenHashMap<RecipeHolder<InfuseRecipe>> matchingRecipes = new Object2IntOpenHashMap<>();
+			Int2ObjectOpenHashMap<RecipeHolder<InfuseRecipe>> matchingRecipes = new Int2ObjectOpenHashMap<>();
 			for (int i = 0; i < SLOT_TOOL; i++) {
 				ItemStack modifier = getModifier(i);
 				if (modifier.isEmpty()) continue;
@@ -332,12 +331,12 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Rec
 				for (RecipeHolder<InfuseRecipe> holder : holders) {
 					InfuseRecipe recipe = holder.value();
 					if (recipe.matchesModifier(this, modifier, false)) {
-						matchingRecipes.put(holder, i);
+						matchingRecipes.put(i, holder);
 						break;
 					}
 				}
 			}
-			return recipesUsed = matchingRecipes;
+			return currentRecipes = matchingRecipes;
 		}
 	}
 
@@ -368,9 +367,9 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Rec
 	}
 
 	protected boolean recipesStillMatch() {
-		for (Map.Entry<RecipeHolder<InfuseRecipe>, Integer> entry : recipesUsed.entrySet()) {
-			ItemStack modifier = getModifier(entry.getValue());
-			if (!entry.getKey().value().matchesModifier(this, modifier, false)) {
+		for (Map.Entry<Integer, RecipeHolder<InfuseRecipe>> entry : currentRecipes.entrySet()) {
+			ItemStack modifier = getModifier(entry.getKey());
+			if (!entry.getValue().value().matchesModifier(this, modifier, false)) {
 				return false;
 			}
 		}
@@ -430,12 +429,13 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Rec
 	}
 
 	private void processTool() {
-		for (HashMap.Entry<RecipeHolder<InfuseRecipe>, Integer> entry : recipesUsed.entrySet()) {
-			ItemStack modifier = getModifier(entry.getValue());
-			RecipeHolder<InfuseRecipe> recipeHolder = entry.getKey();
+		for (Map.Entry<Integer, RecipeHolder<InfuseRecipe>> entry : currentRecipes.entrySet()) {
+			ItemStack modifier = getModifier(entry.getKey());
+			RecipeHolder<InfuseRecipe> recipeHolder = entry.getValue();
 			if (recipeHolder.value().matchesModifier(this, modifier, true)) {
 				ItemStack tool = getFromToolSlot();
 				boolean success = applyModifier(tool, modifier, recipeHolder);
+				ForceCraft.LOGGER.info("Applying modifier {} on tool {}, succes: {}", tool, modifier, success);
 				if (success) {
 
 					// for EACH modifier
@@ -1224,19 +1224,6 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Rec
 
 	@Override
 	public void setItem(int arg0, ItemStack arg1) {
-	}
-
-	@Override
-	public void setRecipeUsed(@Nullable RecipeHolder<?> pRecipe) {
-		if (pRecipe != null && pRecipe.value() instanceof InfuseRecipe) {
-			this.recipesUsed.addTo((RecipeHolder<InfuseRecipe>) pRecipe, 1);
-		}
-	}
-
-	@Nullable
-	@Override
-	public RecipeHolder<?> getRecipeUsed() {
-		return null;
 	}
 
 	public static boolean addRecipe(RecipeHolder<InfuseRecipe> holder) {
