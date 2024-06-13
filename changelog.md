@@ -1,1 +1,1 @@
-* Fix treasure infusion
+* Allow Power Ore to glow again without needing CTM
