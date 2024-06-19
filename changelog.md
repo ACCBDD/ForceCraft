@@ -1,1 +1,1 @@
-* Allow Power Ore to glow again without needing CTM
+* Fix Upgrade Core recipe
