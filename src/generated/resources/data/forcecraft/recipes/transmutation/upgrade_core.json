@@ -6,7 +6,7 @@
     },
     {
       "type": "neoforge:nbt",
-      "item": "forcecraft:experience_core",
+      "item": "forcecraft:experience_tome",
       "tag": "{Experience:100}"
     }
   ],
