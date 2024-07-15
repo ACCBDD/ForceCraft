@@ -1,4 +1,4 @@
-// 1.20.4	2024-06-19T19:44:29.9781709	Recipes
+// 1.20.4	2024-07-15T15:14:47.802542	Recipes
 336bd70bf0493a85ea26c5c55c7a0f3c6471dbf0 data/forcecraft/advancements/recipes/building_blocks/force_black_torch.json
 fbc6710f4224d531b5bba07f413f06838cb299ee data/forcecraft/advancements/recipes/building_blocks/force_blue_torch.json
 8e907873e2ff90f9e39f2306846e7dabc767618e data/forcecraft/advancements/recipes/building_blocks/force_brick.json
@@ -432,8 +432,8 @@ ccc9e67ff55c5e194fbea16e9ce8a84d4bb5b01d data/forcecraft/recipes/force_pink_torc
 134136dd5fd58706f684f689c3607b223130dace data/forcecraft/recipes/force_plank_stairs.json
 35a097dcff723f7f114d53115c67a674e73a0d36 data/forcecraft/recipes/force_purple_torch.json
 0361b196b4528ed3311e7dfb9aa092b201acbdc9 data/forcecraft/recipes/force_red_torch.json
-8012d07d860b793e9cc4ffe26afe9a6d41fef09d data/forcecraft/recipes/force_rod.json
-1b5daab58ac390e7fc4813f775cd451e41fce305 data/forcecraft/recipes/force_rod_from_stick.json
+9d92f9aad2d8c8f0a94eb0952889ef625e9275f1 data/forcecraft/recipes/force_rod.json
+f387b066ce98c63244e8f7075c11769d1d2e171f data/forcecraft/recipes/force_rod_from_stick.json
 3791d0203278ade6318391d5883574bcb06f5251 data/forcecraft/recipes/force_shears.json
 f22fad37e024289ec2ab50e4c800ec4bf4a168fa data/forcecraft/recipes/force_shovel.json
 38a3d25b32eae33f725f64924f6ae4a18bfbb9df data/forcecraft/recipes/force_stick.json

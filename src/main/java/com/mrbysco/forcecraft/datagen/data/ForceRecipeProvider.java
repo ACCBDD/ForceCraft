@@ -622,9 +622,6 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.save(output);
 		//Rod
 		ItemStack rodStack = new ItemStack(ForceRegistry.FORCE_ROD.get());
-		CompoundTag rodTag = rodStack.getOrCreateTag();
-		rodTag.putBoolean("ForceInfused", true);
-		rodStack.setTag(rodTag);
 		ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, rodStack)
 				.pattern("  F")
 				.pattern(" S ")

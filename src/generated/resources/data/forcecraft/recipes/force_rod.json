@@ -18,7 +18,6 @@
     "N  "
   ],
   "result": {
-    "item": "forcecraft:force_rod",
-    "nbt": "{Damage:0,ForceInfused:1b}"
+    "item": "forcecraft:force_rod"
   }
 }
