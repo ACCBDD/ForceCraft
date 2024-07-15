@@ -1,5 +1,6 @@
 package com.mrbysco.forcecraft.attachment.forcerod;
 
+import com.mrbysco.forcecraft.util.ForceUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
@@ -74,7 +75,7 @@ public class ForceRodAttachment implements IForceRodModifier, INBTSerializable<C
 			int y = pos.getY() + 1;
 			int z = pos.getZ();
 
-			player.randomTeleport(x, y, z, true);
+			ForceUtils.teleportToLocation(player, x, y, z, true);
 		} else {
 			if (!player.level().isClientSide) {
 				player.sendSystemMessage(Component.translatable("forcecraft.ender_rod.dimension.text").withStyle(ChatFormatting.YELLOW));
