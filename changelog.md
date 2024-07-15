@@ -1,1 +1,2 @@
-* Fix Upgrade Core recipe
+* Change the output of the Force Rod recipes to not include the `ForceInfused` nbt
+* Chang the behavior of the Ender infusion for the Force Rod to allow teleporting to unloaded chunks, instead of damaging the item while doing nothing.
