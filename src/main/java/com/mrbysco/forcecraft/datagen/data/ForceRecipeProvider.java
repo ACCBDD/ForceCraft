@@ -685,6 +685,13 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.requires(ForceTags.FORCE_LOGS)
 				.unlockedBy("has_force_log", has(ForceTags.FORCE_LOGS))
 				.save(output);
+		//Wood
+		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ForceRegistry.FORCE_WOOD.get(), 3)
+				.pattern("##")
+				.pattern("##")
+				.define('#', ForceRegistry.FORCE_LOG.get())
+				.unlockedBy("has_force_log", has(ForceRegistry.FORCE_LOG))
+				.save(output);
 		//Force Belt
 		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ForceRegistry.FORCE_BELT.get())
 				.pattern("LWL")

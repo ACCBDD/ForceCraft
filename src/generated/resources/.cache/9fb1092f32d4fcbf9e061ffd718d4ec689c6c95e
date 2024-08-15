@@ -1,4 +1,4 @@
-// 1.20.4	2024-07-15T15:14:47.802542	Recipes
+// 1.20.4	2024-08-15T21:17:41.0755055	Recipes
 336bd70bf0493a85ea26c5c55c7a0f3c6471dbf0 data/forcecraft/advancements/recipes/building_blocks/force_black_torch.json
 fbc6710f4224d531b5bba07f413f06838cb299ee data/forcecraft/advancements/recipes/building_blocks/force_blue_torch.json
 8e907873e2ff90f9e39f2306846e7dabc767618e data/forcecraft/advancements/recipes/building_blocks/force_brick.json
@@ -103,6 +103,7 @@ cea5da992f88c1d2a7c48a3bba4e9fa051b05ed5 data/forcecraft/advancements/recipes/bu
 b7475c0020e179c0d12850a42421d22e6ad54ff2 data/forcecraft/advancements/recipes/building_blocks/force_red_torch.json
 3dca0f41a8ee81f4c4dc1b187748f14112ad4de2 data/forcecraft/advancements/recipes/building_blocks/force_torch.json
 af2cd424c3688cd0259128be1edee5b1d136ca6d data/forcecraft/advancements/recipes/building_blocks/force_white_torch.json
+8b17ed34af9d4d217162cefedc3c4a1751c91a00 data/forcecraft/advancements/recipes/building_blocks/force_wood.json
 ba5a66cb03017d156af8a596ba7b33bd1085ded8 data/forcecraft/advancements/recipes/combat/force_bow.json
 01cd214d98284926f98afdc6ad84fe1207aef59b data/forcecraft/advancements/recipes/combat/force_sword.json
 423f2da37a63cd60468e5cd6a34e8001ebf9c3a1 data/forcecraft/advancements/recipes/food/cooked_bacon_from_smelting.json
@@ -440,6 +441,7 @@ f22fad37e024289ec2ab50e4c800ec4bf4a168fa data/forcecraft/recipes/force_shovel.js
 64a358fde804736e4834b2013a458df7d4c9f8ee data/forcecraft/recipes/force_sword.json
 07b263ce7ffab90a9bcd4984136bbc2f7e427780 data/forcecraft/recipes/force_torch.json
 42ff49245a0734b5f31f7d19fb64b05de47cfbae data/forcecraft/recipes/force_white_torch.json
+2ff56a1d8f5285ef668ff95b659b3ce05caa6ea0 data/forcecraft/recipes/force_wood.json
 a358ed429b8f1879a1fcbcef204bc6d737555bcf data/forcecraft/recipes/force_wrench.json
 2a5c271b0606827ca07bb03f2e0627348929c5c6 data/forcecraft/recipes/fortune_cookie.json
 0e94bde3a031a272afc59d2dda4b5cc7b3fac3a2 data/forcecraft/recipes/freezing/bone_from_blaze_rod.json
