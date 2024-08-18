@@ -47,9 +47,9 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import static com.mrbysco.forcecraft.attachment.ForceAttachments.MAGNET;
 
 public class ClientHandler {
-	public static final ModelLayerLocation CREEPER_TOT = new ModelLayerLocation(new ResourceLocation(Reference.MOD_ID, "creeper_tot"), "main");
-	public static final ModelLayerLocation FAIRY = new ModelLayerLocation(new ResourceLocation(Reference.MOD_ID, "fairy"), "main");
-	public static final ModelLayerLocation ENDERTOT = new ModelLayerLocation(new ResourceLocation(Reference.MOD_ID, "endertot"), "main");
+	public static final ModelLayerLocation CREEPER_TOT = new ModelLayerLocation(Reference.modLoc("creeper_tot"), "main");
+	public static final ModelLayerLocation FAIRY = new ModelLayerLocation(Reference.modLoc("fairy"), "main");
+	public static final ModelLayerLocation ENDERTOT = new ModelLayerLocation(Reference.modLoc("endertot"), "main");
 
 	public static void onClientSetup(final FMLClientSetupEvent event) {
 		ItemBlockRenderTypes.setRenderLayer(ForceFluids.FORCE_FLUID_FLOWING.get(), RenderType.translucent());

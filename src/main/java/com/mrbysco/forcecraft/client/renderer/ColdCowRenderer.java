@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 public class ColdCowRenderer extends MobRenderer<ColdCowEntity, ColdCowModel<ColdCowEntity>> {
-	private static final ResourceLocation COW_TEXTURES = new ResourceLocation(Reference.MOD_ID, "textures/entity/cold_cow.png");
+	private static final ResourceLocation COW_TEXTURES = Reference.modLoc("textures/entity/cold_cow.png");
 
 	public ColdCowRenderer(EntityRendererProvider.Context context) {
 		super(context, new ColdCowModel<>(context.bakeLayer(ModelLayers.COW)), 0.7F);

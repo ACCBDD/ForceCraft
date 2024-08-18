@@ -15,5 +15,5 @@ import java.util.List;
 public class ModToolTiers {
 	public static final Tier FORCE = TierSortingRegistry.registerTier(
 			new SimpleTier(3, 1561, 8.0F, 8.0F, 22, ForceTags.NEEDS_FORCE_TOOL, () -> Ingredient.of(ForceRegistry.FORCE_GEM.get())),
-			new ResourceLocation(Reference.MOD_ID, "force"), List.of(Tiers.IRON), List.of(Tiers.DIAMOND));
+			Reference.modLoc("force"), List.of(Tiers.IRON), List.of(Tiers.DIAMOND));
 }

@@ -1,10 +1,11 @@
 package com.mrbysco.forcecraft.world.feature;
 
+import com.mrbysco.forcecraft.Reference;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.data.worldgen.placement.VegetationPlacements;
@@ -38,19 +39,27 @@ import java.util.List;
 
 public class ForceFeatureKeys {
 
-	public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_FORCE = FeatureUtils.createKey("forcecraft:ore_force");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_FORCE_BURIED = FeatureUtils.createKey("forcecraft:ore_force_buried");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_FORCE = createConfiguredKey("ore_force");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_FORCE_BURIED = createConfiguredKey("ore_force_buried");
 
-	public static final ResourceKey<ConfiguredFeature<?, ?>> FORCE_TREE = FeatureUtils.createKey("forcecraft:force_tree");
-	public static final ResourceKey<ConfiguredFeature<?, ?>> FORCE_TREE_WITH_MORE_BEEHIVES_CONFIG = FeatureUtils.createKey("forcecraft:force_tree_with_bees");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> FORCE_TREE = createConfiguredKey("force_tree");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> FORCE_TREE_WITH_MORE_BEEHIVES_CONFIG = createConfiguredKey("force_tree_with_bees");
 
-	public static final ResourceKey<ConfiguredFeature<?, ?>> TREES_FORCE = FeatureUtils.createKey("forcecraft:trees_force");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> TREES_FORCE = createConfiguredKey("trees_force");
 
-	public static final ResourceKey<PlacedFeature> PLACED_ORE_FORCE = PlacementUtils.createKey("forcecraft:ore_force");
-	public static final ResourceKey<PlacedFeature> PLACED_ORE_FORCE_BURIED = PlacementUtils.createKey("forcecraft:ore_force_buried");
-	public static final ResourceKey<PlacedFeature> PLACED_FORCE_TREE = PlacementUtils.createKey("forcecraft:force_tree");
-	public static final ResourceKey<PlacedFeature> PLACED_FORCE_TREE_BEES_002 = PlacementUtils.createKey("forcecraft:force_tree_bees_002");
+	public static ResourceKey<ConfiguredFeature<?, ?>> createConfiguredKey(String name) {
+		return ResourceKey.create(Registries.CONFIGURED_FEATURE, Reference.modLoc(name));
+	}
+	
+	public static final ResourceKey<PlacedFeature> PLACED_ORE_FORCE = createPlacedKey("ore_force");
+	public static final ResourceKey<PlacedFeature> PLACED_ORE_FORCE_BURIED = createPlacedKey("ore_force_buried");
+	public static final ResourceKey<PlacedFeature> PLACED_FORCE_TREE = createPlacedKey("force_tree");
+	public static final ResourceKey<PlacedFeature> PLACED_FORCE_TREE_BEES_002 = createPlacedKey("force_tree_bees_002");
 
+	public static ResourceKey<PlacedFeature> createPlacedKey(String name) {
+		return ResourceKey.create(Registries.PLACED_FEATURE, Reference.modLoc(name));
+	}
+	
 	private static TreeConfiguration.TreeConfigurationBuilder createStraightBlobTree(BlockState trunkState, BlockState foliageState, int baseHeight, int heightRandA, int heightRandB, int p_195152_) {
 		return new TreeConfiguration.TreeConfigurationBuilder(BlockStateProvider.simple(trunkState), new StraightTrunkPlacer(baseHeight, heightRandA, heightRandB),
 				BlockStateProvider.simple(foliageState), new BlobFoliagePlacer(ConstantInt.of(p_195152_), ConstantInt.of(0), 3), new TwoLayersFeatureSize(1, 0, 1));
@@ -60,7 +69,7 @@ public class ForceFeatureKeys {
 		return createStraightBlobTree(ForceRegistry.FORCE_LOG.get().defaultBlockState(), ForceRegistry.FORCE_LEAVES.get().defaultBlockState(), 4, 2, 0, 2).ignoreVines();
 	}
 
-	public static void configuredBootstrap(BootstapContext<ConfiguredFeature<?, ?>> context) {
+	public static void configuredBootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
 		RuleTest stoneRuleTest = new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES);
 		RuleTest deepslateRuleTest = new TagMatchTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES);
 		List<OreConfiguration.TargetBlockState> list = List.of(
@@ -91,7 +100,7 @@ public class ForceFeatureKeys {
 		return orePlacement(CountPlacement.of(count), modifier);
 	}
 
-	public static void placedBootstrap(BootstapContext<PlacedFeature> context) {
+	public static void placedBootstrap(BootstrapContext<PlacedFeature> context) {
 		HolderGetter<ConfiguredFeature<?, ?>> holdergetter = context.lookup(Registries.CONFIGURED_FEATURE);
 
 		PlacementUtils.register(context, PLACED_ORE_FORCE, holdergetter.getOrThrow(ORE_FORCE),

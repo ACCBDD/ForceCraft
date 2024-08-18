@@ -30,12 +30,16 @@ import com.mrbysco.forcecraft.registry.ForceSounds;
 import com.mrbysco.forcecraft.world.feature.ForceFeatures;
 import net.minecraft.core.dispenser.ShearsDispenseItemBehavior;
 import net.minecraft.world.level.block.DispenserBlock;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import org.apache.logging.log4j.LogManager;
@@ -46,8 +50,8 @@ public class ForceCraft {
 
 	public static final Logger LOGGER = LogManager.getLogger(Reference.MOD_ID);
 
-	public ForceCraft(IEventBus eventBus) {
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHandler.commonSpec);
+	public ForceCraft(IEventBus eventBus, ModContainer container, Dist dist) {
+		container.registerConfig(ModConfig.Type.COMMON, ConfigHandler.commonSpec);
 		eventBus.register(ConfigHandler.class);
 
 		eventBus.addListener(CapabilityHandler::registerCapabilities);
@@ -90,7 +94,8 @@ public class ForceCraft {
 
 		NeoForgeMod.enableMilkFluid(); //Enable milk from forge
 
-		if (FMLEnvironment.dist.isClient()) {
+		if (dist.isClient()) {
+			container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 			eventBus.addListener(ClientHandler::onClientSetup);
 			eventBus.addListener(ClientHandler::onRegisterMenu);
 			eventBus.addListener(ClientHandler::registerKeymapping);

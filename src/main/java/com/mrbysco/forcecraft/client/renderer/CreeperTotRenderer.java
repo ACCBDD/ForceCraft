@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 public class CreeperTotRenderer extends MobRenderer<CreeperTotEntity, CreeperTotModel<CreeperTotEntity>> {
-	private static final ResourceLocation CREEPER_TEXTURES = new ResourceLocation(Reference.MOD_ID, "textures/entity/creeper_tot.png");
+	private static final ResourceLocation CREEPER_TEXTURES = Reference.modLoc("textures/entity/creeper_tot.png");
 
 	public CreeperTotRenderer(EntityRendererProvider.Context context) {
 		super(context, new CreeperTotModel<>(context.bakeLayer(ClientHandler.CREEPER_TOT)), 0.2F);

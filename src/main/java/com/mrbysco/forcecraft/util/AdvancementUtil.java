@@ -57,7 +57,7 @@ public class AdvancementUtil {
 
 	public static void unlockAdvancement(ServerPlayer serverPlayer, String name) {
 		if (serverPlayer.getServer() == null) return;
-		AdvancementHolder holder = serverPlayer.getServer().getAdvancements().get(new ResourceLocation(Reference.MOD_ID + ":" + name));
+		AdvancementHolder holder = serverPlayer.getServer().getAdvancements().get(Reference.modLoc(name));
 		if (holder != null) {
 			AdvancementProgress advancementprogress = serverPlayer.getAdvancements().getOrStartProgress(holder);
 			if (!advancementprogress.isDone()) {

@@ -11,6 +11,6 @@ public class ForceDamageTypes {
 	public static final ResourceKey<DamageType> LIQUID_FORCE = register("liquid_force");
 
 	private static ResourceKey<DamageType> register(String name) {
-		return ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Reference.MOD_ID, name));
+		return ResourceKey.create(Registries.DAMAGE_TYPE, Reference.modLoc(name));
 	}
 }

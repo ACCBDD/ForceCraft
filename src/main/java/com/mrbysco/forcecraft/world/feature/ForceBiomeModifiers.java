@@ -6,9 +6,8 @@ import com.mrbysco.forcecraft.registry.ForceEntities;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
@@ -23,24 +22,20 @@ import java.util.List;
 
 public class ForceBiomeModifiers {
 
-	protected static final ResourceKey<BiomeModifier> ADD_FORCE_ORE_MODIFIER = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS,
-			new ResourceLocation(Reference.MOD_ID, "add_force_ore"));
-	protected static final ResourceKey<BiomeModifier> ADD_FORCE_ORE_BURIED_MODIFIER = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS,
-			new ResourceLocation(Reference.MOD_ID, "add_force_ore_buried"));
-	protected static final ResourceKey<BiomeModifier> ADD_FORCE_TREE = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS,
-			new ResourceLocation(Reference.MOD_ID, "add_force_tree"));
-	protected static final ResourceKey<BiomeModifier> ADD_CHU_CHU_MODIFIER = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS,
-			new ResourceLocation(Reference.MOD_ID, "add_chu_chu"));
-	protected static final ResourceKey<BiomeModifier> ADD_SWAMP_CHU_CHU_MODIFIER = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS,
-			new ResourceLocation(Reference.MOD_ID, "add_swamp_chu_chu"));
-	protected static final ResourceKey<BiomeModifier> ADD_CREEPER_TOT_MODIFIER = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS,
-			new ResourceLocation(Reference.MOD_ID, "add_creeper_tot"));
-	protected static final ResourceKey<BiomeModifier> ADD_ENDER_TOT_MODIFIER = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS,
-			new ResourceLocation(Reference.MOD_ID, "add_ender_tot"));
-	protected static final ResourceKey<BiomeModifier> ADD_FAIRY_MODIFIER = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS,
-			new ResourceLocation(Reference.MOD_ID, "add_fairy"));
+	protected static final ResourceKey<BiomeModifier> ADD_FORCE_ORE_MODIFIER = createKey("add_force_ore");
+	protected static final ResourceKey<BiomeModifier> ADD_FORCE_ORE_BURIED_MODIFIER = createKey("add_force_ore_buried");
+	protected static final ResourceKey<BiomeModifier> ADD_FORCE_TREE = createKey("add_force_tree");
+	protected static final ResourceKey<BiomeModifier> ADD_CHU_CHU_MODIFIER = createKey("add_chu_chu");
+	protected static final ResourceKey<BiomeModifier> ADD_SWAMP_CHU_CHU_MODIFIER = createKey("add_swamp_chu_chu");
+	protected static final ResourceKey<BiomeModifier> ADD_CREEPER_TOT_MODIFIER = createKey("add_creeper_tot");
+	protected static final ResourceKey<BiomeModifier> ADD_ENDER_TOT_MODIFIER = createKey("add_ender_tot");
+	protected static final ResourceKey<BiomeModifier> ADD_FAIRY_MODIFIER = createKey("add_fairy");
 
-	public static void modifierBootstrap(BootstapContext<BiomeModifier> context) {
+	private static ResourceKey<BiomeModifier> createKey(String name) {
+		return ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, Reference.modLoc(name));
+	}
+	
+	public static void modifierBootstrap(BootstrapContext<BiomeModifier> context) {
 		HolderGetter<Biome> biomeGetter = context.lookup(Registries.BIOME);
 		HolderGetter<PlacedFeature> placedGetter = context.lookup(Registries.PLACED_FEATURE);
 

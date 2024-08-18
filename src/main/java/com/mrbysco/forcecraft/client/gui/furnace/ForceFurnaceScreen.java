@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 
 public class ForceFurnaceScreen extends AbstractForceFurnaceScreen<ForceFurnaceMenu> {
-	private static final ResourceLocation FURNACE_GUI_TEXTURES = new ResourceLocation(Reference.MOD_ID, "textures/gui/container/furnace_gui.png");
+	private static final ResourceLocation FURNACE_GUI_TEXTURES = Reference.modLoc("textures/gui/container/furnace_gui.png");
 
 	public ForceFurnaceScreen(ForceFurnaceMenu container, Inventory playerInventory, Component title) {
 		super(container, playerInventory, title, FURNACE_GUI_TEXTURES);

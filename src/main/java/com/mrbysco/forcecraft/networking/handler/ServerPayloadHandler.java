@@ -15,9 +15,11 @@ import com.mrbysco.forcecraft.networking.message.PackChangePayload;
 import com.mrbysco.forcecraft.networking.message.QuickUseBeltPayload;
 import com.mrbysco.forcecraft.networking.message.RecipeToCardPayload;
 import com.mrbysco.forcecraft.networking.message.SaveCardRecipePayload;
+import com.mrbysco.forcecraft.registry.ForceComponents;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
 import com.mrbysco.forcecraft.util.FindingUtil;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -32,7 +34,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -44,11 +46,10 @@ public class ServerPayloadHandler {
 		return INSTANCE;
 	}
 
-	public void handleOpen(final OpenInventoryPayload openData, final PlayPayloadContext context) {
-		context.workHandler().submitAsync(() -> {
-					if (context.player().isPresent()) {
-						Player player = context.player().get();
-						if (openData.type() == 0) { //Belt
+	public void handleOpen(final OpenInventoryPayload openData, final IPayloadContext context) {
+		context.enqueueWork(() -> {
+					if (context.player() instanceof ServerPlayer player) {
+						if (openData.inventoryType() == 0) { //Belt
 							Predicate<ItemStack> stackPredicate = (stack) -> stack.getItem() instanceof ForceBeltItem;
 							if (FindingUtil.hasSingleStackInHotbar(player, stackPredicate)) {
 								ItemStack beltStack = FindingUtil.findInstanceStack(player, stackPredicate);
@@ -56,7 +57,7 @@ public class ServerPayloadHandler {
 									Optional<BeltStorage> data = StorageManager.getBelt(beltStack);
 									data.ifPresent(belt ->
 											player.openMenu(new SimpleMenuProvider((id, pInv, pEntity) -> new ForceBeltMenu(id, pInv, belt.getInventory()),
-													beltStack.hasCustomHoverName() ? ((MutableComponent) beltStack.getHoverName()).withStyle(ChatFormatting.BLACK) : Component.translatable(Reference.MOD_ID + ".container.belt"))));
+													beltStack.has(DataComponents.CUSTOM_NAME) ? ((MutableComponent) beltStack.getHoverName()).withStyle(ChatFormatting.BLACK) : Component.translatable(Reference.MOD_ID + ".container.belt"))));
 								}
 							}
 						} else { //Pack
@@ -67,7 +68,7 @@ public class ServerPayloadHandler {
 									Optional<PackStorage> data = StorageManager.getPack(packStack);
 									data.ifPresent(pack ->
 											player.openMenu(new SimpleMenuProvider((id, pInv, pEntity) -> new ForcePackMenu(id, pInv, pack.getInventory()),
-													packStack.hasCustomHoverName() ? ((MutableComponent) packStack.getHoverName()).withStyle(ChatFormatting.BLACK) :
+													packStack.has(DataComponents.CUSTOM_NAME) ? ((MutableComponent) packStack.getHoverName()).withStyle(ChatFormatting.BLACK) :
 															Component.translatable(Reference.MOD_ID + ".container.pack")), buf -> buf.writeInt(pack.getInventory().getUpgrades())));
 								}
 							}
@@ -76,15 +77,14 @@ public class ServerPayloadHandler {
 				})
 				.exceptionally(e -> {
 					// Handle exception
-					context.packetHandler().disconnect(Component.translatable("forcecraft.networking.open_inventory.failed", e.getMessage()));
+					context.disconnect(Component.translatable("forcecraft.networking.open_inventory.failed", e.getMessage()));
 					return null;
 				});
 	}
 
-	public void handleQuickUse(final QuickUseBeltPayload beltData, final PlayPayloadContext context) {
-		context.workHandler().submitAsync(() -> {
-					if (context.player().isPresent()) {
-						Player player = context.player().get();
+	public void handleQuickUse(final QuickUseBeltPayload beltData, final IPayloadContext context) {
+		context.enqueueWork(() -> {
+					if (context.player() instanceof ServerPlayer player) {
 						Predicate<ItemStack> stackPredicate = (stack) -> stack.getItem() instanceof ForceBeltItem;
 						if (FindingUtil.hasSingleStackInHotbar(player, stackPredicate)) {
 							ItemStack beltStack = FindingUtil.findInstanceStack(player, stackPredicate);
@@ -106,28 +106,25 @@ public class ServerPayloadHandler {
 				})
 				.exceptionally(e -> {
 					// Handle exception
-					context.packetHandler().disconnect(Component.translatable("forcecraft.networking.quick_use_belt.failed", e.getMessage()));
+					context.disconnect(Component.translatable("forcecraft.networking.quick_use_belt.failed", e.getMessage()));
 					return null;
 				});
 	}
 
-	public void handlePackChange(final PackChangePayload changeData, final PlayPayloadContext context) {
-		context.workHandler().submitAsync(() -> {
-					if (context.player().isPresent()) {
-						Player player = context.player().get();
+	public void handlePackChange(final PackChangePayload changeData, final IPayloadContext context) {
+		context.enqueueWork(() -> {
+					if (context.player() instanceof ServerPlayer player) {
 						ItemStack stack = player.getItemInHand(changeData.hand());
 
 						if (stack.getItem() == ForceRegistry.FORCE_PACK.get() || stack.getItem() == ForceRegistry.FORCE_BELT.get()) {
-							CompoundTag tag = stack.getOrCreateTag();
-							tag.putInt("Color", changeData.color());
-							stack.setTag(tag);
+							stack.set(ForceComponents.PACK_COLOR, changeData.color());
 
 							String customName = changeData.customName();
 							if (customName.isEmpty()) {
-								stack.resetHoverName();
+								stack.remove(DataComponents.CUSTOM_NAME);
 							} else {
 								if (!stack.getHoverName().getString().equals(customName)) {
-									stack.setHoverName(Component.literal(customName).withStyle(ChatFormatting.YELLOW));
+									stack.set(DataComponents.CUSTOM_NAME, Component.literal(customName).withStyle(ChatFormatting.YELLOW));
 								}
 							}
 						}
@@ -135,15 +132,14 @@ public class ServerPayloadHandler {
 				})
 				.exceptionally(e -> {
 					// Handle exception
-					context.packetHandler().disconnect(Component.translatable("forcecraft.networking.pack_change.failed", e.getMessage()));
+					context.disconnect(Component.translatable("forcecraft.networking.pack_change.failed", e.getMessage()));
 					return null;
 				});
 	}
 
-	public void handleCard(final RecipeToCardPayload recipeData, final PlayPayloadContext context) {
-		context.workHandler().submitAsync(() -> {
-					if (context.player().isPresent()) {
-						Player player = context.player().get();
+	public void handleCard(final RecipeToCardPayload recipeData, final IPayloadContext context) {
+		context.enqueueWork(() -> {
+					if (context.player() instanceof ServerPlayer player) {
 						// Handle tablet version
 						ItemStack mainhand = ItemStack.EMPTY;
 						if (player.getMainHandItem().getItem() instanceof ItemCardItem) {
@@ -160,14 +156,14 @@ public class ServerPayloadHandler {
 				})
 				.exceptionally(e -> {
 					// Handle exception
-					context.packetHandler().disconnect(Component.translatable("forcecraft.networking.recipe_to_card.failed", e.getMessage()));
+					context.disconnect(Component.translatable("forcecraft.networking.recipe_to_card.failed", e.getMessage()));
 					return null;
 				});
 	}
 
-	public void handleSaveCard(final SaveCardRecipePayload saveData, final PlayPayloadContext context) {
-		context.workHandler().submitAsync(() -> {
-					if (context.player().isPresent() && context.player().get() instanceof ServerPlayer player) {
+	public void handleSaveCard(final SaveCardRecipePayload saveData, final IPayloadContext context) {
+		context.enqueueWork(() -> {
+					if (context.player() instanceof ServerPlayer player) {
 						// Handle tablet version
 						Level level = player.level();
 						ItemStack stack = getCardStack(player);
@@ -175,14 +171,15 @@ public class ServerPayloadHandler {
 							if (player.containerMenu instanceof ItemCardMenu itemCardContainer) {
 								CraftingContainer craftMatrix = itemCardContainer.getCraftMatrix();
 								ResultContainer craftResult = itemCardContainer.getCraftResult();
-								Optional<RecipeHolder<CraftingRecipe>> iRecipe = player.server.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, craftMatrix, level);
+								Optional<RecipeHolder<CraftingRecipe>> iRecipe = player.server.getRecipeManager()
+										.getRecipeFor(RecipeType.CRAFTING, craftMatrix.asCraftInput(), level);
 								iRecipe.ifPresent((holder) -> {
 									CompoundTag tag = stack.getOrCreateTag();
 									CompoundTag recipeContents = new CompoundTag();
 									for (int i = 0; i < craftMatrix.getContainerSize(); i++) {
-										recipeContents.put("slot_" + i, craftMatrix.getItem(i).save(new CompoundTag()));
+										recipeContents.put("slot_" + i, craftMatrix.getItem(i).save(level.registryAccess(), new CompoundTag()));
 									}
-									recipeContents.put("result", craftResult.getItem(0).save(new CompoundTag()));
+									recipeContents.put("result", craftResult.getItem(0).save(level.registryAccess(), new CompoundTag()));
 									tag.put("RecipeContents", recipeContents);
 									stack.setTag(tag);
 								});
@@ -193,7 +190,7 @@ public class ServerPayloadHandler {
 				})
 				.exceptionally(e -> {
 					// Handle exception
-					context.packetHandler().disconnect(Component.translatable("forcecraft.networking.save_card.failed", e.getMessage()));
+					context.disconnect(Component.translatable("forcecraft.networking.save_card.failed", e.getMessage()));
 					return null;
 				});
 	}

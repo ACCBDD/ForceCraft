@@ -35,14 +35,14 @@ import java.util.Objects;
 
 @JeiPlugin
 public class JeiCompat implements IModPlugin {
-	public static final ResourceLocation RECIPE_MULTIPLES_JEI = new ResourceLocation(Reference.MOD_ID, "textures/gui/jei/multiples.png");
-	public static final ResourceLocation RECIPE_INFUSER_JEI = new ResourceLocation(Reference.MOD_ID, "textures/gui/jei/infuser.png");
+	public static final ResourceLocation RECIPE_MULTIPLES_JEI = Reference.modLoc("textures/gui/jei/multiples.png");
+	public static final ResourceLocation RECIPE_INFUSER_JEI = Reference.modLoc("textures/gui/jei/infuser.png");
 
-	public static final ResourceLocation PLUGIN_UID = new ResourceLocation(Reference.MOD_ID, "main");
+	public static final ResourceLocation PLUGIN_UID = Reference.modLoc("main");
 
-	public static final ResourceLocation FREEZING = new ResourceLocation(Reference.MOD_ID, "freezing");
-	public static final ResourceLocation GRINDING = new ResourceLocation(Reference.MOD_ID, "grinding");
-	public static final ResourceLocation INFUSER = new ResourceLocation(Reference.MOD_ID, "infuser");
+	public static final ResourceLocation FREEZING = Reference.modLoc("freezing");
+	public static final ResourceLocation GRINDING = Reference.modLoc("grinding");
+	public static final ResourceLocation INFUSER = Reference.modLoc("infuser");
 	public static final RecipeType<FreezingRecipe> FREEZING_TYPE = RecipeType.create(Reference.MOD_ID, "freezing", FreezingRecipe.class);
 	public static final RecipeType<GrindingRecipe> GRINDING_TYPE = RecipeType.create(Reference.MOD_ID, "grinding", GrindingRecipe.class);
 	public static final RecipeType<InfuseRecipe> INFUSER_TYPE = RecipeType.create(Reference.MOD_ID, "infuser", InfuseRecipe.class);

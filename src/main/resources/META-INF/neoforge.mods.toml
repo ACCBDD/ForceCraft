@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[2,)"
+loaderVersion="[4,)"
 issueTrackerURL="https://github.com/mrbysco/forcecraft/issues"
 license="GNU GPL v3"
 
@@ -16,13 +16,19 @@ A mod inspired by DartCraft
 [[dependencies.forcecraft]]
 modId="minecraft"
 type="REQUIRED"
-versionRange="[1.20.4,1.21)"
+versionRange="[1.21,1.22)"
 ordering="NONE"
 side="BOTH"
 [[dependencies.forcecraft]]
 modId="neoforge"
 type="REQUIRED"
-versionRange="[20.4.131-beta,)"
+versionRange="[21.1.1,)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.forcecraft]]
+modId="patchouli"
+type="REQUIRED"
+versionRange="[1.21-87,)"
 ordering="NONE"
 side="BOTH"
 [[mixins]]

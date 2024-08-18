@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.monster.Slime;
 
 public class BlueChuChuRenderer extends SlimeRenderer {
-	private static final ResourceLocation CHU_CHU_TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/entity/blue_chu_chu.png");
+	private static final ResourceLocation CHU_CHU_TEXTURE = Reference.modLoc("textures/entity/blue_chu_chu.png");
 
 	public BlueChuChuRenderer(EntityRendererProvider.Context context) {
 		super(context);

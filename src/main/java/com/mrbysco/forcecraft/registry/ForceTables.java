@@ -9,6 +9,6 @@ public class ForceTables {
 	public static final ResourceLocation TIER_3 = register("spoils/tier3");
 
 	private static ResourceLocation register(String id) {
-		return new ResourceLocation(Reference.MOD_ID, id);
+		return Reference.modLoc(id);
 	}
 }

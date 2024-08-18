@@ -1,41 +1,26 @@
 package com.mrbysco.forcecraft.util;
 
+import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-
-import java.util.Map;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 
 public final class EnchantUtils {
 
-	public static boolean removeEnchant(ItemStack stack, Enchantment enchantment) {
-		Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(stack);
-		enchantments.remove(enchantment);
-		EnchantmentHelper.setEnchantments(enchantments, stack);
-		return false;
+	public static void removeEnchant(ItemStack stack, Holder<Enchantment> enchantment) {
+		ItemEnchantments itemenchantments = EnchantmentHelper.updateEnchantments(
+				stack, mutable -> mutable.removeIf(holder -> !holder.is(enchantment))
+		);
 	}
 
-	public static void incrementLevel(ItemStack stack, Enchantment enchantment) {
-		Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(stack);
-		if (enchantments.containsKey(enchantment)) {
-			int oldLevel = enchantments.get(enchantment);
-			enchantments.remove(enchantment);
-			enchantments.put(enchantment, oldLevel + 1);
-			EnchantmentHelper.setEnchantments(enchantments, stack);
-		} else {
-			stack.enchant(enchantment, 1);
-		}
+	public static void incrementLevel(ItemStack stack, Holder<Enchantment> enchantment) {
+		incrementLevel(stack, enchantment, 1);
 	}
 
-	public static void incrementLevel(ItemStack stack, Enchantment enchantment, int levels) {
-		Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(stack);
-		if (enchantments.containsKey(enchantment)) {
-			int oldLevel = enchantments.get(enchantment);
-			enchantments.remove(enchantment);
-			enchantments.put(enchantment, oldLevel + levels);
-			EnchantmentHelper.setEnchantments(enchantments, stack);
-		} else {
-			stack.enchant(enchantment, levels);
-		}
+	public static void incrementLevel(ItemStack stack, Holder<Enchantment> enchantment, int levels) {
+		ItemEnchantments itemenchantments = EnchantmentHelper.updateEnchantments(
+				stack, mutable -> mutable.upgrade(enchantment, levels) //TODO: Test if this works!
+		);
 	}
 }

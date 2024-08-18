@@ -1,6 +1,5 @@
 package com.mrbysco.forcecraft.util;
 
-import com.mrbysco.forcecraft.Reference;
 import com.mrbysco.forcecraft.blocks.flammable.ForceLogBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
@@ -8,7 +7,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -19,19 +17,15 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
-import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.event.entity.EntityTeleportEvent;
 
-import java.util.Map;
 import java.util.Stack;
 
 public class ForceUtils {
@@ -39,11 +33,11 @@ public class ForceUtils {
 	/**
 	 * A modified version of LivingEntity#randomTeleport that allows teleporting to unloaded chunks
 	 *
-	 * @param player The entity to teleport
-	 * @param x            the x coordinate
-	 * @param y            the y coordinate
-	 * @param z            the z coordinate
-	 * @param broadcast    if the teleport should be broadcasted to other players
+	 * @param player    The entity to teleport
+	 * @param x         the x coordinate
+	 * @param y         the y coordinate
+	 * @param z         the z coordinate
+	 * @param broadcast if the teleport should be broadcasted to other players
 	 * @return if the teleport was successful
 	 */
 	public static boolean teleportToLocation(Player player, double x, double y, double z, boolean broadcast) {
@@ -54,15 +48,6 @@ public class ForceUtils {
 			level.broadcastEntityEvent(player, (byte) 46);
 		}
 		return true;
-	}
-
-	public static void removeEnchant(Enchantment enchantment, ItemStack stack) {
-		Map<Enchantment, Integer> enchantMap = EnchantmentHelper.getEnchantments(stack);
-		if (enchantMap.containsKey(enchantment)) {
-			enchantMap.remove(enchantment);
-		}
-
-		EnchantmentHelper.setEnchantments(enchantMap, stack);
 	}
 
 	//Credit to Slimeknights for this code until I can logic through it on my own
@@ -135,8 +120,9 @@ public class ForceUtils {
 		// server sided handling
 		if (!level.isClientSide) {
 			// send the blockbreak event
-			int xp = CommonHooks.onBlockBreakEvent(level, ((ServerPlayer) player).gameMode.getGameModeForPlayer(), (ServerPlayer) player, pos);
-			if (xp == -1) {
+			BlockState blockstate1 = level.getBlockState(pos);
+			var event = net.neoforged.neoforge.common.CommonHooks.fireBlockBreak(level, ((ServerPlayer) player).gameMode.getGameModeForPlayer(), ((ServerPlayer) player), pos, blockstate1);
+			if (event.isCanceled()) {
 				return;
 			}
 
@@ -147,7 +133,9 @@ public class ForceUtils {
 			if (block.onDestroyedByPlayer(state, level, pos, player, true, fluidState)) { // boolean is if block can be harvested, checked above
 				block.playerWillDestroy(level, pos, state, player);
 				block.playerDestroy(level, player, pos, state, tileEntity, stack);
-				block.popExperience((ServerLevel) level, pos, xp);
+				int xp = block.getExpDrop(state, level, pos, null, player, stack);
+				if (xp > 0)
+					block.popExperience((ServerLevel) level, pos, xp);
 			}
 
 			// always send block update to client
@@ -199,7 +187,7 @@ public class ForceUtils {
 		float strength = state.getDestroyProgress(player, level, pos);
 
 		// only harvestable blocks that aren't impossibly slow to harvest
-		if (!CommonHooks.isCorrectToolForDrops(state, player) || refStrength / strength > 10f) {
+		if (!stack.isCorrectToolForDrops(state) || refStrength / strength > 10f) {
 			return false;
 		}
 
@@ -222,14 +210,6 @@ public class ForceUtils {
 
 	public static boolean isFakePlayer(Entity player) {
 		return (player instanceof FakePlayer);
-	}
-
-	public static String resource(String res) {
-		return String.format("%s:%s", Reference.MOD_ID, res);
-	}
-
-	public static ResourceLocation getResource(String res) {
-		return new ResourceLocation(Reference.MOD_ID, res);
 	}
 
 	public static void teleportRandomly(LivingEntity livingEntity) {

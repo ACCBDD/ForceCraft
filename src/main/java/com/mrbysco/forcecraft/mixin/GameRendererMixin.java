@@ -1,7 +1,9 @@
 package com.mrbysco.forcecraft.mixin;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrbysco.forcecraft.client.ShakeUtil;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import org.spongepowered.asm.mixin.Final;
@@ -18,12 +20,12 @@ public abstract class GameRendererMixin {
 	@Final
 	private Minecraft minecraft;
 
-	@Inject(method = "renderLevel(FJLcom/mojang/blaze3d/vertex/PoseStack;)V", at = @At(
+	@Inject(method = "renderLevel(Lnet/minecraft/client/DeltaTracker;)V", at = @At(
 			value = "INVOKE",
 			target = "Lnet/minecraft/client/Options;screenEffectScale()Lnet/minecraft/client/OptionInstance;",
 			shift = At.Shift.BEFORE,
 			ordinal = 0))
-	public void renderLevel(float partialTicks, long finishTimeNano, PoseStack poseStack, CallbackInfo ci) {
-		ShakeUtil.shakeScreen(minecraft, partialTicks, finishTimeNano, poseStack);
+	public void renderLevel(DeltaTracker deltaTracker, CallbackInfo ci, @Local PoseStack poseStack) {
+		ShakeUtil.shakeScreen(minecraft, deltaTracker, poseStack);
 	}
 }

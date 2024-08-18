@@ -27,17 +27,17 @@ public class InfuserScreen extends AbstractContainerScreen<InfuserMenu> {
 	private Inventory inventory;
 	private ProgressBar infuserProgress;
 	// 12 by 107
-	private final ResourceLocation INFO = new ResourceLocation(Reference.MOD_ID, "textures/gui/container/info.png");
-	private final ResourceLocation ENERGY = new ResourceLocation(Reference.MOD_ID, "textures/gui/container/energy.png");
-	private final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/container/forceinfuser.png");
+	private final ResourceLocation INFO = Reference.modLoc("textures/gui/container/info.png");
+	private final ResourceLocation ENERGY = Reference.modLoc("textures/gui/container/energy.png");
+	private final ResourceLocation TEXTURE = Reference.modLoc("textures/gui/container/forceinfuser.png");
 
 	private static final WidgetSprites GUIDE_SPRITE = new WidgetSprites(
-			new ResourceLocation(Reference.MOD_ID, "infuser/guide"),
-			new ResourceLocation(Reference.MOD_ID, "infuser/guide_highlighted")
+			Reference.modLoc("infuser/guide"),
+			Reference.modLoc("infuser/guide_highlighted")
 	);
 	private static final WidgetSprites CHISEL = new WidgetSprites(
-			new ResourceLocation(Reference.MOD_ID, "infuser/chisel"),
-			new ResourceLocation(Reference.MOD_ID, "infuser/chisel_highlight")
+			Reference.modLoc("infuser/chisel"),
+			Reference.modLoc("infuser/chisel_highlight")
 	);
 
 	private Button buttonInfuse;

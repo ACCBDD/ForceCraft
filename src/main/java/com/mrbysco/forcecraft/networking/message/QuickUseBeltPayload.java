@@ -2,11 +2,14 @@ package com.mrbysco.forcecraft.networking.message;
 
 import com.mrbysco.forcecraft.Reference;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 
 public record QuickUseBeltPayload(int slot) implements CustomPacketPayload {
-	public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "quick_use_belt");
+	public static final StreamCodec<FriendlyByteBuf, QuickUseBeltPayload> CODEC = CustomPacketPayload.codec(
+			QuickUseBeltPayload::write,
+			QuickUseBeltPayload::new);
+	public static final Type<QuickUseBeltPayload> ID = new Type<>(Reference.modLoc("quick_use_belt"));
 
 	public QuickUseBeltPayload(final FriendlyByteBuf packetBuffer) {
 		this(packetBuffer.readInt());
@@ -17,7 +20,7 @@ public record QuickUseBeltPayload(int slot) implements CustomPacketPayload {
 	}
 
 	@Override
-	public ResourceLocation id() {
+	public Type<? extends CustomPacketPayload> type() {
 		return ID;
 	}
 }

@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.entity.layers.SaddleLayer;
 import net.minecraft.resources.ResourceLocation;
 
 public class ColdPigRenderer extends MobRenderer<ColdPigEntity, ColdPigModel<ColdPigEntity>> {
-	private static final ResourceLocation PIG_TEXTURES = new ResourceLocation(Reference.MOD_ID, "textures/entity/cold_pig.png");
+	private static final ResourceLocation PIG_TEXTURES = Reference.modLoc("textures/entity/cold_pig.png");
 
 	public ColdPigRenderer(EntityRendererProvider.Context context) {
 		super(context, new ColdPigModel<>(context.bakeLayer(ModelLayers.PIG)), 0.7F);

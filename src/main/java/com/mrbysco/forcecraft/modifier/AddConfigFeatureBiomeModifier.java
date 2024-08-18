@@ -1,6 +1,6 @@
 package com.mrbysco.forcecraft.modifier;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mrbysco.forcecraft.registry.ForceModifiers;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -23,7 +23,7 @@ public record AddConfigFeatureBiomeModifier(HolderSet<Biome> biomes, HolderSet<P
 	}
 
 	@Override
-	public Codec<? extends BiomeModifier> codec() {
+	public MapCodec<? extends BiomeModifier> codec() {
 		return ForceModifiers.ADD_CONFIG_FEATURES_BIOME_MODIFIER_TYPE.get();
 	}
 }

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ForceEngineScreen extends AbstractContainerScreen<ForceEngineMenu> {
-	private final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/container/force_engine.png");
+	private final ResourceLocation TEXTURE = Reference.modLoc("textures/gui/container/force_engine.png");
 
 	public ForceEngineScreen(ForceEngineMenu screenContainer, Inventory inv, Component titleIn) {
 		super(screenContainer, inv, titleIn);

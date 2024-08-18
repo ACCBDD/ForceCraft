@@ -17,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class RenameAndRecolorScreen extends Screen {
-	private static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/container/rename_screen.png");
+	private static final ResourceLocation TEXTURE = Reference.modLoc("textures/gui/container/rename_screen.png");
 	private ItemStack itemstack;
 	private final InteractionHand usedHand;
 	private EditBox textfield;

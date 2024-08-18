@@ -39,7 +39,7 @@ public class PatchouliProvider extends PatchouliBookProvider {
 				//Add leveling altar entry
 				.addEntry("infuser/infuser", "info.forcecraft.book.infuser.entry.name", "forcecraft:infuser")
 				.addTextPage("info.forcecraft.book.infuser_info.text").build()
-				.addCraftingPage(new ResourceLocation(Reference.MOD_ID, "transmutation/infuser")).setText("info.forcecraft.book.infuser_recipe.text").build().build()
+				.addCraftingPage(Reference.modLoc("transmutation/infuser")).setText("info.forcecraft.book.infuser_recipe.text").build().build()
 
 				.addEntry("infuser/requirements", "info.forcecraft.book.requirements.entry.name", "forcecraft:infuser")
 				.addTextPage("info.forcecraft.book.requirements_info.text").build()
@@ -52,37 +52,37 @@ public class PatchouliProvider extends PatchouliBookProvider {
 				.addTextPage("info.forcecraft.book.force_engine_info.text").build()
 				.addTextPage("info.forcecraft.book.force_engine_info_2.text").build()
 				.addTextPage("info.forcecraft.book.force_engine_info_3.text").build()
-				.addCraftingPage(new ResourceLocation(Reference.MOD_ID, "force_engine")).setText("info.forcecraft.book.force_engine_recipe.text").build().build()
+				.addCraftingPage(Reference.modLoc("force_engine")).setText("info.forcecraft.book.force_engine_recipe.text").build().build()
 
 				.addEntry("infuser/force_rod", "info.forcecraft.book.force_rod.entry.name", "forcecraft:force_rod")
 				.addTextPage("info.forcecraft.book.force_rod_info.text").build()
-				.addCraftingPage(new ResourceLocation(Reference.MOD_ID, "force_rod"))
+				.addCraftingPage(Reference.modLoc("force_rod"))
 				.setText("info.forcecraft.book.force_rod_recipe.text").build().build()
 
 				.addEntry("infuser/force_ingot", "info.forcecraft.book.force_ingot.entry.name", "forcecraft:force_ingot")
 				.addTextPage("info.forcecraft.book.force_ingot_info.text").build()
-				.addCraftingPage(new ResourceLocation(Reference.MOD_ID, "iron_to_force_ingot"))
+				.addCraftingPage(Reference.modLoc("iron_to_force_ingot"))
 				.setText("info.forcecraft.book.force_ingot_recipe.text").build()
-				.addCraftingPage(new ResourceLocation(Reference.MOD_ID, "gold_to_force_ingot"))
+				.addCraftingPage(Reference.modLoc("gold_to_force_ingot"))
 				.setText("info.forcecraft.book.force_ingot_recipe2.text").build()
-				.addCraftingPage(new ResourceLocation(Reference.MOD_ID, "nuggets_to_force_ingot"))
+				.addCraftingPage(Reference.modLoc("nuggets_to_force_ingot"))
 				.setText("info.forcecraft.book.force_ingot_recipe3.text").build().build()
 
 				.addEntry("infuser/force_shears", "info.forcecraft.book.force_shears.entry.name", "forcecraft:force_shears")
 				.addTextPage("info.forcecraft.book.force_shears_info.text").build()
 				.addTextPage("info.forcecraft.book.force_shears_info2.text").build()
-				.addCraftingPage(new ResourceLocation(Reference.MOD_ID, "force_shears"))
+				.addCraftingPage(Reference.modLoc("force_shears"))
 				.setText("info.forcecraft.book.force_shears_recipe.text").build().build()
 
 				.addEntry("infuser/baconator", "info.forcecraft.book.baconator.entry.name", "forcecraft:baconator")
 				.addTextPage("info.forcecraft.book.baconator_info.text").build()
-				.addCraftingPage(new ResourceLocation(Reference.MOD_ID, "baconator"))
+				.addCraftingPage(Reference.modLoc("baconator"))
 				.setText("info.forcecraft.book.baconator_recipe.text").build()
 				.build()
 
 				.addEntry("infuser/bacon", "info.forcecraft.book.bacon.entry.name", "forcecraft:raw_bacon")
 				.addTextPage("info.forcecraft.book.bacon_info.text").build()
-				.addSmeltingPage(new ResourceLocation(Reference.MOD_ID, "cooked_bacon_from_smelting"))
+				.addSmeltingPage(Reference.modLoc("cooked_bacon_from_smelting"))
 				.setText("info.forcecraft.book.bacon_recipe.text").build()
 				.addEntityPage("minecraft:pig").build()
 				.addEntityPage("forcecraft:cold_pig").build()
@@ -98,16 +98,16 @@ public class PatchouliProvider extends PatchouliBookProvider {
 
 				.addEntry("infuser/inert_core", "info.forcecraft.book.inert_core.entry.name", "forcecraft:inert_core")
 				.addTextPage("info.forcecraft.book.inert_core_info.text").build()
-				.addImagePage(new ResourceLocation(Reference.MOD_ID, "textures/gui/entries/burning_inert.png"))
+				.addImagePage(Reference.modLoc("textures/gui/entries/burning_inert.png"))
 				.setText("info.forcecraft.book.inert_core_info2.text").build()
 				.addSpotlightPage(new ItemStack(ForceRegistry.BOTTLED_WITHER.get())).build()
 				.build()
 
 				.addEntry("infuser/force_flask", "info.forcecraft.book.force_flask.entry.name", "forcecraft:force_flask")
 				.addTextPage("info.forcecraft.book.force_flask_info.text").build()
-				.addCraftingPage(new ResourceLocation(Reference.MOD_ID, "force_flask"))
+				.addCraftingPage(Reference.modLoc("force_flask"))
 				.setText("info.forcecraft.book.force_flask_recipe.text").build()
-				.addCraftingPage(new ResourceLocation(Reference.MOD_ID, "force_flask_from_entity"))
+				.addCraftingPage(Reference.modLoc("force_flask_from_entity"))
 				.setText("info.forcecraft.book.force_flask_recipe2.text").build()
 				.build()
 
@@ -123,11 +123,11 @@ public class PatchouliProvider extends PatchouliBookProvider {
 				.setText("info.forcecraft.book.force_furnace_freezing_core.text").build()
 				.addSpotlightPage(new ItemStack(ForceRegistry.EXPERIENCE_CORE.get()))
 				.setText("info.forcecraft.book.force_furnace_experience_core.text").build()
-				.addCraftingPage(new ResourceLocation(Reference.MOD_ID, "force_furnace")).setText("info.forcecraft.book.force_furnace_recipe.text").build().build()
+				.addCraftingPage(Reference.modLoc("force_furnace")).setText("info.forcecraft.book.force_furnace_recipe.text").build().build()
 
 				.addEntry("infuser/upgrade_core", "info.forcecraft.book.upgrade_core.entry.name", "forcecraft:upgrade_core")
 				.addTextPage("info.forcecraft.book.upgrade_core_info.text").build()
-				.addCraftingPage(new ResourceLocation(Reference.MOD_ID, "transmutation/upgrade_core")).setText("info.forcecraft.book.upgrade_core_recipe.text").build().build()
+				.addCraftingPage(Reference.modLoc("transmutation/upgrade_core")).setText("info.forcecraft.book.upgrade_core_recipe.text").build().build()
 
 				.build(); //Back to the bookbuilder
 

@@ -47,7 +47,7 @@ import java.util.EnumSet;
 import java.util.function.Predicate;
 
 public class EnderTotEntity extends EnderMan {
-	private static final ResourceLocation TOT_HOLDABLE = new ResourceLocation(Reference.MOD_ID, "endertot_holdable");
+	private static final ResourceLocation TOT_HOLDABLE = Reference.modLoc("endertot_holdable");
 
 	public EnderTotEntity(EntityType<? extends EnderMan> type, Level level) {
 		super(type, level);

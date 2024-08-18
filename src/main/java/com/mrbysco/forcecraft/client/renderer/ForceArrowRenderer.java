@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 
 public class ForceArrowRenderer extends ArrowRenderer<ForceArrowEntity> {
-	public static final ResourceLocation FORCE_ARROW = new ResourceLocation(Reference.MOD_ID, "textures/entity/projectiles/force_arrow.png");
+	public static final ResourceLocation FORCE_ARROW = Reference.modLoc("textures/entity/projectiles/force_arrow.png");
 
 	public ForceArrowRenderer(EntityRendererProvider.Context context) {
 		super(context);

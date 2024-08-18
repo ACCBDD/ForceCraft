@@ -2,15 +2,18 @@ package com.mrbysco.forcecraft.networking.message;
 
 import com.mrbysco.forcecraft.Reference;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public record RecipeToCardPayload(List<ItemStack> stacks) implements CustomPacketPayload {
-	public static final ResourceLocation ID = new ResourceLocation(Reference.MOD_ID, "recipe_to_card");
+	public static final StreamCodec<FriendlyByteBuf, RecipeToCardPayload> CODEC = CustomPacketPayload.codec(
+			RecipeToCardPayload::write,
+			RecipeToCardPayload::new);
+	public static final Type<RecipeToCardPayload> ID = new Type<>(Reference.modLoc("recipe_to_card"));
 
 	public RecipeToCardPayload(final FriendlyByteBuf packetBuffer) {
 		this(new ArrayList<>());
@@ -28,7 +31,7 @@ public record RecipeToCardPayload(List<ItemStack> stacks) implements CustomPacke
 	}
 
 	@Override
-	public ResourceLocation id() {
+	public Type<? extends CustomPacketPayload> type() {
 		return ID;
 	}
 }

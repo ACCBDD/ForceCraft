@@ -10,11 +10,11 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class ForcePackScreen extends AbstractContainerScreen<ForcePackMenu> {
 
-	private final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/container/forcepack.png");
-	private final ResourceLocation TEXTURE_UPGRADE_1 = new ResourceLocation(Reference.MOD_ID, "textures/gui/container/forcepack_upgrade_1.png");
-	private final ResourceLocation TEXTURE_UPGRADE_2 = new ResourceLocation(Reference.MOD_ID, "textures/gui/container/forcepack_upgrade_2.png");
-	private final ResourceLocation TEXTURE_UPGRADE_3 = new ResourceLocation(Reference.MOD_ID, "textures/gui/container/forcepack_upgrade_3.png");
-	private final ResourceLocation TEXTURE_UPGRADE_4 = new ResourceLocation(Reference.MOD_ID, "textures/gui/container/forcepack_upgrade_4.png");
+	private final ResourceLocation TEXTURE = Reference.modLoc("textures/gui/container/forcepack.png");
+	private final ResourceLocation TEXTURE_UPGRADE_1 = Reference.modLoc("textures/gui/container/forcepack_upgrade_1.png");
+	private final ResourceLocation TEXTURE_UPGRADE_2 = Reference.modLoc("textures/gui/container/forcepack_upgrade_2.png");
+	private final ResourceLocation TEXTURE_UPGRADE_3 = Reference.modLoc("textures/gui/container/forcepack_upgrade_3.png");
+	private final ResourceLocation TEXTURE_UPGRADE_4 = Reference.modLoc("textures/gui/container/forcepack_upgrade_4.png");
 
 	public ForcePackScreen(ForcePackMenu screenContainer, Inventory inv, Component titleIn) {
 		super(screenContainer, inv, titleIn);

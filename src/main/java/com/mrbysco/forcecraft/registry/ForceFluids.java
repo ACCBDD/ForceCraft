@@ -12,7 +12,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.common.SoundActions;
@@ -27,8 +27,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ForceFluids {
-	private static final ResourceLocation STILL_METAL = new ResourceLocation(Reference.MOD_ID, "block/force_fluid_source");
-	private static final ResourceLocation FLOWING_METAL = new ResourceLocation(Reference.MOD_ID, "block/force_fluid_flowing");
+	private static final ResourceLocation STILL_METAL = Reference.modLoc("block/force_fluid_source");
+	private static final ResourceLocation FLOWING_METAL = Reference.modLoc("block/force_fluid_flowing");
 
 	public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(BuiltInRegistries.FLUID, Reference.MOD_ID);
 	public static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, Reference.MOD_ID);
@@ -45,6 +45,7 @@ public class ForceFluids {
 			entity.setDeltaMovement(vec3.x * (double) 0.95F, vec3.y + (double) (vec3.y < (double) 0.06F ? 5.0E-4F : 0.0F), vec3.z * (double) 0.95F);
 		}
 
+		@SuppressWarnings("removal")
 		@Override
 		public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
 			consumer.accept(new IClientFluidTypeExtensions() {
@@ -89,7 +90,7 @@ public class ForceFluids {
 		return FluidType.Properties.create()
 				.canSwim(false)
 				.canDrown(false)
-				.pathType(BlockPathTypes.LAVA)
+				.pathType(PathType.LAVA)
 				.sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
 				.sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)
 				.rarity(Rarity.COMMON)

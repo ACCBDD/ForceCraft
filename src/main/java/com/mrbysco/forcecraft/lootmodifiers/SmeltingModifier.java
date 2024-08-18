@@ -2,8 +2,9 @@ package com.mrbysco.forcecraft.lootmodifiers;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mrbysco.forcecraft.registry.ForceLootModifiers;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.SimpleContainer;
@@ -21,7 +22,8 @@ import javax.annotation.Nonnull;
 import static com.mrbysco.forcecraft.attachment.ForceAttachments.TOOL_MODIFIER;
 
 public class SmeltingModifier extends LootModifier {
-	public static final Supplier<Codec<SmeltingModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst).apply(inst, SmeltingModifier::new)));
+	public static final Supplier<MapCodec<SmeltingModifier>> CODEC = Suppliers.memoize(() ->
+			RecordCodecBuilder.mapCodec(inst -> codecStart(inst).apply(inst, SmeltingModifier::new)));
 
 
 	public SmeltingModifier(LootItemCondition[] conditionsIn) {
@@ -52,7 +54,7 @@ public class SmeltingModifier extends LootModifier {
 	}
 
 	@Override
-	public Codec<? extends IGlobalLootModifier> codec() {
-		return CODEC.get();
+	public MapCodec<? extends IGlobalLootModifier> codec() {
+		return ForceLootModifiers.SMELTING.get();
 	}
 }

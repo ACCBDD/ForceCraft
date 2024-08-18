@@ -17,7 +17,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.Random;
 
 public class EnderTotRenderer extends MobRenderer<EnderTotEntity, EnderTotModel<EnderTotEntity>> {
-	private static final ResourceLocation ENDERTOT_TEXTURES = new ResourceLocation(Reference.MOD_ID, "textures/entity/ender_tot.png");
+	private static final ResourceLocation ENDERTOT_TEXTURES = Reference.modLoc("textures/entity/ender_tot.png");
 	private final Random rnd = new Random();
 
 	public EnderTotRenderer(EntityRendererProvider.Context context) {

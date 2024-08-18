@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 public class FairyRenderer extends MobRenderer<FairyEntity, FairyModel<FairyEntity>> {
-	private static final ResourceLocation FAIRY_TEXTURES = new ResourceLocation(Reference.MOD_ID, "textures/entity/fairy.png");
+	private static final ResourceLocation FAIRY_TEXTURES = Reference.modLoc("textures/entity/fairy.png");
 
 	public FairyRenderer(EntityRendererProvider.Context context) {
 		super(context, new FairyModel<>(context.bakeLayer(ClientHandler.FAIRY)), 0.2F);

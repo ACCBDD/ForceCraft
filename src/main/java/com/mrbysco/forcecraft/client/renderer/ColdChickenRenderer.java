@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 public class ColdChickenRenderer extends MobRenderer<ColdChickenEntity, ColdChickenModel<ColdChickenEntity>> {
-	private static final ResourceLocation CHICKEN_TEXTURES = new ResourceLocation(Reference.MOD_ID, "textures/entity/cold_chicken.png");
+	private static final ResourceLocation CHICKEN_TEXTURES = Reference.modLoc("textures/entity/cold_chicken.png");
 
 	public ColdChickenRenderer(EntityRendererProvider.Context context) {
 		super(context, new ColdChickenModel<>(context.bakeLayer(ModelLayers.CHICKEN)), 0.3F);
