@@ -92,7 +92,7 @@ public class FlaskEntity extends ThrowableItemProjectile implements ItemSupplier
 				} else {
 					if (entity.isAlive() && !entity.isInvulnerable() && !(entity instanceof Player) &&
 							entity instanceof LivingEntity livingEntity && entity.canChangeDimensions(this.level(), entity.level()) &&
-							!forceFlask.isBlacklisted((LivingEntity) entity)) {
+							!forceFlask.isBlacklisted(livingEntity)) {
 						ItemStack entityFlask = null;
 						if (entity instanceof Bat) {
 							entityFlask = new ItemStack(ForceRegistry.BAT_FLASK.get());

@@ -105,7 +105,7 @@ public class InfuserCategory<T extends InfuseRecipe> implements IRecipeCategory<
 				builder.addSlot(RecipeIngredientRole.OUTPUT, 120, 47).addItemStack(recipe.getResultItem(registryAccess));
 			}
 		} else {
-			builder.addSlot(RecipeIngredientRole.INPUT, 46, 47).addIngredients(recipe.getIngredients().get(0));
+			builder.addSlot(RecipeIngredientRole.INPUT, 46, 47).addIngredients(recipe.getIngredients().getFirst());
 
 			List<ItemStack> stacks = new ArrayList<>();
 			ItemStack[] modifierStack = recipe.getIngredient().getItems();

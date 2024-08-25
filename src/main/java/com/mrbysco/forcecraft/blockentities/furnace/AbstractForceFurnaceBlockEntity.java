@@ -349,7 +349,7 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 			ItemStack itemstack = this.handler.getStackInSlot(INPUT_SLOT);
 			List<? extends String> additionalBlacklist = new ArrayList<>();
 			ConfigHandler.COMMON.furnaceOutputBlacklist.get();
-			if (!ConfigHandler.COMMON.furnaceOutputBlacklist.get().isEmpty() && !ConfigHandler.COMMON.furnaceOutputBlacklist.get().get(0).isEmpty()) {
+			if (!ConfigHandler.COMMON.furnaceOutputBlacklist.get().isEmpty() && !ConfigHandler.COMMON.furnaceOutputBlacklist.get().getFirst().isEmpty()) {
 				additionalBlacklist = ConfigHandler.COMMON.furnaceOutputBlacklist.get();
 			}
 

@@ -55,8 +55,8 @@ public class ItemCardTransferHandler implements IRecipeTransferHandler<ItemCardM
 		}
 		List<IRecipeSlotView> outputs = recipeSlots.getSlotViews(RecipeIngredientRole.OUTPUT);
 
-		if (outputs.get(0).getDisplayedItemStack().isPresent())
-			items.set(9, outputs.get(0).getDisplayedItemStack().get());
+		if (outputs.getFirst().getDisplayedItemStack().isPresent())
+			items.set(9, outputs.getFirst().getDisplayedItemStack().get());
 
 		PacketDistributor.sendToServer(new RecipeToCardPayload(items));
 

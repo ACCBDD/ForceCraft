@@ -16,7 +16,7 @@ public abstract class MultipleOutputFurnaceRecipe extends AbstractCookingRecipe 
 	protected final NonNullList<ItemStack> results;
 
 	public MultipleOutputFurnaceRecipe(RecipeType<?> typeIn, String groupIn, Ingredient ingredientIn, NonNullList<ItemStack> results, float secondaryChance, float experienceIn, int cookTimeIn) {
-		super(typeIn, groupIn, CookingBookCategory.MISC, ingredientIn, results.get(0), experienceIn, cookTimeIn);
+		super(typeIn, groupIn, CookingBookCategory.MISC, ingredientIn, results.getFirst(), experienceIn, cookTimeIn);
 		this.results = results;
 		this.secondaryChance = secondaryChance;
 	}
@@ -33,7 +33,7 @@ public abstract class MultipleOutputFurnaceRecipe extends AbstractCookingRecipe 
 
 	@Override
 	public ItemStack getResultItem(HolderLookup.Provider registries) {
-		return this.results.get(0);
+		return this.results.getFirst();
 	}
 
 	public NonNullList<ItemStack> getRecipeOutputs() {

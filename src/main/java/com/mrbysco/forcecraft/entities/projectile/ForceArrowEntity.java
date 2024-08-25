@@ -182,7 +182,7 @@ public class ForceArrowEntity extends Arrow {
 					creeper.getEntityData().set(Creeper.DATA_IS_IGNITED, false);
 					attachment.setExplodeAbility(false);
 					creeper.goalSelector.getAvailableGoals().removeIf(goal -> goal.getGoal() instanceof SwellGoal);
-					ForceCraft.LOGGER.debug("Added Bane to " + living.getName());
+					ForceCraft.LOGGER.debug("Added Bane to {}", living.getName());
 
 					creeper.setData(ForceAttachments.BANE_MODIFIER, attachment);
 				}

@@ -98,7 +98,7 @@ public class MultipleOutputRecipeBuilder implements RecipeBuilder {
 
 	@Override
 	public Item getResult() {
-		return results.get(0).getItem();
+		return results.getFirst().getItem();
 	}
 
 	@Override

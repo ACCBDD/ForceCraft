@@ -43,7 +43,7 @@ public abstract class AbstractMultiOutputCategory<T extends MultipleOutputFurnac
 
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, T recipe, IFocusGroup focuses) {
-		builder.addSlot(RecipeIngredientRole.INPUT, 10, 10).addIngredients(recipe.getIngredients().get(0));
+		builder.addSlot(RecipeIngredientRole.INPUT, 10, 10).addIngredients(recipe.getIngredients().getFirst());
 		builder.addSlot(RecipeIngredientRole.OUTPUT, 83, 10)
 				.addItemStack(recipe.getRecipeOutputs().get(0));
 		if (recipe.getRecipeOutputs().size() > 1) {
