@@ -1,17 +1,17 @@
 package com.mrbysco.forcecraft;
 
-import com.mrbysco.forcecraft.components.ForceComponents;
+import com.mrbysco.forcecraft.attachments.ForceAttachments;
 import com.mrbysco.forcecraft.capability.CapabilityHandler;
 import com.mrbysco.forcecraft.client.ClientHandler;
 import com.mrbysco.forcecraft.client.KeybindHandler;
 import com.mrbysco.forcecraft.command.ForceCommands;
+import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.config.ConfigHandler;
 import com.mrbysco.forcecraft.handlers.BaneHandler;
 import com.mrbysco.forcecraft.handlers.ForceDeathHandler;
 import com.mrbysco.forcecraft.handlers.GrindstoneHandler;
 import com.mrbysco.forcecraft.handlers.HeartHandler;
 import com.mrbysco.forcecraft.handlers.LootTableHandler;
-import com.mrbysco.forcecraft.handlers.LootingHandler;
 import com.mrbysco.forcecraft.handlers.LumberHandler;
 import com.mrbysco.forcecraft.handlers.PlayerCapHandler;
 import com.mrbysco.forcecraft.handlers.ToolModifierHandler;
@@ -77,6 +77,7 @@ public class ForceCraft {
 		ForceModifiers.BIOME_MODIFIER_SERIALIZERS.register(eventBus);
 		ForceConditions.CONDITION_CODECS.register(eventBus);
 		ForceComponents.COMPONENT_TYPE.register(eventBus);
+		ForceAttachments.ATTACHMENT_TYPES.register(eventBus);
 
 		NeoForge.EVENT_BUS.register(new HeartHandler());
 		NeoForge.EVENT_BUS.register(new ForceDeathHandler());
