@@ -1,10 +1,10 @@
 package com.mrbysco.forcecraft.items.tools;
 
-import com.mrbysco.forcecraft.attachment.toolmodifier.ToolModifierAttachment;
 import com.mrbysco.forcecraft.items.infuser.ForceToolData;
 import com.mrbysco.forcecraft.items.infuser.IForceChargingTool;
 import com.mrbysco.forcecraft.registry.material.ModToolTiers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -27,29 +27,30 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static com.mrbysco.forcecraft.attachment.ForceAttachments.TOOL_MODIFIER;
+import static com.mrbysco.forcecraft.components.ForceComponents.TOOL_ENDER;
+import static com.mrbysco.forcecraft.components.ForceComponents.TOOL_WING;
 
 public class ForceSwordItem extends SwordItem implements IForceChargingTool {
 
 	public ForceSwordItem(Item.Properties properties) {
-		super(ModToolTiers.FORCE, -2, -2.4F, properties);
+		super(ModToolTiers.FORCE, properties.attributes(createAttributes(ModToolTiers.FORCE, -2, -2.4F)));
 	}
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player playerIn, InteractionHand handIn) {
 		ItemStack heldStack = playerIn.getItemInHand(handIn);
-		ToolModifierAttachment attachment = heldStack.getData(TOOL_MODIFIER);
 		//Wing Modifier
-		if (attachment.hasWing()) {
+		if (heldStack.has(TOOL_WING)) {
 			Vec3 vec = playerIn.getLookAngle();
 			double wantedVelocity = 1.7;
 			playerIn.setDeltaMovement(vec.x * wantedVelocity, vec.y * wantedVelocity, vec.z * wantedVelocity);
-			heldStack.hurtAndBreak(1, playerIn, (player) -> player.broadcastBreakEvent(handIn));
+			heldStack.hurtAndBreak(1, playerIn, Player.getSlotForHand(handIn));
+
 			playerIn.getCooldowns().addCooldown(this, 20);
 			level.playSound((Player) null, playerIn.getX(), playerIn.getY(), playerIn.getZ(), SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (level.random.nextFloat() - level.random.nextFloat()) * 0.8F);
 		}
 		//Ender Modifier
-		if (attachment.hasEnder()) {
+		if (heldStack.has(TOOL_ENDER)) {
 			BlockHitResult traceResult = getPlayerPOVHitResult(level, playerIn, Fluid.NONE);
 			BlockPos lookPos = traceResult.getBlockPos().relative(traceResult.getDirection());
 			EntityTeleportEvent event = new EntityTeleportEvent(playerIn, lookPos.getX(), lookPos.getY(), lookPos.getZ());
@@ -58,7 +59,7 @@ public class ForceSwordItem extends SwordItem implements IForceChargingTool {
 				if (flag2 && !playerIn.isSilent()) {
 					level.playSound((Player) null, playerIn.xo, playerIn.yo, playerIn.zo, SoundEvents.ENDERMAN_TELEPORT, playerIn.getSoundSource(), 1.0F, 1.0F);
 					playerIn.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
-					heldStack.hurtAndBreak(1, playerIn, (player) -> player.broadcastBreakEvent(handIn));
+					heldStack.hurtAndBreak(1, playerIn, Player.getSlotForHand(handIn));
 					playerIn.getCooldowns().addCooldown(this, 10);
 				}
 			}
@@ -67,15 +68,14 @@ public class ForceSwordItem extends SwordItem implements IForceChargingTool {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> lores, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		ForceToolData fd = new ForceToolData(stack);
-		fd.attachInformation(lores);
-		ToolModifierAttachment.attachInformation(stack, lores);
-		super.appendHoverText(stack, level, lores, flagIn);
+		fd.attachInformation(tooltip);
+		super.appendHoverText(stack, context, tooltip, tooltipFlag);
 	}
 
 	@Override
-	public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
+	public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, @Nullable T entity, Consumer<Item> onBroken) {
 		return this.damageItem(stack, amount);
 	}
 

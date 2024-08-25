@@ -22,6 +22,8 @@ import com.mrbysco.forcecraft.client.renderer.ForceArrowRenderer;
 import com.mrbysco.forcecraft.client.renderer.GoldChuChuRenderer;
 import com.mrbysco.forcecraft.client.renderer.GreenChuChuRenderer;
 import com.mrbysco.forcecraft.client.renderer.RedChuChuRenderer;
+import com.mrbysco.forcecraft.components.ForceComponents;
+import com.mrbysco.forcecraft.components.flask.FlaskContent;
 import com.mrbysco.forcecraft.items.BaconatorItem;
 import com.mrbysco.forcecraft.registry.ForceEntities;
 import com.mrbysco.forcecraft.registry.ForceFluids;
@@ -37,6 +39,7 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
@@ -44,7 +47,7 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
-import static com.mrbysco.forcecraft.attachment.ForceAttachments.MAGNET;
+import static com.mrbysco.forcecraft.components.ForceComponents.MAGNET;
 
 public class ClientHandler {
 	public static final ModelLayerLocation CREEPER_TOT = new ModelLayerLocation(Reference.modLoc("creeper_tot"), "main");
@@ -56,29 +59,29 @@ public class ClientHandler {
 		ItemBlockRenderTypes.setRenderLayer(ForceFluids.FORCE_FLUID_SOURCE.get(), RenderType.translucent());
 
 		event.enqueueWork(() -> {
-			ItemProperties.register(ForceRegistry.MAGNET_GLOVE.get(), new ResourceLocation("active"), (stack, world, livingEntity, i) ->
-					stack.hasData(MAGNET) && stack.getData(MAGNET).isActivated() ? 1.0F : 0.0F);
+			ItemProperties.register(ForceRegistry.MAGNET_GLOVE.get(), ResourceLocation.withDefaultNamespace("active"), (stack, world, livingEntity, i) ->
+					stack.getOrDefault(MAGNET, false) ? 1.0F : 0.0F);
 
-			ItemProperties.register(ForceRegistry.ENTITY_FLASK.get(), new ResourceLocation("captured"), (stack, world, livingEntity, i) ->
-					stack.hasTag() && stack.getTag().contains("StoredEntity") ? 1.0F : 0.0F);
+			ItemProperties.register(ForceRegistry.ENTITY_FLASK.get(), ResourceLocation.withDefaultNamespace("captured"), (stack, world, livingEntity, i) ->
+					stack.has(ForceComponents.FLASK_CONTENT) ? 1.0F : 0.0F);
 
-			ItemProperties.register(ForceRegistry.BACONATOR.get(), new ResourceLocation("filled"), (stack, world, livingEntity, i) ->
-					stack.hasTag() && stack.getTag().contains(BaconatorItem.HAS_FOOD_TAG) ? 1.0F : 0.0F);
+			ItemProperties.register(ForceRegistry.BACONATOR.get(), ResourceLocation.withDefaultNamespace("filled"), (stack, world, livingEntity, i) ->
+					stack.has(ForceComponents.STORED_FOOD)? 1.0F : 0.0F);
 
-			ItemProperties.register(ForceRegistry.FORCE_PACK.get(), new ResourceLocation("color"), (stack, world, livingEntity, i) ->
-					stack.hasTag() && stack.getTag().contains("Color") ? (1.0F / 16) * stack.getTag().getInt("Color") : 0.9375F);
+			ItemProperties.register(ForceRegistry.FORCE_PACK.get(), ResourceLocation.withDefaultNamespace("color"), (stack, world, livingEntity, i) ->
+					stack.has(ForceComponents.PACK_COLOR) ? (1.0F / 16) * stack.getOrDefault(ForceComponents.PACK_COLOR, 0) : 0.9375F);
 
-			ItemProperties.register(ForceRegistry.FORCE_BELT.get(), new ResourceLocation("color"), (stack, world, livingEntity, i) ->
-					stack.hasTag() && stack.getTag().contains("Color") ? (1.0F / 16) * stack.getTag().getInt("Color") : 0.9375F);
+			ItemProperties.register(ForceRegistry.FORCE_BELT.get(), ResourceLocation.withDefaultNamespace("color"), (stack, world, livingEntity, i) ->
+					stack.has(ForceComponents.PACK_COLOR) ? (1.0F / 16) * stack.getOrDefault(ForceComponents.PACK_COLOR, 0) : 0.9375F);
 
-			ItemProperties.register(ForceRegistry.FORCE_BOW.get(), new ResourceLocation("pull"), (stack, world, livingEntity, i) -> {
+			ItemProperties.register(ForceRegistry.FORCE_BOW.get(), ResourceLocation.withDefaultNamespace("pull"), (stack, world, livingEntity, i) -> {
 				if (livingEntity == null) {
 					return 0.0F;
 				} else {
-					return livingEntity.getUseItem() != stack ? 0.0F : (float) (stack.getUseDuration() - livingEntity.getUseItemRemainingTicks()) / 20.0F;
+					return livingEntity.getUseItem() != stack ? 0.0F : (float) (stack.getUseDuration(livingEntity) - livingEntity.getUseItemRemainingTicks()) / 20.0F;
 				}
 			});
-			ItemProperties.register(ForceRegistry.FORCE_BOW.get(), new ResourceLocation("pulling"), (stack, world, livingEntity, i) ->
+			ItemProperties.register(ForceRegistry.FORCE_BOW.get(), ResourceLocation.withDefaultNamespace("pulling"), (stack, world, livingEntity, i) ->
 					livingEntity != null && livingEntity.isUsingItem() && livingEntity.getUseItem() == stack ? 1.0F : 0.0F);
 		});
 	}
@@ -133,8 +136,9 @@ public class ClientHandler {
 	public static void registerItemColors(final RegisterColorHandlersEvent.Item event) {
 		event.register((stack, tintIndex) -> {
 			if (tintIndex == 0 || tintIndex == 1) {
-				if (stack.hasTag() && stack.getTag().contains("StoredEntity", CompoundTag.TAG_STRING)) {
-					ResourceLocation id = new ResourceLocation(stack.getTag().getString("StoredEntity"));
+				if (stack.has(ForceComponents.FLASK_CONTENT)) {
+					FlaskContent content = stack.get(ForceComponents.FLASK_CONTENT);
+					ResourceLocation id = content != null ? content.storedType() : BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.EGG);
 					SpawnEggItem info = SpawnEggItem.byId(BuiltInRegistries.ENTITY_TYPE.get(id));
 
 					if (info != null) {

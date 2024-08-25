@@ -35,9 +35,7 @@ public class ForceCommands {
 		UpgradeBookTier bookTier = UpgradeBookTier.FINAL;
 
 		ItemStack book = new ItemStack(ForceRegistry.UPGRADE_TOME.get());
-		UpgradeBookData bd = new UpgradeBookData(book);
-		bd.setTier(bookTier);
-		bd.write(book);
+		UpgradeBookData.setTier(book, bookTier);
 
 		player.addItem(book);
 
@@ -51,9 +49,7 @@ public class ForceCommands {
 		UpgradeBookTier bookTier = UpgradeBookTier.values()[tier];
 
 		ItemStack book = new ItemStack(ForceRegistry.UPGRADE_TOME.get());
-		UpgradeBookData bd = new UpgradeBookData(book);
-		bd.setTier(bookTier);
-		bd.write(book);
+		UpgradeBookData.setTier(book, bookTier);
 
 		player.addItem(book);
 

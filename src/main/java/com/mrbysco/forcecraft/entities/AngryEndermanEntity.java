@@ -19,7 +19,7 @@ import net.minecraft.world.entity.monster.Endermite;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -28,7 +28,7 @@ import java.util.function.Predicate;
 public class AngryEndermanEntity extends EnderMan {
 	public AngryEndermanEntity(EntityType<? extends EnderMan> type, Level level) {
 		super(type, level);
-		this.setPathfindingMalus(BlockPathTypes.WATER, 8.0F); //Reset to default as like Ender Tots, Angry Enderman aren't afraid of water
+		this.setPathfindingMalus(PathType.WATER, 8.0F); //Reset to default as like Ender Tots, Angry Enderman aren't afraid of water
 	}
 
 	protected void registerGoals() {

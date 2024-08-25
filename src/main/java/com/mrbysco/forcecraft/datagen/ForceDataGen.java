@@ -25,7 +25,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.registries.VanillaRegistries;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -35,7 +35,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class ForceDataGen {
 	@SubscribeEvent
 	public static void gatherData(GatherDataEvent event) {
@@ -45,14 +45,14 @@ public class ForceDataGen {
 		ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
 		if (event.includeServer()) {
-			generator.addProvider(event.includeServer(), new ForceLootProvider(packOutput));
-			generator.addProvider(event.includeServer(), new ForceRecipeProvider(packOutput));
-			generator.addProvider(event.includeServer(), new PatchouliProvider(packOutput));
+			generator.addProvider(event.includeServer(), new ForceLootProvider(packOutput, lookupProvider));
+			generator.addProvider(event.includeServer(), new ForceRecipeProvider(packOutput, lookupProvider));
+			generator.addProvider(event.includeServer(), new PatchouliProvider(packOutput, lookupProvider));
 			BlockTagsProvider provider;
 			generator.addProvider(event.includeServer(), provider = new ForceBlockTagProvider(packOutput, lookupProvider, existingFileHelper));
 			generator.addProvider(event.includeServer(), new ForceItemTagProvider(packOutput, lookupProvider, provider, existingFileHelper));
 			generator.addProvider(event.includeServer(), new ForceDamageTypeTagProvider(packOutput, lookupProvider, existingFileHelper));
-			generator.addProvider(event.includeServer(), new ForceLootModifierProvider(packOutput));
+			generator.addProvider(event.includeServer(), new ForceLootModifierProvider(packOutput, lookupProvider));
 
 			generator.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(
 					packOutput, CompletableFuture.supplyAsync(ForceDataGen::getProvider), Set.of(Reference.MOD_ID)));

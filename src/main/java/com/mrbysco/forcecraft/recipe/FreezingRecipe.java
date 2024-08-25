@@ -2,17 +2,17 @@ package com.mrbysco.forcecraft.recipe;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrbysco.forcecraft.registry.ForceRecipeSerializers;
 import com.mrbysco.forcecraft.registry.ForceRecipes;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.ExtraCodecs;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import org.jetbrains.annotations.Nullable;
 
 public class FreezingRecipe extends MultipleOutputFurnaceRecipe {
 
@@ -33,12 +33,12 @@ public class FreezingRecipe extends MultipleOutputFurnaceRecipe {
 		return ForceRecipeSerializers.FREEZING_SERIALIZER.get();
 	}
 
-	public static class SerializerFreezingRecipe implements RecipeSerializer<FreezingRecipe> {
-		public static final Codec<FreezingRecipe> CODEC = RecordCodecBuilder.create(
+	public static class Serializer implements RecipeSerializer<FreezingRecipe> {
+		private static final MapCodec<FreezingRecipe> CODEC = RecordCodecBuilder.mapCodec(
 				instance -> instance.group(
-								ExtraCodecs.strictOptionalField(Codec.STRING, "group", "").forGetter(recipe -> recipe.group),
+								Codec.STRING.optionalFieldOf("group", "").forGetter(recipe -> recipe.group),
 								Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
-								ItemStack.RESULT_CODEC.codec()
+								ItemStack.CODEC
 										.listOf()
 										.fieldOf("results")
 										.flatXmap(
@@ -60,22 +60,28 @@ public class FreezingRecipe extends MultipleOutputFurnaceRecipe {
 						)
 						.apply(instance, FreezingRecipe::new)
 		);
+		public static final StreamCodec<RegistryFriendlyByteBuf, FreezingRecipe> STREAM_CODEC = StreamCodec.of(
+				Serializer::toNetwork, Serializer::fromNetwork
+		);
 
 		@Override
-		public Codec<FreezingRecipe> codec() {
+		public MapCodec<FreezingRecipe> codec() {
 			return CODEC;
 		}
 
-		@Nullable
 		@Override
-		public FreezingRecipe fromNetwork(FriendlyByteBuf buffer) {
+		public StreamCodec<RegistryFriendlyByteBuf, FreezingRecipe> streamCodec() {
+			return STREAM_CODEC;
+		}
+
+		public static FreezingRecipe fromNetwork(RegistryFriendlyByteBuf buffer) {
 			String s = buffer.readUtf(32767);
-			Ingredient ingredient = Ingredient.fromNetwork(buffer);
+			Ingredient ingredient = Ingredient.CONTENTS_STREAM_CODEC.decode(buffer);
 
 			int size = buffer.readVarInt();
 			NonNullList<ItemStack> resultList = NonNullList.withSize(size, ItemStack.EMPTY);
 			for (int j = 0; j < resultList.size(); ++j) {
-				resultList.set(j, buffer.readItem());
+				resultList.set(j, ItemStack.STREAM_CODEC.decode(buffer));
 			}
 
 			float f = buffer.readFloat();
@@ -83,14 +89,13 @@ public class FreezingRecipe extends MultipleOutputFurnaceRecipe {
 			return new FreezingRecipe(s, ingredient, resultList, f, i);
 		}
 
-		@Override
-		public void toNetwork(FriendlyByteBuf buffer, FreezingRecipe recipe) {
+		public static void toNetwork(RegistryFriendlyByteBuf buffer, FreezingRecipe recipe) {
 			buffer.writeUtf(recipe.group);
-			recipe.ingredient.toNetwork(buffer);
+			Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.ingredient);
 
 			buffer.writeVarInt(recipe.results.size());
 			for (ItemStack stack : recipe.results) {
-				buffer.writeItem(stack);
+				ItemStack.STREAM_CODEC.encode(buffer, stack);
 			}
 
 			buffer.writeFloat(recipe.experience);

@@ -15,7 +15,7 @@ import net.minecraft.world.level.material.Fluid;
 
 public class ForceTags {
 
-	public static final TagKey<Block> NEEDS_FORCE_TOOL = forceBlockTag("needs_force_tool");
+	public static final TagKey<Block> INCORRECT_FOR_FORCE = forceBlockTag("needs_force_tool");
 	public static final TagKey<Block> MINEABLE_WITH_MITTS = forceBlockTag("mineable_with_mitts");
 	public static final TagKey<Block> FORCE_BRICK = forceBlockTag("force_brick");
 

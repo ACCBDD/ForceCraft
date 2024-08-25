@@ -58,7 +58,7 @@ public class ItemCardTransferHandler implements IRecipeTransferHandler<ItemCardM
 		if (outputs.get(0).getDisplayedItemStack().isPresent())
 			items.set(9, outputs.get(0).getDisplayedItemStack().get());
 
-		PacketDistributor.SERVER.noArg().send(new RecipeToCardPayload(items));
+		PacketDistributor.sendToServer(new RecipeToCardPayload(items));
 
 		return null;
 	}

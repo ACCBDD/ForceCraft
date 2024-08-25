@@ -26,7 +26,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,11 +38,11 @@ public class FairyEntity extends PathfinderMob implements FlyingAnimal {
 		super(type, level);
 		this.moveControl = new FlyingMoveControl(this, 20, true);
 		this.lookControl = new LookHelperController(this);
-		this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, -1.0F);
-		this.setPathfindingMalus(BlockPathTypes.WATER, -1.0F);
-		this.setPathfindingMalus(BlockPathTypes.WATER_BORDER, 16.0F);
-		this.setPathfindingMalus(BlockPathTypes.COCOA, -1.0F);
-		this.setPathfindingMalus(BlockPathTypes.FENCE, -1.0F);
+		this.setPathfindingMalus(PathType.DANGER_FIRE, -1.0F);
+		this.setPathfindingMalus(PathType.WATER, -1.0F);
+		this.setPathfindingMalus(PathType.WATER_BORDER, 16.0F);
+		this.setPathfindingMalus(PathType.COCOA, -1.0F);
+		this.setPathfindingMalus(PathType.FENCE, -1.0F);
 	}
 
 	public float getWalkTargetValue(BlockPos pos, LevelReader level) {
@@ -65,7 +65,7 @@ public class FairyEntity extends PathfinderMob implements FlyingAnimal {
 	}
 
 	@Override
-	public boolean canBeLeashed(Player player) {
+	public boolean canBeLeashed() {
 		return false;
 	}
 

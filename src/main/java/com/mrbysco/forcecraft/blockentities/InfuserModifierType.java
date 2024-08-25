@@ -11,6 +11,7 @@ import com.mrbysco.forcecraft.items.tools.ForcePickaxeItem;
 import com.mrbysco.forcecraft.items.tools.ForceRodItem;
 import com.mrbysco.forcecraft.items.tools.ForceShovelItem;
 import com.mrbysco.forcecraft.items.tools.ForceSwordItem;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -22,30 +23,30 @@ public enum InfuserModifierType implements StringRepresentable {
 	// pack is for upgrades, item gives crafting results
 	PACK1, PACK2, PACK3, PACK4, GRINDING, FREEZING, EXP, STORAGE, SIGHT, TREASURE, ITEM;
 
-	public boolean apply(ItemStack tool, ItemStack mod, UpgradeBookData bd) {
+	public boolean apply(ItemStack tool, ItemStack mod, UpgradeBookData bd, HolderLookup.Provider provider) {
 		switch (this) {
 			case DAMAGE: // claw item
-				return InfuserBlockEntity.addDamageModifier(tool);
+				return InfuserBlockEntity.addDamageModifier(tool, provider);
 			case ENDER:
 				return InfuserBlockEntity.addEnderModifier(tool);
 			case FORCE:
-				return InfuserBlockEntity.addForceModifier(tool);
+				return InfuserBlockEntity.addForceModifier(tool, provider);
 			case HEALING:
 				return InfuserBlockEntity.addHealingModifier(tool);
 			case HEAT:
-				return InfuserBlockEntity.addHeatModifier(tool);
+				return InfuserBlockEntity.addHeatModifier(tool, provider);
 			case LIGHT:
 				return InfuserBlockEntity.addLightModifier(tool);
 			case FORTUNE:
-				return InfuserBlockEntity.addLuckModifier(tool);
+				return InfuserBlockEntity.addLuckModifier(tool, provider);
 			case LUMBERJACK:
 				return InfuserBlockEntity.addLumberjackModifier(tool);
 			case SILK:
-				return InfuserBlockEntity.addSilkTouchModifier(tool);
+				return InfuserBlockEntity.addSilkTouchModifier(tool, provider);
 			case SPEED:
-				return InfuserBlockEntity.addSpeedModifier(tool);
+				return InfuserBlockEntity.addSpeedModifier(tool, provider);
 			case STURDY:
-				return InfuserBlockEntity.addSturdyModifier(tool);
+				return InfuserBlockEntity.addSturdyModifier(tool, provider);
 			case CAMO:
 				return InfuserBlockEntity.applyCamo(tool, mod);
 			case BANE:

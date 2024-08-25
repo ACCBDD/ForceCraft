@@ -1,8 +1,9 @@
 package com.mrbysco.forcecraft.items.tools;
 
-import com.mrbysco.forcecraft.attachment.magnet.MagnetAttachment;
+import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.items.BaseItem;
 import com.mrbysco.forcecraft.registry.ForceEffects;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -17,11 +18,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.util.FakePlayer;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.mrbysco.forcecraft.attachment.ForceAttachments.MAGNET;
+import static com.mrbysco.forcecraft.components.ForceComponents.MAGNET;
 
 public class MagnetGloveItem extends BaseItem {
 
@@ -33,10 +33,8 @@ public class MagnetGloveItem extends BaseItem {
 	public InteractionResultHolder<ItemStack> use(Level level, Player playerIn, InteractionHand handIn) {
 		if (playerIn.isShiftKeyDown()) {
 			ItemStack stack = playerIn.getItemInHand(handIn);
-			MagnetAttachment attachment = stack.getData(MAGNET);
-			boolean state = attachment.isActivated();
-			attachment.setActivation(!state);
-			stack.setData(MAGNET, attachment);
+			boolean state = stack.getOrDefault(MAGNET, false);
+			stack.set(MAGNET, !state);
 			level.playSound((Player) null, playerIn.getX(), playerIn.getY(), playerIn.getZ(), SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.NEUTRAL, 1.0F, 1.0F);
 		}
 		return super.use(level, playerIn, handIn);
@@ -46,17 +44,26 @@ public class MagnetGloveItem extends BaseItem {
 	public void inventoryTick(ItemStack stack, Level level, Entity entityIn, int itemSlot, boolean isSelected) {
 		if (entityIn instanceof Player && !(entityIn instanceof FakePlayer)) {
 			if (itemSlot >= 0 && itemSlot <= Inventory.getSelectionSize()) {
-				MagnetAttachment attachment = stack.getData(MAGNET);
-				if (attachment.isActivated()) {
-					((Player) entityIn).addEffect(new MobEffectInstance(ForceEffects.MAGNET.get(), 20, 1, true, false));
+				boolean state = stack.getOrDefault(MAGNET, false);
+				if (state) {
+					((Player) entityIn).addEffect(new MobEffectInstance(ForceEffects.MAGNET, 20, 1, true, false));
 				}
 			}
 		}
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> lores, TooltipFlag flagIn) {
-		MagnetAttachment.attachInformation(stack, lores);
-		super.appendHoverText(stack, level, lores, flagIn);
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
+		super.appendHoverText(stack, context, tooltip, tooltipFlag);
+		if (stack.has(ForceComponents.MAGNET)) {
+			boolean activated = stack.getOrDefault(ForceComponents.MAGNET, false);
+			if (activated) {
+				tooltip.add(Component.translatable("forcecraft.magnet_glove.active").withStyle(ChatFormatting.GREEN));
+			} else {
+				tooltip.add(Component.translatable("forcecraft.magnet_glove.deactivated").withStyle(ChatFormatting.RED));
+			}
+			tooltip.add(Component.empty());
+			tooltip.add(Component.translatable("forcecraft.magnet_glove.change").withStyle(ChatFormatting.BOLD));
+		}
 	}
 }

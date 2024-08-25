@@ -28,7 +28,7 @@ public class ItemCardScreen extends AbstractContainerScreen<ItemCardMenu> {
 		this.titleLabelX = 29;
 
 		this.buttonSave = this.addRenderableWidget(Button.builder(saveText, (button) -> {
-			PacketDistributor.SERVER.noArg().send(new SaveCardRecipePayload());
+			PacketDistributor.sendToServer(new SaveCardRecipePayload());
 		}).bounds(this.width / 2 + 62, this.height / 2 - 76, 20, 20).build());
 	}
 

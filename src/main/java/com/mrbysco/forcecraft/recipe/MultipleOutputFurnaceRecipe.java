@@ -1,13 +1,13 @@
 package com.mrbysco.forcecraft.recipe;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.CookingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 
 public abstract class MultipleOutputFurnaceRecipe extends AbstractCookingRecipe {
 	protected final float secondaryChance;
@@ -27,12 +27,12 @@ public abstract class MultipleOutputFurnaceRecipe extends AbstractCookingRecipe 
 	}
 
 	@Override
-	public ItemStack assemble(Container inv, RegistryAccess registryAccess) {
-		return getResultItem(registryAccess).copy();
+	public ItemStack assemble(SingleRecipeInput inv, HolderLookup.Provider registries) {
+		return getResultItem(registries).copy();
 	}
 
 	@Override
-	public ItemStack getResultItem(RegistryAccess registryAccess) {
+	public ItemStack getResultItem(HolderLookup.Provider registries) {
 		return this.results.get(0);
 	}
 

@@ -61,9 +61,8 @@ public class RedPotionItem extends BaseItem {
 		return ItemUtils.startUsingInstantly(level, playerIn, handIn);
 	}
 
-	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
+		super.appendHoverText(stack, context, tooltip, tooltipFlag);
 		tooltip.add(Component.translatable("item.red_potion.tooltip").withStyle(ChatFormatting.GRAY));
-		super.appendHoverText(stack, level, tooltip, flagIn);
 	}
 }

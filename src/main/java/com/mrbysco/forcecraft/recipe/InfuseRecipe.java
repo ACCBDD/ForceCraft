@@ -1,29 +1,32 @@
 package com.mrbysco.forcecraft.recipe;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.mrbysco.forcecraft.attachment.storage.PackStackHandler;
 import com.mrbysco.forcecraft.blockentities.InfuserBlockEntity;
 import com.mrbysco.forcecraft.blockentities.InfuserModifierType;
+import com.mrbysco.forcecraft.components.ForceComponents;
+import com.mrbysco.forcecraft.components.storage.PackStackHandler;
 import com.mrbysco.forcecraft.items.infuser.UpgradeBookData;
 import com.mrbysco.forcecraft.items.infuser.UpgradeBookTier;
 import com.mrbysco.forcecraft.registry.ForceRecipeSerializers;
 import com.mrbysco.forcecraft.registry.ForceRecipes;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.ExtraCodecs;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 
-public class InfuseRecipe implements Recipe<InfuserBlockEntity> {
+public class InfuseRecipe implements Recipe<RecipeInput> {
 	private static final int MAX_SLOTS = 8;
 	protected Ingredient ingredient;
 	protected InfuserModifierType resultModifier;
@@ -55,9 +58,9 @@ public class InfuseRecipe implements Recipe<InfuserBlockEntity> {
 	}
 
 	@Override
-	public boolean matches(InfuserBlockEntity inv, Level level) {
-		for (int i = 0; i < inv.handler.getSlots(); i++) {
-			ItemStack stack = inv.handler.getStackInSlot(i);
+	public boolean matches(RecipeInput inv, Level level) {
+		for (int i = 0; i < inv.size(); i++) {
+			ItemStack stack = inv.getItem(i);
 			if (i < InfuserBlockEntity.SLOT_TOOL) {
 				return matchesModifier(inv, stack, false);
 			}
@@ -65,16 +68,17 @@ public class InfuseRecipe implements Recipe<InfuserBlockEntity> {
 		return false;
 	}
 
-	public boolean matchesModifier(InfuserBlockEntity inv, ItemStack modifier, boolean ignoreInfused) {
+	public boolean matchesModifier(RecipeInput inv, ItemStack modifier, boolean ignoreInfused) {
 		//Has the correct tier
-		UpgradeBookData bd = new UpgradeBookData(inv.getBookInSlot());
-		int bookTier = bd.getTier().ordinal();
+		ItemStack bookStack = inv.getItem(InfuserBlockEntity.SLOT_BOOK);
+		UpgradeBookData bd = bookStack.getOrDefault(ForceComponents.UPGRADE_BOOK, UpgradeBookData.DEFAULT);
+		int bookTier = bd.tier().ordinal();
 		if (getTier().ordinal() > bookTier) {
 			return false;
 		}
 
 		//Does the center match
-		ItemStack centerStack = inv.handler.getStackInSlot(InfuserBlockEntity.SLOT_TOOL);
+		ItemStack centerStack = inv.getItem(InfuserBlockEntity.SLOT_TOOL);
 		boolean toolMatches = matchesTool(centerStack, ignoreInfused);
 		boolean modifierMatches = matchesModifier(centerStack, modifier);
 
@@ -109,7 +113,7 @@ public class InfuseRecipe implements Recipe<InfuserBlockEntity> {
 		}
 		if (!ignoreInfused) {
 			//Ignore if the tool is infused in case of infusing for the first time
-			return !toolStack.hasTag() || !toolStack.getTag().getBoolean("ForceInfused");
+			return !toolStack.has(ForceComponents.FORCE_INFUSED);
 		}
 		return true;
 	}
@@ -120,7 +124,7 @@ public class InfuseRecipe implements Recipe<InfuserBlockEntity> {
 	}
 
 	@Override
-	public ItemStack getResultItem(RegistryAccess registryAccess) {
+	public ItemStack getResultItem(HolderLookup.Provider registries) {
 		return output;
 	}
 
@@ -129,8 +133,8 @@ public class InfuseRecipe implements Recipe<InfuserBlockEntity> {
 	}
 
 	@Override
-	public ItemStack assemble(InfuserBlockEntity inv, RegistryAccess registryAccess) {
-		return getResultItem(registryAccess);
+	public ItemStack assemble(RecipeInput inv, HolderLookup.Provider registries) {
+		return getResultItem(registries);
 	}
 
 	@Override
@@ -175,41 +179,47 @@ public class InfuseRecipe implements Recipe<InfuserBlockEntity> {
 		return ForceRecipeSerializers.INFUSER_SERIALIZER.get();
 	}
 
-	public static class SerializeInfuserRecipe implements RecipeSerializer<InfuseRecipe> {
-		private static final Codec<InfuseRecipe> CODEC = RecordCodecBuilder.create(
+	public static class Serializer implements RecipeSerializer<InfuseRecipe> {
+		private static final MapCodec<InfuseRecipe> CODEC = RecordCodecBuilder.mapCodec(
 				instance -> instance.group(
 								Ingredient.CODEC_NONEMPTY.fieldOf("center").forGetter(recipe -> recipe.center),
 								Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
 								InfuserModifierType.CODEC.fieldOf("resultType").forGetter(recipe -> recipe.resultModifier),
 								UpgradeBookTier.CODEC.fieldOf("tier").forGetter(recipe -> recipe.tier),
-								ExtraCodecs.strictOptionalField(ItemStack.ITEM_WITH_COUNT_CODEC, "output", ItemStack.EMPTY).forGetter(recipe -> recipe.output),
+								ItemStack.OPTIONAL_CODEC.optionalFieldOf("output", ItemStack.EMPTY).forGetter(recipe -> recipe.output),
 								Codec.INT.fieldOf("time").forGetter(recipe -> recipe.time)
 						)
 						.apply(instance, InfuseRecipe::new)
 		);
+		public static final StreamCodec<RegistryFriendlyByteBuf, InfuseRecipe> STREAM_CODEC = StreamCodec.of(
+				Serializer::toNetwork, Serializer::fromNetwork
+		);
 
 		@Override
-		public Codec<InfuseRecipe> codec() {
+		public MapCodec<InfuseRecipe> codec() {
 			return CODEC;
 		}
 
 		@Override
-		public void toNetwork(FriendlyByteBuf buffer, InfuseRecipe recipe) {
-			recipe.center.toNetwork(buffer);
-			recipe.ingredient.toNetwork(buffer);
+		public StreamCodec<RegistryFriendlyByteBuf, InfuseRecipe> streamCodec() {
+			return STREAM_CODEC;
+		}
+
+		public static void toNetwork(RegistryFriendlyByteBuf buffer, InfuseRecipe recipe) {
+			Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.center);
+			Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.ingredient);
 			buffer.writeEnum(recipe.resultModifier);
 			buffer.writeEnum(recipe.tier);
-			buffer.writeItem(recipe.getResultItem(null));
+			ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, recipe.output);
 			buffer.writeInt(recipe.getTime());
 		}
 
-		@Override
-		public InfuseRecipe fromNetwork(FriendlyByteBuf buffer) {
-			Ingredient center = Ingredient.fromNetwork(buffer);
-			Ingredient ing = Ingredient.fromNetwork(buffer);
+		public static InfuseRecipe fromNetwork(RegistryFriendlyByteBuf buffer) {
+			Ingredient center = Ingredient.CONTENTS_STREAM_CODEC.decode(buffer);
+			Ingredient ing = Ingredient.CONTENTS_STREAM_CODEC.decode(buffer);
 			InfuserModifierType infuserType = buffer.readEnum(InfuserModifierType.class);
 			UpgradeBookTier tier = buffer.readEnum(UpgradeBookTier.class);
-			ItemStack output = buffer.readItem();
+			ItemStack output = ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer);
 			int time = buffer.readInt();
 			return new InfuseRecipe(center, ing, infuserType, tier, output, time);
 		}

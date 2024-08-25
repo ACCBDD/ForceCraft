@@ -55,7 +55,7 @@ public class ForceEngineScreen extends AbstractContainerScreen<ForceEngineMenu> 
 				text.add(Component.translatable("gui.forcecraft.force_engine.empty"));
 			} else {
 				if (tile.getFuelFluidStack() != null) {
-					text.add(tile.getFuelFluidStack().getDisplayName());
+					text.add(tile.getFuelFluidStack().getHoverName());
 					text.add(Component.literal(tile.getFuelAmount() + " mb")
 							.withStyle(ChatFormatting.GOLD));
 				}
@@ -70,7 +70,7 @@ public class ForceEngineScreen extends AbstractContainerScreen<ForceEngineMenu> 
 				text.add(Component.translatable("gui.forcecraft.force_engine.empty"));
 			} else {
 				if (tile.getThrottleFluidStack() != null) {
-					text.add(tile.getThrottleFluidStack().getDisplayName());
+					text.add(tile.getThrottleFluidStack().getHoverName());
 					text.add(Component.literal(tile.getThrottleAmount() + " mb")
 							.withStyle(ChatFormatting.GOLD));
 				}

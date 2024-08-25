@@ -91,17 +91,17 @@ public class ForceBlockTagProvider extends BlockTagsProvider {
 		super(output, lookupProvider, Reference.MOD_ID, existingFileHelper);
 	}
 
-	public static final TagKey<Block> ORES_IN_GROUND_DEEPSLATE = forgeTag("ores_in_ground/deepslate");
-	public static final TagKey<Block> ORES_IN_GROUND_STONE = forgeTag("ores_in_ground/stone");
-	public static final TagKey<Block> ORES = forgeTag("ores");
-	public static final TagKey<Block> ORES_POWER = forgeTag("ores/power");
+	public static final TagKey<Block> ORES_IN_GROUND_DEEPSLATE = commonTag("ores_in_ground/deepslate");
+	public static final TagKey<Block> ORES_IN_GROUND_STONE = commonTag("ores_in_ground/stone");
+	public static final TagKey<Block> ORES = commonTag("ores");
+	public static final TagKey<Block> ORES_POWER = commonTag("ores/power");
 
-	private static TagKey<Block> forgeTag(String name) {
-		return BlockTags.create(new ResourceLocation("forge", name));
+	private static TagKey<Block> commonTag(String name) {
+		return BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", name));
 	}
 
 	private static TagKey<Block> optionalTag(String modid, String name) {
-		return BlockTags.create(new ResourceLocation(modid, name));
+		return BlockTags.create(ResourceLocation.fromNamespaceAndPath(modid, name));
 	}
 
 	@Override
@@ -125,7 +125,7 @@ public class ForceBlockTagProvider extends BlockTagsProvider {
 				LIME_FORCE_FURNACE.get(), MAGENTA_FORCE_FURNACE.get(), ORANGE_FORCE_FURNACE.get(), PINK_FORCE_FURNACE.get(),
 				PURPLE_FORCE_FURNACE.get(), RED_FORCE_FURNACE.get(), WHITE_FORCE_FURNACE.get(), FORCE_ENGINE.get()
 		);
-		this.tag(ForceTags.NEEDS_FORCE_TOOL).add(INFUSER.get(), FORCE_ENGINE.get());
+		this.tag(ForceTags.INCORRECT_FOR_FORCE).addTag(BlockTags.INCORRECT_FOR_DIAMOND_TOOL);
 		this.tag(BlockTags.NEEDS_DIAMOND_TOOL).add(FORCE_BRICK_RED.get(), FORCE_BRICK_YELLOW.get(),
 				FORCE_BRICK_GREEN.get(), FORCE_BRICK_BLUE.get(), FORCE_BRICK_WHITE.get(), FORCE_BRICK_BLACK.get(),
 				FORCE_BRICK_BROWN.get(), FORCE_BRICK_ORANGE.get(), FORCE_BRICK_LIGHT_BLUE.get(), FORCE_BRICK_MAGENTA.get(),

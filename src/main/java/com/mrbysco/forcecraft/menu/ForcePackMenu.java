@@ -1,6 +1,8 @@
 package com.mrbysco.forcecraft.menu;
 
-import com.mrbysco.forcecraft.attachment.storage.PackStackHandler;
+import com.mrbysco.forcecraft.components.ForceComponents;
+import com.mrbysco.forcecraft.components.card.RecipeContentsData;
+import com.mrbysco.forcecraft.components.storage.PackStackHandler;
 import com.mrbysco.forcecraft.items.ForceBeltItem;
 import com.mrbysco.forcecraft.items.ForcePackItem;
 import com.mrbysco.forcecraft.items.ItemCardItem;
@@ -95,13 +97,12 @@ public class ForcePackMenu extends AbstractContainerMenu {
 		if (inventory != null) {
 			for (int i = 0; i < inventory.getSlots(); i++) {
 				ItemStack stack = inventory.getStackInSlot(i);
-				CompoundTag tag = stack.getTag();
-				if (stack.getItem() instanceof ItemCardItem && tag != null && tag.contains("RecipeContents")) {
-					CompoundTag recipeContents = tag.getCompound("RecipeContents");
+				if (stack.getItem() instanceof ItemCardItem && stack.has(ForceComponents.RECIPE_CONTENTS)) {
+					RecipeContentsData recipeData = stack.get(ForceComponents.RECIPE_CONTENTS);
 					NonNullList<ItemStack> ingredientList = NonNullList.create();
 					List<ItemStack> mergeList = new ArrayList<>();
 					for (int j = 0; j < 9; j++) {
-						ItemStack recipeStack = ItemStack.of(recipeContents.getCompound("slot_" + j));
+						ItemStack recipeStack = recipeData.recipeItems().get(j);
 						if (!recipeStack.isEmpty()) {
 							if (ingredientList.isEmpty()) {
 								ingredientList.add(recipeStack);
@@ -116,7 +117,7 @@ public class ForcePackMenu extends AbstractContainerMenu {
 							List<ItemStack> buffer = new ArrayList<>();
 							for (ItemStack ingredient : ingredientList) {
 								if (ingredient != null && !ingredient.isEmpty()) {
-									if (ItemStack.isSameItemSameTags(ingredient, recipeStack)) {
+									if (ItemStack.isSameItemSameComponents(ingredient, recipeStack)) {
 										int addedCount = ingredient.getCount() + recipeStack.getCount();
 										int maxCount = ingredient.getMaxStackSize();
 										if (addedCount <= maxCount) {
@@ -154,7 +155,7 @@ public class ForcePackMenu extends AbstractContainerMenu {
 					for (ItemStack ingredient : ingredientList) {
 						int countPossible = 0;
 						for (ItemStack rest : restList) {
-							if (ItemStack.isSameItemSameTags(ingredient, rest)) {
+							if (ItemStack.isSameItemSameComponents(ingredient, rest)) {
 								countPossible += (int) ((double) rest.getCount() / ingredient.getCount());
 							}
 						}
@@ -168,12 +169,12 @@ public class ForcePackMenu extends AbstractContainerMenu {
 						}
 					}
 
-					ItemStack craftStack = ItemStack.of(recipeContents.getCompound("result"));
+					ItemStack craftStack = recipeData.resultItem();
 					if (canCraft && craftCount > 0) {
 						for (int l = 0; l < craftCount; l++) {
 							for (ItemStack ingredient : ingredientList) {
 								for (ItemStack rest : restList) {
-									if (ItemStack.isSameItemSameTags(ingredient, rest)) {
+									if (ItemStack.isSameItemSameComponents(ingredient, rest)) {
 										if (rest.getCount() >= ingredient.getCount()) {
 											rest.shrink(ingredient.getCount());
 										}
@@ -191,9 +192,7 @@ public class ForcePackMenu extends AbstractContainerMenu {
 				}
 			}
 
-			CompoundTag tag = heldStack.getOrCreateTag();
-			tag.putInt(ForcePackItem.SLOTS_USED, ItemHandlerUtils.getUsedSlots(inventory));
-			heldStack.setTag(tag);
+			heldStack.set(ForceComponents.SLOTS_USED, ItemHandlerUtils.getUsedSlots(inventory));
 		}
 
 		super.removed(player);

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "#": {
+      "tag": "c:glass_blocks"
+    },
+    "F": {
+      "tag": "c:ingots/force"
+    },
+    "G": {
+      "tag": "c:gears/force"
+    },
+    "P": {
+      "item": "minecraft:piston"
+    }
+  },
+  "pattern": [
+    "FFF",
+    " # ",
+    "GPG"
+  ],
+  "result": {
+    "count": 1,
+    "id": "forcecraft:force_engine"
+  }
+}

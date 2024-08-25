@@ -1,8 +1,11 @@
 package com.mrbysco.forcecraft.menu;
 
+import com.mrbysco.forcecraft.components.ForceComponents;
+import com.mrbysco.forcecraft.components.card.RecipeContentsData;
 import com.mrbysco.forcecraft.items.ItemCardItem;
 import com.mrbysco.forcecraft.registry.ForceMenus;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -95,14 +98,13 @@ public class ItemCardMenu extends AbstractContainerMenu {
 
 		heldStack = getCardStack(playerInventory);
 		if (heldStack.getItem() == ForceRegistry.ITEM_CARD.get()) {
-			CompoundTag tag = heldStack.getOrCreateTag();
-			if (tag.contains("RecipeContents")) {
-				CompoundTag recipeContents = tag.getCompound("RecipeContents");
-				if (!player.level().isClientSide) {
+			if (heldStack.has(ForceComponents.RECIPE_CONTENTS)) {
+				RecipeContentsData recipeData = heldStack.get(ForceComponents.RECIPE_CONTENTS);
+				if (recipeData != null && !player.level().isClientSide) {
 					for (int i = 0; i < craftMatrix.getContainerSize(); i++) {
-						craftMatrix.setItem(i, ItemStack.of(recipeContents.getCompound("slot_" + i)));
+						craftMatrix.setItem(i, recipeData.recipeItems().get(i));
 					}
-					craftResult.setItem(0, ItemStack.of(recipeContents.getCompound("result")));
+					craftResult.setItem(0, recipeData.resultItem());
 				}
 			}
 		}
@@ -121,13 +123,13 @@ public class ItemCardMenu extends AbstractContainerMenu {
 	protected void updateCraftingResult(Level level, Player player, CraftingContainer inventory, ResultContainer inventoryResult) {
 		if (!level.isClientSide) {
 			ServerPlayer serverPlayer = (ServerPlayer) player;
-			final Optional<RecipeHolder<CraftingRecipe>> iRecipe = serverPlayer.server.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, inventory, level);
+			final Optional<RecipeHolder<CraftingRecipe>> iRecipe = serverPlayer.server.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, inventory.asCraftInput(), level);
 			final ItemStack stack;
 			if (iRecipe.isPresent() && (iRecipe.get().value().isSpecial()
 					|| !level.getGameRules().getBoolean(GameRules.RULE_LIMITED_CRAFTING)
 					|| serverPlayer.getRecipeBook().contains(iRecipe.get())
 					|| player.isCreative())) {
-				stack = iRecipe.get().value().assemble(this.craftMatrix, level.registryAccess());
+				stack = iRecipe.get().value().assemble(this.craftMatrix.asCraftInput(), level.registryAccess());
 				inventoryResult.setItem(0, stack);
 				serverPlayer.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, 0, 0, stack));
 			} else {

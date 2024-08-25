@@ -1,9 +1,12 @@
 package com.mrbysco.forcecraft.items;
 
-import com.mrbysco.forcecraft.attachment.toolmodifier.ToolModifierAttachment;
+import com.mrbysco.forcecraft.Reference;
+import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.items.infuser.ForceToolData;
 import com.mrbysco.forcecraft.items.infuser.IForceChargingTool;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -12,30 +15,26 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-import static com.mrbysco.forcecraft.attachment.ForceAttachments.TOOL_MODIFIER;
-
 public class ForceArmorItem extends ArmorItem implements IForceChargingTool {
 
-	public ForceArmorItem(ArmorMaterial materialIn, ArmorItem.Type type, Item.Properties builderIn) {
+	public ForceArmorItem(Holder<ArmorMaterial> materialIn, ArmorItem.Type type, Item.Properties builderIn) {
 		super(materialIn, type, builderIn);
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> lores, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		ForceToolData fd = new ForceToolData(stack);
-		fd.attachInformation(lores);
-		ToolModifierAttachment.attachInformation(stack, lores);
-		super.appendHoverText(stack, level, lores, flagIn);
+		fd.attachInformation(tooltip);
+		super.appendHoverText(stack, context, tooltip, tooltipFlag);
 	}
 
 	@Override
-	public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
+	public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, @Nullable T entity, Consumer<Item> onBroken) {
 		return this.damageItem(stack, amount);
 	}
 
@@ -44,12 +43,11 @@ public class ForceArmorItem extends ArmorItem implements IForceChargingTool {
 		return false;
 	}
 
-	@Nullable
 	@Override
-	public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
-		if (stack.hasData(TOOL_MODIFIER) && stack.getData(TOOL_MODIFIER).hasCamo()) {
-			return "forcecraft:textures/models/armor/force_invisible.png";
+	public ResourceLocation getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer, boolean innerModel) {
+		if (stack.has(ForceComponents.TOOL_CAMO)) {
+			return Reference.modLoc("textures/models/armor/force_invisible.png");
 		}
-		return super.getArmorTexture(stack, entity, slot, type);
+		return super.getArmorTexture(stack, entity, slot, layer, innerModel);
 	}
 }

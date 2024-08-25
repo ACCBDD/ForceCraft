@@ -1,177 +1,148 @@
 package com.mrbysco.forcecraft.items.infuser;
 
-import com.mrbysco.forcecraft.ForceCraft;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrbysco.forcecraft.blockentities.InfuserBlockEntity;
+import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.recipe.InfuseRecipe;
-import com.mrbysco.forcecraft.registry.ForceRegistry;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
-public class UpgradeBookData {
-	private UpgradeBookTier tier = UpgradeBookTier.ZERO;
-	private final Map<Integer, Set<ResourceLocation>> recipesUsed = new HashMap<>();
-	private int points = 0;
-	private String progressCache = "";
+public record UpgradeBookData(UpgradeBookTier tier, List<ResourceLocation> recipesUsed,
+                              int points, String progressCache) {
+	public static final UpgradeBookData DEFAULT = new UpgradeBookData(UpgradeBookTier.ZERO, new ArrayList<>(), 0, "");
+	public static final Codec<UpgradeBookData> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+					UpgradeBookTier.CODEC.fieldOf("tier").forGetter(UpgradeBookData::tier),
+					Codec.list(ResourceLocation.CODEC).fieldOf("recipesUsed").forGetter(UpgradeBookData::recipesUsed),
+					Codec.INT.fieldOf("points").forGetter(UpgradeBookData::points),
+					Codec.STRING.fieldOf("progressCache").forGetter(UpgradeBookData::progressCache))
+			.apply(inst, UpgradeBookData::new));
+	public static final StreamCodec<RegistryFriendlyByteBuf, UpgradeBookData> STREAM_CODEC = StreamCodec.of(
+			UpgradeBookData::toNetwork, UpgradeBookData::fromNetwork
+	);
 
-	public UpgradeBookData(ItemStack book) {
-		if (book.getItem() != ForceRegistry.UPGRADE_TOME.get()) {
-			ForceCraft.LOGGER.error("invalid book data entering book {}", book);
-			return;
-		}
-		CompoundTag tag = book.getTag();
-		if (tag != null && tag.contains("tier")) {
-			// is not empty, load it up
-			this.read(book, tag);
-		} else {
-			updateCache();
-			this.write(book);
-		}
-		// else its a new craft, or showing in JEI etc
+	private static UpgradeBookData fromNetwork(RegistryFriendlyByteBuf byteBuf) {
+		UpgradeBookTier tier = UpgradeBookTier.values()[byteBuf.readVarInt()];
+		List<ResourceLocation> recipesUsed = byteBuf.readList(ResourceLocation.STREAM_CODEC);
+		int points = byteBuf.readVarInt();
+		String progressCache = byteBuf.readUtf(32767);
+		return new UpgradeBookData(tier, recipesUsed, points, progressCache);
+	}
+
+	private static void toNetwork(RegistryFriendlyByteBuf byteBuf, UpgradeBookData playerCompassData) {
+		byteBuf.writeVarInt(playerCompassData.tier().ordinal());
+		byteBuf.writeCollection(playerCompassData.recipesUsed(), ResourceLocation.STREAM_CODEC);
+		byteBuf.writeVarInt(playerCompassData.points());
+		byteBuf.writeUtf(playerCompassData.progressCache());
 	}
 
 	// how many we need for next tier increment
-	public int nextTier() {
-		if (getTier() == UpgradeBookTier.FINAL) {
+	public int nextTier(ItemStack stack) {
+		UpgradeBookData data = stack.getOrDefault(ForceComponents.UPGRADE_BOOK, UpgradeBookData.DEFAULT);
+		if (data.tier() == UpgradeBookTier.FINAL) {
 			return 0;
 		}
-		return Math.max(0, getTier().pointsForLevelup() - points);
+		return Math.max(0, data.tier().pointsForLevelup() - points);
 	}
 
 	public void onRecipeApply(RecipeHolder<InfuseRecipe> recipeHolder, ItemStack bookStack) {
-		Integer tier = recipeHolder.value().getTier().ordinal();
-		Set<ResourceLocation> tierSet = new HashSet<>();
-
-		if (recipesUsed.containsKey(tier)) {
-			tierSet = recipesUsed.get(tier);
+		UpgradeBookData data = bookStack.getOrDefault(ForceComponents.UPGRADE_BOOK, UpgradeBookData.DEFAULT);
+		if (InfuserBlockEntity.LEVEL_RECIPE_LIST.get(data.tier.asInt()).contains(recipeHolder.id())) {
+			recipesUsed.add(recipeHolder.id());
 		}
-
-		tierSet.add(recipeHolder.id());
-		recipesUsed.put(tier, tierSet);
-
-		tryLevelUp();
-
-		this.write(bookStack);
+		tryLevelUp(bookStack);
 	}
 
-	public void incrementPoints(int incoming) {
-		points += incoming;
-		tryLevelUp();
+	public static void incrementPoints(ItemStack stack, int incoming) {
+		UpgradeBookData data = stack.getOrDefault(ForceComponents.UPGRADE_BOOK, UpgradeBookData.DEFAULT);
+		stack.set(ForceComponents.UPGRADE_BOOK,
+				new UpgradeBookData(
+						data.tier,
+						data.recipesUsed,
+						data.points + incoming,
+						data.progressCache
+				)
+		);
+		tryLevelUp(stack);
 	}
 
 	// update level and points if levelup is possible
-	private void tryLevelUp() {
-		if (canLevelUp()) {
+	private static void tryLevelUp(ItemStack stack) {
+		UpgradeBookData data = stack.getOrDefault(ForceComponents.UPGRADE_BOOK, UpgradeBookData.DEFAULT);
+		if (canLevelUp(stack)) {
 			// then go
-			points -= this.getTier().pointsForLevelup();
-			setTier(getTier().incrementTier());
+			int newPoints = data.points() - data.tier().pointsForLevelup();
+			setTierAndPoints(stack, data.tier().incrementTier(), newPoints);
 
-			updateCache();
+			updateCache(stack);
 		}
 	}
 
-	private void updateCache() {
+	private static void updateCache(ItemStack stack) {
+		UpgradeBookData data = stack.getOrDefault(ForceComponents.UPGRADE_BOOK, UpgradeBookData.DEFAULT);
 		//Update tooltip
-		Set<ResourceLocation> thisTier = this.recipesUsed.get(this.tier.ordinal());
+		List<ResourceLocation> thisTier = InfuserBlockEntity.LEVEL_RECIPE_LIST.get(data.tier().ordinal());
 		int recipesThisTier = (thisTier == null) ? 0 : thisTier.size();
 		if (!InfuserBlockEntity.LEVEL_RECIPE_LIST.isEmpty()) {
-			int totalThisTier = InfuserBlockEntity.LEVEL_RECIPE_LIST.get(this.tier.ordinal()).size();
-			this.progressCache = recipesThisTier + "/" + totalThisTier;
+			int totalThisTier = InfuserBlockEntity.LEVEL_RECIPE_LIST.get(data.tier().ordinal()).size();
+			stack.set(ForceComponents.UPGRADE_BOOK,
+					new UpgradeBookData(
+							data.tier,
+							data.recipesUsed,
+							data.points,
+							recipesThisTier + "/" + totalThisTier
+					)
+			);
 		}
 	}
 
-	private boolean canLevelUp() {
+	private static boolean canLevelUp(ItemStack stack) {
+		UpgradeBookData data = stack.getOrDefault(ForceComponents.UPGRADE_BOOK, UpgradeBookData.DEFAULT);
 		// check more
-		Set<ResourceLocation> thisTier = this.recipesUsed.get(this.tier.ordinal());
+		List<ResourceLocation> thisTier = data.recipesUsed();
 		int recipesThisTier = (thisTier == null) ? 0 : thisTier.size();
-		int totalThisTier = InfuserBlockEntity.LEVEL_RECIPE_LIST.get(this.tier.ordinal()).size();
+		int totalThisTier = InfuserBlockEntity.LEVEL_RECIPE_LIST.get(data.tier().ordinal()).size();
 
 //		ForceCraft.LOGGER.debug("can lvlup?  ?  " + recipesThisTier + " >= " + totalThisTier);
 
-		updateCache();
+		updateCache(stack);
 
-		if (points < this.getTier().pointsForLevelup() || getTier() == UpgradeBookTier.FINAL) {
+		if (data.points() < data.tier().pointsForLevelup() || data.tier() == UpgradeBookTier.FINAL) {
 			return false;
 		}
 
-		// if this tier has total=5 recipes, i need to craft at least 5 unique recipes
+		// if this tier has total=5 recipes, I need to craft at least 5 unique recipes
 		// this tier
 		return recipesThisTier >= totalThisTier;
 	}
 
-	private void read(ItemStack book, CompoundTag tag) {
-		progressCache = tag.getString("progressCache");
-		setTier(UpgradeBookTier.values()[tag.getInt("tier")]);
-		points = tag.getInt("points");
-
-		for (UpgradeBookTier tier : UpgradeBookTier.values()) {
-			Set<ResourceLocation> tierSet = new HashSet<>();
-
-			ListTag listTag = (ListTag) tag.get("tier" + tier.ordinal());
-
-			if (listTag != null) {
-				for (Tag value : listTag) {
-					CompoundTag tg = (CompoundTag) value;
-					String id = tg.getString("id");
-
-					// i dont know where this bug comes from
-					if (!id.isEmpty() && !"minecraft:".equalsIgnoreCase(id))
-						tierSet.add(ResourceLocation.tryParse(id));
-				}
-			}
-			recipesUsed.put(tier.ordinal(), tierSet);
-		}
+	private static void setTierAndPoints(ItemStack stack, UpgradeBookTier tier, int points) {
+		UpgradeBookData data = stack.getOrDefault(ForceComponents.UPGRADE_BOOK, UpgradeBookData.DEFAULT);
+		stack.set(ForceComponents.UPGRADE_BOOK,
+				new UpgradeBookData(
+						tier,
+						new ArrayList<>(), //Clear list on tier change
+						points,
+						data.progressCache
+				)
+		);
 	}
 
-	public CompoundTag write(ItemStack bookInSlot) {
-		CompoundTag tag = bookInSlot.getOrCreateTag();
-		tag.putString("progressCache", progressCache);
-		tag.putInt("tier", getTier().ordinal());
-		tag.putInt("points", points);
-
-		for (UpgradeBookTier tier : UpgradeBookTier.values()) {
-			Set<ResourceLocation> tierSet = recipesUsed.get(tier.ordinal());
-			if (tierSet == null) {
-				tierSet = new HashSet<>();
-			}
-			ListTag listTag = new ListTag();
-			for (ResourceLocation id : tierSet) {
-				// I don't know where this bug comes from
-				if (!"minecraft:".equalsIgnoreCase(id.toString())) {
-					CompoundTag tg = new CompoundTag();
-					tg.putString("id", id.toString());
-					listTag.add(tg);
-				}
-			}
-
-			tag.put("tier" + tier.ordinal(), listTag);
-		}
-
-		return tag;
+	public static void setTier(ItemStack stack, UpgradeBookTier tier) {
+		UpgradeBookData data = stack.getOrDefault(ForceComponents.UPGRADE_BOOK, UpgradeBookData.DEFAULT);
+		stack.set(ForceComponents.UPGRADE_BOOK,
+				new UpgradeBookData(
+						tier,
+						new ArrayList<>(), //Clear list on tier change
+						data.points,
+						data.progressCache
+				)
+		);
 	}
-
-	public String getProgressCache() {
-		return progressCache;
-	}
-
-	public UpgradeBookTier getTier() {
-		return tier;
-	}
-
-	public void setTier(UpgradeBookTier tier) {
-		this.tier = tier;
-	}
-
-	public int getPoints() {
-		return points;
-	}
-
 }

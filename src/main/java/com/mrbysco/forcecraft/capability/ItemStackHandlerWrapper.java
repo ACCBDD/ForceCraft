@@ -1,5 +1,6 @@
 package com.mrbysco.forcecraft.capability;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.util.INBTSerializable;
@@ -83,17 +84,17 @@ public class ItemStackHandlerWrapper implements IItemHandler, IItemHandlerModifi
 	}
 
 	@Override
-	public CompoundTag serializeNBT() {
+	public CompoundTag serializeNBT(HolderLookup.Provider registries) {
 		CompoundTag tag = new CompoundTag();
-		tag.put(NBT_INPUT, input.serializeNBT());
-		tag.put(NBT_OUTPUT, output.serializeNBT());
+		tag.put(NBT_INPUT, input.serializeNBT(registries));
+		tag.put(NBT_OUTPUT, output.serializeNBT(registries));
 		return tag;
 	}
 
 	@Override
-	public void deserializeNBT(CompoundTag tag) {
-		input.deserializeNBT(tag.getCompound(NBT_INPUT));
-		output.deserializeNBT(tag.getCompound(NBT_OUTPUT));
+	public void deserializeNBT(HolderLookup.Provider registries, CompoundTag tag) {
+		input.deserializeNBT(registries, tag.getCompound(NBT_INPUT));
+		output.deserializeNBT(registries, tag.getCompound(NBT_OUTPUT));
 	}
 
 	@FunctionalInterface

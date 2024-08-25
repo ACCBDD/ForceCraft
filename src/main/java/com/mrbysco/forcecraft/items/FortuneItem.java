@@ -1,7 +1,7 @@
 package com.mrbysco.forcecraft.items;
 
+import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.config.ConfigHandler;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -25,10 +25,11 @@ public class FortuneItem extends BaseItem {
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player playerIn, InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
-		CompoundTag tag = stack.hasTag() ? stack.getTag() : new CompoundTag();
+		String message = stack.getOrDefault(ForceComponents.MESSAGE, "");
 
-		if (!tag.contains("message")) {
-			addMessage(stack, tag);
+		if (message.isEmpty()) {
+			addMessage(stack);
+			message = stack.getOrDefault(ForceComponents.MESSAGE, "");
 		}
 
 		if (!level.isClientSide) {
@@ -41,13 +42,13 @@ public class FortuneItem extends BaseItem {
 					playerIn.spawnAtLocation(paperStack);
 				}
 			} else {
-				playerIn.sendSystemMessage(Component.literal(tag.getString("message")));
+				playerIn.sendSystemMessage(Component.literal(message));
 			}
 		}
 		return super.use(level, playerIn, handIn);
 	}
 
-	public static void addMessage(ItemStack stack, CompoundTag tag) {
+	public static void addMessage(ItemStack stack) {
 		List<String> messages = new ArrayList<>(ConfigHandler.COMMON.fortuneMessages.get());
 		String message = "No fortune for you";
 		if (!messages.isEmpty()) {
@@ -55,7 +56,6 @@ public class FortuneItem extends BaseItem {
 			message = messages.get(idx);
 		}
 
-		tag.putString("message", message);
-		stack.setTag(tag);
+		stack.set(ForceComponents.MESSAGE, message);
 	}
 }

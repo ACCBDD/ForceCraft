@@ -1,12 +1,13 @@
 package com.mrbysco.forcecraft.items;
 
 import com.mrbysco.forcecraft.Reference;
-import com.mrbysco.forcecraft.attachment.storage.PackStackHandler;
-import com.mrbysco.forcecraft.attachment.storage.PackStorage;
-import com.mrbysco.forcecraft.attachment.storage.StorageManager;
+import com.mrbysco.forcecraft.components.ForceComponents;
+import com.mrbysco.forcecraft.components.storage.PackStackHandler;
+import com.mrbysco.forcecraft.components.storage.PackStorage;
+import com.mrbysco.forcecraft.components.storage.StorageManager;
 import com.mrbysco.forcecraft.menu.ForcePackMenu;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
@@ -18,6 +19,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -34,7 +36,8 @@ public class ForcePackItem extends BaseItem {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level level, Player playerIn, InteractionHand handIn) {
+	@NotNull
+	public InteractionResultHolder<ItemStack> use(@NotNull Level level, Player playerIn, @NotNull InteractionHand handIn) {
 		ItemStack stack = playerIn.getItemInHand(handIn);
 
 		if (playerIn.isShiftKeyDown()) {
@@ -54,35 +57,36 @@ public class ForcePackItem extends BaseItem {
 	@Nullable
 	public MenuProvider getContainer(ItemStack stack, PackStackHandler handler) {
 		return new SimpleMenuProvider((id, playerInv, player) -> new ForcePackMenu(id, playerInv, handler),
-				stack.hasCustomHoverName() ? ((MutableComponent) stack.getHoverName()).withStyle(ChatFormatting.BLACK) :
+				stack.has(DataComponents.CUSTOM_NAME) ? ((MutableComponent) stack.getHoverName()).withStyle(ChatFormatting.BLACK) :
 						Component.translatable(Reference.MOD_ID + ".container.pack"));
 	}
 
 	@Override
-	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+	public boolean shouldCauseReequipAnimation(@NotNull ItemStack oldStack, @NotNull ItemStack newStack, boolean slotChanged) {
 		return false;
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
-		CompoundTag tag = stack.getOrCreateTag();
-		if (tag.contains(ForcePackItem.SLOTS_USED) && tag.contains(ForcePackItem.SLOTS_TOTAL)) {
-			tooltip.add(Component.literal(String.format("%s/%s Slots", tag.getInt(ForcePackItem.SLOTS_USED), tag.getInt(ForcePackItem.SLOTS_TOTAL))));
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
+		if (stack.has(ForceComponents.SLOTS_USED) && stack.has(ForceComponents.SLOTS_TOTAL)) {
+			tooltip.add(Component.literal(String.format("%s/%s Slots",
+					stack.getOrDefault(ForceComponents.SLOTS_USED, 0),
+					stack.getOrDefault(ForceComponents.SLOTS_TOTAL, 1))));
 		} else {
 			tooltip.add(Component.literal("0/8 Slots"));
 		}
 
-
-		if (flagIn.isAdvanced() && stack.getTag() != null && stack.getTag().contains("uuid")) {
-			UUID uuid = stack.getTag().getUUID("uuid");
-			tooltip.add(Component.literal("ID: " + uuid.toString().substring(0, 8)).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+		if (flagIn.isAdvanced() && stack.has(ForceComponents.UUID)) {
+			UUID uuid = stack.get(ForceComponents.UUID);
+			tooltip.add(Component.literal("ID: " + uuid.toString().substring(0, 8))
+					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		}
-
-		super.appendHoverText(stack, level, tooltip, flagIn);
 	}
 
 	@Override
-	public Component getName(ItemStack stack) {
+	@NotNull
+	public Component getName(@NotNull ItemStack stack) {
 		return ((MutableComponent) super.getName(stack)).withStyle(ChatFormatting.YELLOW);
 	}
 }

@@ -3,10 +3,12 @@ package com.mrbysco.forcecraft.blocks;
 import com.mojang.serialization.MapCodec;
 import com.mrbysco.forcecraft.blockentities.furnace.AbstractForceFurnaceBlockEntity;
 import com.mrbysco.forcecraft.blockentities.furnace.ForceFurnaceBlockEntity;
+import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.items.UpgradeCoreItem;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -142,15 +144,9 @@ public class ForceFurnaceBlock extends AbstractFurnaceBlock implements EntityBlo
 	public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
 		BlockEntity blockentity = level.getBlockEntity(pos);
 		if (blockentity instanceof AbstractForceFurnaceBlockEntity furnaceTile) {
-
-			if (stack.hasCustomHoverName()) {
-				furnaceTile.setCustomName(stack.getHoverName());
-			}
 			// inventory step
-
-			if (stack.getTag() != null && stack.getTag().contains(NBT_UPGRADE)) {
-				ItemStack upgrade = ItemStack.of(stack.getTag().getCompound(NBT_UPGRADE));
-				furnaceTile.setUpgrade(upgrade);
+			if (stack.has(ForceComponents.FURNACE_UPGRADE)) {
+				furnaceTile.setUpgrade(stack.getOrDefault(ForceComponents.FURNACE_UPGRADE, ItemStack.EMPTY));
 			}
 		}
 	}

@@ -2,6 +2,7 @@ package com.mrbysco.forcecraft.client.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
@@ -17,7 +18,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import java.awt.*;
 
 public class RenderHelper {
-	public static void drawFluidTankInGUI(FluidStack fluid, double x, double y, double percent, int height) {
+	public static void drawFluidTankInGUI(FluidStack fluid, float x, float y, float percent, int height) {
 		if (fluid == null || fluid.isEmpty())
 			return;
 
@@ -47,7 +48,7 @@ public class RenderHelper {
 				for (int i = 0; i < count; i++) {
 					double subHeight = Math.min(16.0, tankLevel - (16.0 * i));
 					double offsetY = height - 16.0 * i - subHeight;
-					drawQuad(x, y + offsetY, 16, subHeight, minU, (float) (maxV - deltaV * (subHeight / 16.0)), maxU, maxV);
+					drawQuad(x, (float) (y + offsetY), 16F, (float) subHeight, minU, (float) (maxV - deltaV * (subHeight / 16.0)), maxU, maxV);
 				}
 				RenderSystem.disableBlend();
 				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -55,15 +56,14 @@ public class RenderHelper {
 		}
 	}
 
-	private static void drawQuad(double x, double y, double width, double height, float minU, float minV, float maxU, float maxV) {
+	private static void drawQuad(float x, float y, float width, float height, float minU, float minV, float maxU, float maxV) {
 		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder buffer = tesselator.getBuilder();
-		buffer.begin(Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-		buffer.vertex(x, y + height, 0).uv(minU, maxV).endVertex();
-		buffer.vertex(x + width, y + height, 0).uv(maxU, maxV).endVertex();
-		buffer.vertex(x + width, y, 0).uv(maxU, minV).endVertex();
-		buffer.vertex(x, y, 0).uv(minU, minV).endVertex();
-		tesselator.end();
+		BufferBuilder buffer = tesselator.begin(Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+		buffer.addVertex(x, y + height, 0).setUv(minU, maxV);
+		buffer.addVertex(x + width, y + height, 0).setUv(maxU, maxV);
+		buffer.addVertex(x + width, y, 0).setUv(maxU, minV);
+		buffer.addVertex(x, y, 0).setUv(minU, minV);
+		BufferUploader.drawWithShader(buffer.buildOrThrow());
 	}
 
 	public static float getTankPercentage(int fluidAmount, int fluidMax) {

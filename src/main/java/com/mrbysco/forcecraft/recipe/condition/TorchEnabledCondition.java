@@ -1,16 +1,16 @@
 package com.mrbysco.forcecraft.recipe.condition;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mrbysco.forcecraft.config.ConfigHandler;
 import net.neoforged.neoforge.common.conditions.ICondition;
 
 public class TorchEnabledCondition implements ICondition {
 	public static final TorchEnabledCondition INSTANCE = new TorchEnabledCondition();
-	public static final Codec<TorchEnabledCondition> CODEC = Codec.unit(INSTANCE).stable();
+	public static final MapCodec<TorchEnabledCondition> CODEC = MapCodec.unit(INSTANCE).stable();
 
 	@Override
-	public Codec<? extends ICondition> codec() {
-		return CODEC;
+	public MapCodec<? extends ICondition> codec() {
+		return ForceConditions.TIME_TORCH_ENABLED.get();
 	}
 
 	@Override

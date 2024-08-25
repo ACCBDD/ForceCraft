@@ -1,6 +1,6 @@
 {
   "type": "neoforge:add_spawns",
-  "biomes": "#forge:is_swamp",
+  "biomes": "#c:is_swamp",
   "spawners": [
     {
       "type": "forcecraft:red_chu_chu",

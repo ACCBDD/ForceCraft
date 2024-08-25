@@ -1,10 +1,8 @@
 package com.mrbysco.forcecraft.entities;
 
-import com.mrbysco.forcecraft.Reference;
 import com.mrbysco.forcecraft.registry.ForceEntities;
 import com.mrbysco.forcecraft.registry.ForceTags;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
@@ -34,7 +32,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -47,11 +45,9 @@ import java.util.EnumSet;
 import java.util.function.Predicate;
 
 public class EnderTotEntity extends EnderMan {
-	private static final ResourceLocation TOT_HOLDABLE = Reference.modLoc("endertot_holdable");
-
 	public EnderTotEntity(EntityType<? extends EnderMan> type, Level level) {
 		super(type, level);
-		this.setPathfindingMalus(BlockPathTypes.WATER, 8.0F); //Reset to default as Ender Tots aren't afraid of water
+		this.setPathfindingMalus(PathType.WATER, 8.0F); //Reset to default as Ender Tots aren't afraid of water
 	}
 
 	protected void registerGoals() {
@@ -258,7 +254,7 @@ public class EnderTotEntity extends EnderMan {
 		public boolean canUse() {
 			if (this.endertot.getCarriedBlock() != null) {
 				return false;
-			} else if (!EventHooks.getMobGriefingEvent(this.endertot.level(), this.endertot)) {
+			} else if (!EventHooks.canEntityGrief(this.endertot.level(), this.endertot)) {
 				return false;
 			} else {
 				return this.endertot.getRandom().nextInt(20) == 0;
@@ -302,7 +298,7 @@ public class EnderTotEntity extends EnderMan {
 		public boolean canUse() {
 			if (this.endertot.getCarriedBlock() == null) {
 				return false;
-			} else if (!EventHooks.getMobGriefingEvent(this.endertot.level(), this.endertot)) {
+			} else if (!EventHooks.canEntityGrief(this.endertot.level(), this.endertot)) {
 				return false;
 			} else {
 				return this.endertot.getRandom().nextInt(2000) == 0;

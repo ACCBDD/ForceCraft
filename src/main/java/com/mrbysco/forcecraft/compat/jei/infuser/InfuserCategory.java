@@ -2,6 +2,7 @@ package com.mrbysco.forcecraft.compat.jei.infuser;
 
 import com.mrbysco.forcecraft.blockentities.InfuserModifierType;
 import com.mrbysco.forcecraft.compat.jei.JeiCompat;
+import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.items.infuser.UpgradeBookData;
 import com.mrbysco.forcecraft.recipe.InfuseRecipe;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
@@ -78,18 +79,19 @@ public class InfuserCategory<T extends InfuseRecipe> implements IRecipeCategory<
 				if (modifierStack.length > 0) {
 					ItemStack modifier = modifierStack[0].copy();
 					InfuserModifierType type = recipe.getModifier();
-					UpgradeBookData fakeUpgradeBook = new UpgradeBookData(new ItemStack(ForceRegistry.UPGRADE_TOME.get()));
-					fakeUpgradeBook.setTier(recipe.getTier());
+					ItemStack bookStack = new ItemStack(ForceRegistry.UPGRADE_TOME.get());
+					UpgradeBookData.setTier(bookStack, recipe.getTier());
+					UpgradeBookData fakeUpgradeBook = bookStack.getOrDefault(ForceComponents.UPGRADE_BOOK, UpgradeBookData.DEFAULT);
 
 					for (ItemStack center : matchingStacks) {
 						ItemStack centerStack = center.copy();
 						if (centerStack.getItem() == ForceRegistry.FORCE_PACK.get()) {
-							type.apply(centerStack, modifier, fakeUpgradeBook);
-							type.apply(centerStack, modifier, fakeUpgradeBook);
-							type.apply(centerStack, modifier, fakeUpgradeBook);
-							type.apply(centerStack, modifier, fakeUpgradeBook);
+							type.apply(centerStack, modifier, fakeUpgradeBook, registryAccess);
+							type.apply(centerStack, modifier, fakeUpgradeBook, registryAccess);
+							type.apply(centerStack, modifier, fakeUpgradeBook, registryAccess);
+							type.apply(centerStack, modifier, fakeUpgradeBook, registryAccess);
 						} else {
-							type.apply(centerStack, modifier, fakeUpgradeBook);
+							type.apply(centerStack, modifier, fakeUpgradeBook, registryAccess);
 						}
 
 						stacks.add(centerStack);
@@ -114,18 +116,19 @@ public class InfuserCategory<T extends InfuseRecipe> implements IRecipeCategory<
 				if (modifierStack.length > 0) {
 					ItemStack modifier = modifierStack[0].copy();
 					InfuserModifierType type = recipe.getModifier();
-					UpgradeBookData fakeUpgradeBook = new UpgradeBookData(new ItemStack(ForceRegistry.UPGRADE_TOME.get()));
-					fakeUpgradeBook.setTier(recipe.getTier());
+					ItemStack bookStack = new ItemStack(ForceRegistry.UPGRADE_TOME.get());
+					UpgradeBookData.setTier(bookStack, recipe.getTier());
+					UpgradeBookData fakeUpgradeBook = bookStack.getOrDefault(ForceComponents.UPGRADE_BOOK, UpgradeBookData.DEFAULT);
 
 					for (ItemStack center : matchingStacks) {
 						ItemStack centerStack = center.copy();
 						if (centerStack.getItem() == ForceRegistry.FORCE_PACK.get()) {
-							type.apply(centerStack, modifier, fakeUpgradeBook);
-							type.apply(centerStack, modifier, fakeUpgradeBook);
-							type.apply(centerStack, modifier, fakeUpgradeBook);
-							type.apply(centerStack, modifier, fakeUpgradeBook);
+							type.apply(centerStack, modifier, fakeUpgradeBook, registryAccess);
+							type.apply(centerStack, modifier, fakeUpgradeBook, registryAccess);
+							type.apply(centerStack, modifier, fakeUpgradeBook, registryAccess);
+							type.apply(centerStack, modifier, fakeUpgradeBook, registryAccess);
 						} else {
-							type.apply(centerStack, modifier, fakeUpgradeBook);
+							type.apply(centerStack, modifier, fakeUpgradeBook, registryAccess);
 						}
 
 						stacks.add(centerStack);

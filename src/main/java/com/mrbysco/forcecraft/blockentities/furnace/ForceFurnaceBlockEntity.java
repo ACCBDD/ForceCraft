@@ -4,9 +4,11 @@ import com.mrbysco.forcecraft.Reference;
 import com.mrbysco.forcecraft.menu.furnace.ForceFurnaceMenu;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class ForceFurnaceBlockEntity extends AbstractForceFurnaceBlockEntity {

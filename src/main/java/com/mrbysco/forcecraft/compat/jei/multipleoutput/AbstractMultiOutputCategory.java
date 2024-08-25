@@ -5,8 +5,9 @@ import com.mrbysco.forcecraft.recipe.MultipleOutputFurnaceRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.ingredient.IRecipeSlotTooltipCallback;
+import mezz.jei.api.gui.ingredient.IRecipeSlotRichTooltipCallback;
 import mezz.jei.api.gui.ingredient.IRecipeSlotView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
@@ -16,8 +17,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-
-import java.util.List;
 
 public abstract class AbstractMultiOutputCategory<T extends MultipleOutputFurnaceRecipe> implements IRecipeCategory<T> {
 	private final IDrawable background;
@@ -52,7 +51,7 @@ public abstract class AbstractMultiOutputCategory<T extends MultipleOutputFurnac
 					.addItemStack(recipe.getRecipeOutputs().get(1));
 
 			if (showChance) {
-				secondOutputBuilder.addTooltipCallback(new ChanceTooltip(recipe));
+				secondOutputBuilder.addRichTooltipCallback(new ChanceTooltip(recipe));
 			}
 		}
 	}
@@ -62,7 +61,7 @@ public abstract class AbstractMultiOutputCategory<T extends MultipleOutputFurnac
 		return localizedName;
 	}
 
-	public static class ChanceTooltip implements IRecipeSlotTooltipCallback {
+	public static class ChanceTooltip implements IRecipeSlotRichTooltipCallback {
 		private final MultipleOutputFurnaceRecipe recipe;
 
 		public ChanceTooltip(MultipleOutputFurnaceRecipe recipe) {
@@ -70,7 +69,7 @@ public abstract class AbstractMultiOutputCategory<T extends MultipleOutputFurnac
 		}
 
 		@Override
-		public void onTooltip(IRecipeSlotView recipeSlotView, List<Component> tooltip) {
+		public void onRichTooltip(IRecipeSlotView recipeSlotView, ITooltipBuilder tooltip) {
 			tooltip.add(Component.literal(recipe.getSecondaryChance() * 100 + " ").append(Component.translatable("forcecraft.gui.jei.category.grinding.tooltip")).withStyle(ChatFormatting.YELLOW));
 		}
 	}

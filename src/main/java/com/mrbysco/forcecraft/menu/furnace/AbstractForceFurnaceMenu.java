@@ -22,6 +22,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.event.EventHooks;
@@ -174,7 +175,7 @@ public abstract class AbstractForceFurnaceMenu extends AbstractContainerMenu {
 	}
 
 	protected boolean hasRecipe(ItemStack stack) {
-		return this.level.getRecipeManager().getRecipeFor((RecipeType) this.getRecipeType(), new SimpleContainer(stack), this.level).isPresent();
+		return this.level.getRecipeManager().getRecipeFor((RecipeType) this.getRecipeType(), new SingleRecipeInput(stack), this.level).isPresent();
 	}
 
 	protected RecipeType<? extends AbstractCookingRecipe> getRecipeType() {

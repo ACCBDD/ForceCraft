@@ -1,9 +1,11 @@
 package com.mrbysco.forcecraft.networking.handler;
 
 import com.mrbysco.forcecraft.Reference;
-import com.mrbysco.forcecraft.attachment.storage.BeltStorage;
-import com.mrbysco.forcecraft.attachment.storage.PackStorage;
-import com.mrbysco.forcecraft.attachment.storage.StorageManager;
+import com.mrbysco.forcecraft.components.ForceComponents;
+import com.mrbysco.forcecraft.components.card.RecipeContentsData;
+import com.mrbysco.forcecraft.components.storage.BeltStorage;
+import com.mrbysco.forcecraft.components.storage.PackStorage;
+import com.mrbysco.forcecraft.components.storage.StorageManager;
 import com.mrbysco.forcecraft.items.ForceBeltItem;
 import com.mrbysco.forcecraft.items.ForcePackItem;
 import com.mrbysco.forcecraft.items.ItemCardItem;
@@ -15,10 +17,10 @@ import com.mrbysco.forcecraft.networking.message.PackChangePayload;
 import com.mrbysco.forcecraft.networking.message.QuickUseBeltPayload;
 import com.mrbysco.forcecraft.networking.message.RecipeToCardPayload;
 import com.mrbysco.forcecraft.networking.message.SaveCardRecipePayload;
-import com.mrbysco.forcecraft.registry.ForceComponents;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
 import com.mrbysco.forcecraft.util.FindingUtil;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -174,14 +176,17 @@ public class ServerPayloadHandler {
 								Optional<RecipeHolder<CraftingRecipe>> iRecipe = player.server.getRecipeManager()
 										.getRecipeFor(RecipeType.CRAFTING, craftMatrix.asCraftInput(), level);
 								iRecipe.ifPresent((holder) -> {
-									CompoundTag tag = stack.getOrCreateTag();
 									CompoundTag recipeContents = new CompoundTag();
-									for (int i = 0; i < craftMatrix.getContainerSize(); i++) {
-										recipeContents.put("slot_" + i, craftMatrix.getItem(i).save(level.registryAccess(), new CompoundTag()));
+									if (craftMatrix.getContainerSize() > 9) {
+										player.sendSystemMessage(Component.translatable("forcecraft.networking.save_card.too_large", "Crafting grid too large").withStyle(ChatFormatting.RED));
+										return;
 									}
-									recipeContents.put("result", craftResult.getItem(0).save(level.registryAccess(), new CompoundTag()));
-									tag.put("RecipeContents", recipeContents);
-									stack.setTag(tag);
+									NonNullList<ItemStack> stacks = NonNullList.withSize(9, ItemStack.EMPTY);
+									for (int i = 0; i < craftMatrix.getContainerSize(); i++) {
+										stacks.set(i, craftMatrix.getItem(i));
+									}
+									RecipeContentsData data = new RecipeContentsData(stacks, craftResult.getItem(0));
+									stack.set(ForceComponents.RECIPE_CONTENTS, data);
 								});
 							}
 						}

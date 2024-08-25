@@ -1,7 +1,6 @@
 package com.mrbysco.forcecraft.items.tools;
 
 import com.google.common.collect.Lists;
-import com.mrbysco.forcecraft.attachment.toolmodifier.ToolModifierAttachment;
 import com.mrbysco.forcecraft.items.infuser.ForceToolData;
 import com.mrbysco.forcecraft.items.infuser.IForceChargingTool;
 import com.mrbysco.forcecraft.registry.material.ModToolTiers;
@@ -18,7 +17,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -27,24 +26,12 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static com.mrbysco.forcecraft.attachment.ForceAttachments.TOOL_MODIFIER;
 import static com.mrbysco.forcecraft.util.ForceUtils.isLog;
 
 public class ForceAxeItem extends AxeItem implements IForceChargingTool {
 
 	public ForceAxeItem(Item.Properties properties) {
-		super(ModToolTiers.FORCE, 0F, -3.1F, properties);
-	}
-
-	@Override
-	public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, Player player) {
-		if (stack.hasData(TOOL_MODIFIER) && stack.getData(TOOL_MODIFIER).hasLumberjack()) {
-			if (ForceUtils.isTree(player.getCommandSenderWorld(), pos)) {
-				return fellTree(stack, pos, player);
-			}
-		}
-
-		return false;
+		super(ModToolTiers.FORCE, properties.attributes(createAttributes(ModToolTiers.FORCE, 0F, -3.1F)));
 	}
 
 	public static boolean fellTree(ItemStack stack, BlockPos pos, Player player) {
@@ -74,13 +61,14 @@ public class ForceAxeItem extends AxeItem implements IForceChargingTool {
 		}
 
 		@SubscribeEvent
-		public void chop(TickEvent.LevelTickEvent event) {
-			if (event.side.isClient()) {
+		public void chop(LevelTickEvent.Post event) {
+			Level level = event.getLevel();
+			if (level.isClientSide()) {
 				finish();
 				return;
 			}
 			// only if same dimension
-			if (event.level.dimension().location().equals(level.dimension().location())) {
+			if (level.dimension().location().equals(level.dimension().location())) {
 				return;
 			}
 
@@ -147,15 +135,14 @@ public class ForceAxeItem extends AxeItem implements IForceChargingTool {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> lores, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		ForceToolData fd = new ForceToolData(stack);
-		fd.attachInformation(lores);
-		ToolModifierAttachment.attachInformation(stack, lores);
-		super.appendHoverText(stack, level, lores, flagIn);
+		fd.attachInformation(tooltip);
+		super.appendHoverText(stack, context, tooltip, tooltipFlag);
 	}
 
 	@Override
-	public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
+	public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, @Nullable T entity, Consumer<Item> onBroken) {
 		return this.damageItem(stack, amount);
 	}
 

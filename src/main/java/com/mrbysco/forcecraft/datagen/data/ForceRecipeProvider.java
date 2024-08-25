@@ -2,6 +2,7 @@ package com.mrbysco.forcecraft.datagen.data;
 
 import com.mrbysco.forcecraft.Reference;
 import com.mrbysco.forcecraft.blockentities.InfuserModifierType;
+import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.datagen.data.recipe.InfuseRecipeBuilder;
 import com.mrbysco.forcecraft.datagen.data.recipe.MultipleOutputRecipeBuilder;
 import com.mrbysco.forcecraft.datagen.data.recipe.NoRemainderShapedBuilder;
@@ -10,6 +11,7 @@ import com.mrbysco.forcecraft.items.infuser.UpgradeBookTier;
 import com.mrbysco.forcecraft.recipe.condition.TorchEnabledCondition;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
 import com.mrbysco.forcecraft.registry.ForceTags;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -19,31 +21,32 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.recipes.SingleItemRecipeBuilder;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.CampfireCookingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SmokingRecipe;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.crafting.NBTIngredient;
+import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
+import vazkii.patchouli.common.item.PatchouliDataComponents;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 
 public class ForceRecipeProvider extends RecipeProvider {
-	public ForceRecipeProvider(PackOutput packOutput) {
-		super(packOutput);
+	public ForceRecipeProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+		super(packOutput, lookupProvider);
 	}
 
 	@Override
-	protected void buildRecipes(RecipeOutput output) {
+	protected void buildRecipes(RecipeOutput output, HolderLookup.Provider provider) {
 		//Stairs
 		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ForceRegistry.FORCE_PLANK_STAIRS.get(), 4).define('#', ForceRegistry.FORCE_PLANKS.get()).pattern("#  ").pattern("## ").pattern("###").unlockedBy("has_planks", has(ForceRegistry.FORCE_PLANKS.get())).save(output);
 		ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ForceRegistry.FORCE_BRICK_RED_STAIRS.get(), 4).define('#', ForceRegistry.FORCE_BRICK_RED.get()).pattern("#  ").pattern("## ").pattern("###").unlockedBy("has_bricks", has(ForceRegistry.FORCE_BRICK_RED.get())).save(output);
@@ -581,7 +584,7 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.pattern(" #S")
 				.define('N', ForceTags.FORCE_NUGGET)
 				.define('S', ForceTags.FORCE_ROD)
-				.define('#', Tags.Items.STRING)
+				.define('#', Tags.Items.STRINGS)
 				.unlockedBy("has_force_nugget", has(ForceTags.FORCE_NUGGET))
 				.unlockedBy("has_force_rod", has(ForceTags.FORCE_ROD))
 				.save(output);
@@ -612,12 +615,12 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.pattern("CFI")
 				.pattern("CLL")
 				.define('F', ForceTags.FORCE_INGOT)
-				.define('L', Tags.Items.LEATHER)
-				.define('C', Tags.Items.COBBLESTONE_NORMAL)
+				.define('L', Tags.Items.LEATHERS)
+				.define('C', Tags.Items.COBBLESTONES_NORMAL)
 				.define('I', Tags.Items.INGOTS_IRON)
 				.unlockedBy("has_force_ingot", has(ForceTags.FORCE_INGOT))
-				.unlockedBy("has_leather", has(Tags.Items.LEATHER))
-				.unlockedBy("has_cobblestone", has(Tags.Items.COBBLESTONE_NORMAL))
+				.unlockedBy("has_leather", has(Tags.Items.LEATHERS))
+				.unlockedBy("has_cobblestone", has(Tags.Items.COBBLESTONES_NORMAL))
 				.unlockedBy("has_iron_ingot", has(Tags.Items.INGOTS_IRON))
 				.save(output);
 		//Rod
@@ -699,11 +702,11 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.pattern("LWL")
 				.define('F', ForceTags.FORCE_INGOT)
 				.define('I', Tags.Items.INGOTS_IRON)
-				.define('L', Tags.Items.LEATHER)
+				.define('L', Tags.Items.LEATHERS)
 				.define('W', ItemTags.WOOL)
 				.unlockedBy("has_force_ingot", has(ForceTags.FORCE_INGOT))
 				.unlockedBy("has_iron_ingot", has(Tags.Items.INGOTS_IRON))
-				.unlockedBy("has_leather", has(Tags.Items.LEATHER))
+				.unlockedBy("has_leather", has(Tags.Items.LEATHERS))
 				.unlockedBy("has_wool", has(ItemTags.WOOL))
 				.save(output);
 		//Force Engine
@@ -712,11 +715,11 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.pattern(" # ")
 				.pattern("GPG")
 				.define('F', ForceTags.FORCE_INGOT)
-				.define('#', Tags.Items.GLASS)
+				.define('#', Tags.Items.GLASS_BLOCKS)
 				.define('G', ForceTags.FORCE_GEAR)
 				.define('P', Items.PISTON)
 				.unlockedBy("has_force_ingot", has(ForceTags.FORCE_INGOT))
-				.unlockedBy("has_glass", has(Tags.Items.GLASS))
+				.unlockedBy("has_glass", has(Tags.Items.GLASS_BLOCKS))
 				.unlockedBy("has_force_gear", has(ForceTags.FORCE_GEAR))
 				.unlockedBy("has_piston", has(Items.PISTON))
 				.save(output);
@@ -751,10 +754,10 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.pattern("LCL")
 				.pattern("FLF")
 				.define('F', ForceTags.FORCE_INGOT)
-				.define('L', Tags.Items.LEATHER)
+				.define('L', Tags.Items.LEATHERS)
 				.define('C', ItemTags.PLANKS)
 				.unlockedBy("has_force_ingot", has(ForceTags.FORCE_INGOT))
-				.unlockedBy("has_leather", has(Tags.Items.LEATHER))
+				.unlockedBy("has_leather", has(Tags.Items.LEATHERS))
 				.unlockedBy("has_planks", has(ItemTags.PLANKS))
 				.save(output);
 		//Force Pack Upgrade
@@ -763,10 +766,10 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.pattern("LIL")
 				.pattern("WLW")
 				.define('I', ForceTags.FORCE_INGOT)
-				.define('L', Tags.Items.LEATHER)
+				.define('L', Tags.Items.LEATHERS)
 				.define('W', ItemTags.WOOL)
 				.unlockedBy("has_force_ingot", has(ForceTags.FORCE_INGOT))
-				.unlockedBy("has_leather", has(Tags.Items.LEATHER))
+				.unlockedBy("has_leather", has(Tags.Items.LEATHERS))
 				.unlockedBy("has_wool", has(ItemTags.WOOL))
 				.save(output);
 		//Force Flask
@@ -775,9 +778,9 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.pattern("G G")
 				.pattern(" G ")
 				.define('N', ForceTags.FORCE_NUGGET)
-				.define('G', Tags.Items.GLASS)
+				.define('G', Tags.Items.GLASS_BLOCKS)
 				.unlockedBy("has_force_nugget", has(ForceTags.FORCE_NUGGET))
-				.unlockedBy("has_glass", has(Tags.Items.GLASS))
+				.unlockedBy("has_glass", has(Tags.Items.GLASS_BLOCKS))
 				.save(output);
 		NoRemainderShapedBuilder.shaped(RecipeCategory.MISC, ForceRegistry.FORCE_FLASK.get())
 				.pattern("E")
@@ -882,12 +885,12 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.pattern(" G ")
 				.pattern("BSF")
 				.pattern(" L ")
-				.define('G', Tags.Items.GUNPOWDER)
+				.define('G', Tags.Items.GUNPOWDERS)
 				.define('S', ForceRegistry.SNOW_COOKIE.get())
 				.define('B', Tags.Items.BONES)
 				.define('F', Items.ROTTEN_FLESH)
 				.define('L', Tags.Items.DYES_LIGHT_BLUE)
-				.unlockedBy("has_gunpowder", has(Tags.Items.GUNPOWDER))
+				.unlockedBy("has_gunpowder", has(Tags.Items.GUNPOWDERS))
 				.unlockedBy("has_snow_cookie", has(ForceRegistry.SNOW_COOKIE.get()))
 				.unlockedBy("has_bone", has(Tags.Items.BONES))
 				.unlockedBy("has_rotten_flesh", has(Items.ROTTEN_FLESH))
@@ -937,11 +940,10 @@ public class ForceRecipeProvider extends RecipeProvider {
 	}
 
 	public static ItemStack getGuideBook() {
-		Item guideBook = BuiltInRegistries.ITEM.get(new ResourceLocation("patchouli", "guide_book"));
+		Item guideBook = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("patchouli", "guide_book"));
 		if (guideBook != null) {
 			ItemStack patchouliBook = new ItemStack(guideBook);
-			CompoundTag tag = patchouliBook.getOrCreateTag();
-			tag.putString("patchouli:book", "forcecraft:force_and_you");
+			patchouliBook.set(PatchouliDataComponents.BOOK, Reference.modLoc("force_and_you"));
 			return patchouliBook;
 		}
 		return ItemStack.EMPTY;
@@ -1067,9 +1069,9 @@ public class ForceRecipeProvider extends RecipeProvider {
 						20
 				).modifierType(InfuserModifierType.SILK)
 				.save(output, Reference.modLoc("infuser/infuse_silk"));
-		final ItemStack invisibility = PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.INVISIBILITY);
+		final ItemStack invisibility = PotionContents.createItemStack(Items.POTION, Potions.INVISIBILITY);
 		InfuseRecipeBuilder.infuse(
-						NBTIngredient.of(false, invisibility),
+						DataComponentIngredient.of(false, invisibility),
 						Ingredient.of(ForceTags.VALID_CAMO_TOOLS),
 						UpgradeBookTier.THREE,
 						20
@@ -1177,7 +1179,7 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.setResult(Items.BONE_MEAL, 1)
 				.unlockedBy("has_core", has(ForceRegistry.FREEZING_CORE))
 				.save(output, Reference.modLoc("freezing/bone_meal_from_blaze_powder"));
-		MultipleOutputRecipeBuilder.freezing(Ingredient.of(Tags.Items.INGOTS_NETHER_BRICK), 0.1F, 200)
+		MultipleOutputRecipeBuilder.freezing(Ingredient.of(Tags.Items.BRICKS_NORMAL), 0.1F, 200)
 				.setResult(Items.BRICK, 1)
 				.unlockedBy("has_core", has(ForceRegistry.FREEZING_CORE))
 				.save(output, Reference.modLoc("freezing/brick_from_nether_brick"));
@@ -1185,8 +1187,8 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.setResult(Items.LEATHER, 1)
 				.unlockedBy("has_core", has(ForceRegistry.FREEZING_CORE))
 				.save(output, Reference.modLoc("freezing/leather_from_rotten_flesh"));
-		final ItemStack waterBottle = PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER);
-		MultipleOutputRecipeBuilder.freezing(NBTIngredient.of(false, waterBottle), 0.1F, 200)
+		final ItemStack waterBottle = PotionContents.createItemStack(Items.POTION, Potions.WATER);
+		MultipleOutputRecipeBuilder.freezing(DataComponentIngredient.of(false, waterBottle), 0.1F, 200)
 				.setResult(Items.ICE, 1)
 				.setResult(Items.GLASS_BOTTLE, 1)
 				.unlockedBy("has_core", has(ForceRegistry.FREEZING_CORE))
@@ -1196,7 +1198,7 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.setResult(Items.BUCKET, 1)
 				.unlockedBy("has_core", has(ForceRegistry.FREEZING_CORE))
 				.save(output, Reference.modLoc("freezing/ice_from_water_bucket"));
-		MultipleOutputRecipeBuilder.freezing(Ingredient.of(Tags.Items.NETHERRACK), 0.1F, 200)
+		MultipleOutputRecipeBuilder.freezing(Ingredient.of(Tags.Items.NETHERRACKS), 0.1F, 200)
 				.setResult(Items.COBBLESTONE, 1)
 				.unlockedBy("has_core", has(ForceRegistry.FREEZING_CORE))
 				.save(output, Reference.modLoc("freezing/cobblestone_from_netherrack"));
@@ -1205,11 +1207,11 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.setResult(Items.BUCKET, 1)
 				.unlockedBy("has_core", has(ForceRegistry.FREEZING_CORE))
 				.save(output, Reference.modLoc("freezing/obsidian_from_lava_bucket"));
-		MultipleOutputRecipeBuilder.freezing(Ingredient.of(Tags.Items.SAND_COLORLESS), 0.1F, 200)
+		MultipleOutputRecipeBuilder.freezing(Ingredient.of(Tags.Items.SANDS_COLORLESS), 0.1F, 200)
 				.setResult(Items.SANDSTONE, 1)
 				.unlockedBy("has_core", has(ForceRegistry.FREEZING_CORE))
 				.save(output, Reference.modLoc("freezing/sandstone_from_sand"));
-		MultipleOutputRecipeBuilder.freezing(Ingredient.of(Tags.Items.SAND_RED), 0.1F, 200)
+		MultipleOutputRecipeBuilder.freezing(Ingredient.of(Tags.Items.SANDS_RED), 0.1F, 200)
 				.setResult(Items.RED_SANDSTONE, 1)
 				.unlockedBy("has_core", has(ForceRegistry.FREEZING_CORE))
 				.save(output, Reference.modLoc("freezing/sandstone_from_red_sand"));
@@ -1217,11 +1219,11 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.setResult(Items.SNOWBALL, 1)
 				.unlockedBy("has_core", has(ForceRegistry.FREEZING_CORE))
 				.save(output, Reference.modLoc("freezing/snowball_from_slimeball"));
-		MultipleOutputRecipeBuilder.freezing(Ingredient.of(Tags.Items.COBBLESTONE_NORMAL), 0.1F, 200)
+		MultipleOutputRecipeBuilder.freezing(Ingredient.of(Tags.Items.COBBLESTONES_NORMAL), 0.1F, 200)
 				.setResult(Items.STONE, 1)
 				.unlockedBy("has_core", has(ForceRegistry.FREEZING_CORE))
 				.save(output, Reference.modLoc("freezing/stone_from_cobblestone"));
-		MultipleOutputRecipeBuilder.freezing(Ingredient.of(Tags.Items.STONE), 0.1F, 200)
+		MultipleOutputRecipeBuilder.freezing(Ingredient.of(Tags.Items.STONES), 0.1F, 200)
 				.setResult(Items.STONE_BRICKS, 1)
 				.unlockedBy("has_core", has(ForceRegistry.FREEZING_CORE))
 				.save(output, Reference.modLoc("freezing/stone_bricks_from_stone"));
@@ -1381,7 +1383,7 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.save(output, Reference.modLoc("grinding/ingots_from_force_furnace"));
 
 		//Flint
-		MultipleOutputRecipeBuilder.grinding(Ingredient.of(Tags.Items.GRAVEL), 1.0F, 0.1F, 400)
+		MultipleOutputRecipeBuilder.grinding(Ingredient.of(Tags.Items.GRAVELS), 1.0F, 0.1F, 400)
 				.setResult(Items.FLINT, 1)
 				.unlockedBy("has_core", has(ForceRegistry.GRINDING_CORE))
 				.save(output, Reference.modLoc("grinding/flint_from_gravel"));
@@ -1429,7 +1431,7 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.setResult(Items.RED_SAND, 1)
 				.unlockedBy("has_core", has(ForceRegistry.GRINDING_CORE))
 				.save(output, Reference.modLoc("grinding/sand_from_red_sandstone"));
-		MultipleOutputRecipeBuilder.grinding(Ingredient.of(Tags.Items.COBBLESTONE_NORMAL), 1.0F, 0.1F, 400)
+		MultipleOutputRecipeBuilder.grinding(Ingredient.of(Tags.Items.COBBLESTONES_NORMAL), 1.0F, 0.1F, 400)
 				.setResult(Items.COBBLESTONE, 1)
 				.unlockedBy("has_core", has(ForceRegistry.GRINDING_CORE))
 				.save(output, Reference.modLoc("grinding/sand_from_cobblestone"));
@@ -1769,11 +1771,9 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.save(output, Reference.modLoc("transmutation/upgrade_tome"));
 
 		ItemStack experienceTomeStack = new ItemStack(ForceRegistry.EXPERIENCE_TOME.get());
-		CompoundTag tag = experienceTomeStack.getOrCreateTag();
-		tag.putInt("Experience", 100);
-		experienceTomeStack.setTag(tag);
+		experienceTomeStack.set(ForceComponents.TOME_EXPERIENCE, 100);
 		TransmutationRecipeBuilder.transmutation(ForceRegistry.UPGRADE_CORE.get())
-				.requires(NBTIngredient.of(false, experienceTomeStack))
+				.requires(DataComponentIngredient.of(false, experienceTomeStack))
 				.unlockedBy("has_experience_tome", has(ForceRegistry.EXPERIENCE_TOME.get()))
 				.save(output, Reference.modLoc("transmutation/upgrade_core"));
 

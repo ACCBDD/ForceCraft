@@ -10,7 +10,7 @@ public record PackChangePayload(InteractionHand hand, String customName, int col
 	public static final StreamCodec<FriendlyByteBuf, PackChangePayload> CODEC = CustomPacketPayload.codec(
 			PackChangePayload::write,
 			PackChangePayload::new);
-	public static final Type<OpenInventoryPayload> ID = new Type<>(Reference.modLoc("pack_change"));
+	public static final Type<PackChangePayload> ID = new Type<>(Reference.modLoc("pack_change"));
 
 	public PackChangePayload(final FriendlyByteBuf packetBuffer) {
 		this(packetBuffer.readInt() == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND, packetBuffer.readUtf(), packetBuffer.readInt());

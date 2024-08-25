@@ -1,8 +1,5 @@
 package com.mrbysco.forcecraft.items.tools;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableMultimap.Builder;
-import com.google.common.collect.Multimap;
 import com.mojang.datafixers.util.Pair;
 import com.mrbysco.forcecraft.registry.ForceSounds;
 import com.mrbysco.forcecraft.registry.ForceTags;
@@ -17,14 +14,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.HoeItem;
@@ -40,7 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.common.ToolActions;
+import net.neoforged.neoforge.common.ItemAbilities;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -48,12 +39,12 @@ import java.util.function.Predicate;
 
 public class ForceMittItem extends DiggerItem {
 
-	private final float attackDamage;
 	private final Tier itemTier = ModToolTiers.FORCE;
 
 	public ForceMittItem(Item.Properties properties) {
-		super(8.0F, 8.0F, ModToolTiers.FORCE, ForceTags.MINEABLE_WITH_MITTS, properties.durability(1000));
-		this.attackDamage = 3.0F;
+		super(ModToolTiers.FORCE, ForceTags.MINEABLE_WITH_MITTS, properties
+				.attributes(createAttributes(ModToolTiers.FORCE, 3.0F, -2.4F))
+				.durability(1000));
 	}
 
 	@Override
@@ -102,11 +93,11 @@ public class ForceMittItem extends DiggerItem {
 		BlockEntity tileEntity = level.getBlockEntity(pos);
 		if (level.getBlockState(pos).is(BlockTags.LEAVES)) {
 			BlockState state = level.getBlockState(pos);
-			if (!CommonHooks.isCorrectToolForDrops(state, player)) return;
+			if (!stack.isCorrectToolForDrops(state)) return;
 
 			if (!level.isClientSide) {
-				int xp = CommonHooks.onBlockBreakEvent(level, ((ServerPlayer) player).gameMode.getGameModeForPlayer(), (ServerPlayer) player, pos);
-				if (xp == -1) {
+				if (CommonHooks.fireBlockBreak(level, ((ServerPlayer) player).gameMode.getGameModeForPlayer(),
+						(ServerPlayer) player, pos, state).isCanceled()) {
 					return;
 				}
 
@@ -116,7 +107,8 @@ public class ForceMittItem extends DiggerItem {
 				if (block.onDestroyedByPlayer(state, level, pos, player, true, fluidState)) {
 					block.playerWillDestroy(level, pos, state, player);
 					block.playerDestroy(level, player, pos, state, tileEntity, stack);
-					block.popExperience((ServerLevel) level, pos, xp);
+					int exp = block.getExpDrop(state, level, pos, null, player, stack);
+					block.popExperience((ServerLevel) level, pos, exp);
 				}
 
 				((ServerLevel) level).sendParticles(ParticleTypes.SWEEP_ATTACK, (double) pos.getX(), (double) pos.getY(), (double) pos.getZ(), 1, 0, 0, 0, 0.0D);
@@ -156,9 +148,7 @@ public class ForceMittItem extends DiggerItem {
 					if (!level.isClientSide) {
 						consumer.accept(context);
 						if (player != null) {
-							context.getItemInHand().hurtAndBreak(1, player, (p_150845_) -> {
-								p_150845_.broadcastBreakEvent(context.getHand());
-							});
+							context.getItemInHand().hurtAndBreak(1, player, Player.getSlotForHand(context.getHand()));
 						}
 					}
 
@@ -169,7 +159,7 @@ public class ForceMittItem extends DiggerItem {
 			}
 		}
 
-		Optional<BlockState> optional = Optional.ofNullable(blockstate.getToolModifiedState(context, ToolActions.AXE_STRIP, false));
+		Optional<BlockState> optional = Optional.ofNullable(blockstate.getToolModifiedState(context, ItemAbilities.AXE_STRIP, false));
 		if (optional.isPresent()) {
 			level.playSound(player, blockpos, SoundEvents.AXE_STRIP, SoundSource.BLOCKS, 1.0F, 1.0F);
 			if (player instanceof ServerPlayer) {
@@ -178,9 +168,7 @@ public class ForceMittItem extends DiggerItem {
 
 			level.setBlock(blockpos, optional.get(), 11);
 			if (player != null) {
-				itemstack.hurtAndBreak(1, player, (player1) -> {
-					player1.broadcastBreakEvent(context.getHand());
-				});
+				itemstack.hurtAndBreak(1, player, Player.getSlotForHand(context.getHand()));
 			}
 
 			return InteractionResult.sidedSuccess(level.isClientSide);
@@ -191,7 +179,7 @@ public class ForceMittItem extends DiggerItem {
 
 	@Override
 	public float getDestroySpeed(ItemStack stack, BlockState state) {
-		return state.is(this.blocks) ? 14.0F : 1.0F;
+		return state.is(ForceTags.MINEABLE_WITH_MITTS) ? 14.0F : 1.0F;
 	}
 
 	public float getAttackDamage() {
@@ -200,21 +188,7 @@ public class ForceMittItem extends DiggerItem {
 
 	@Override
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-		stack.hurtAndBreak(1, attacker, (attackerEntity) -> attackerEntity.broadcastBreakEvent(InteractionHand.MAIN_HAND));
+		stack.hurtAndBreak(1, attacker, Player.getSlotForHand(attacker.getUsedItemHand()));
 		return true;
-	}
-
-	@Override
-	public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot equipmentSlot) {
-		Multimap<Attribute, AttributeModifier> multimap = super.getDefaultAttributeModifiers(equipmentSlot);
-		if (equipmentSlot == EquipmentSlot.MAINHAND) {
-			if (multimap != null) {
-				Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-				builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon damage modifier", (double) this.attackDamage, Operation.ADDITION));
-				builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon speed modifier", -2.4000000953674316D, Operation.ADDITION));
-				multimap = builder.build();
-			}
-		}
-		return multimap;
 	}
 }

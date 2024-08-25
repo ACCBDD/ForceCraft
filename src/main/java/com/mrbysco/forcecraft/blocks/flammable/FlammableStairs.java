@@ -12,7 +12,7 @@ public class FlammableStairs extends StairBlock {
 	public final int fireSpreadSpeed;
 	public final int flammability;
 
-	public FlammableStairs(Supplier<BlockState> state, Properties properties, int spreadSpeed, int flammability) {
+	public FlammableStairs(BlockState state, Properties properties, int spreadSpeed, int flammability) {
 		super(state, properties);
 		this.fireSpreadSpeed = spreadSpeed;
 		this.flammability = flammability;

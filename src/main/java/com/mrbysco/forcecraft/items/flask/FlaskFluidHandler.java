@@ -3,18 +3,21 @@ package com.mrbysco.forcecraft.items.flask;
 import com.mrbysco.forcecraft.registry.ForceFluids;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
 import com.mrbysco.forcecraft.registry.ForceTags;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.fluids.capability.templates.FluidHandlerItemStackSimple;
 
 import javax.annotation.Nonnull;
+import java.util.function.Supplier;
 
 public class FlaskFluidHandler extends FluidHandlerItemStackSimple {
 
-	public FlaskFluidHandler(@Nonnull ItemStack container) {
-		super(container, 1000);
+	public FlaskFluidHandler(Supplier<DataComponentType<SimpleFluidContent>> componentType, ItemStack container) {
+		super(componentType, container, 1000);
 	}
 
 	@Override

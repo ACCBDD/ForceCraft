@@ -1,0 +1,15 @@
+{
+  "type": "forcecraft:transmutation",
+  "ingredients": [
+    {
+      "item": "forcecraft:force_rod"
+    },
+    {
+      "item": "minecraft:anvil"
+    }
+  ],
+  "result": {
+    "count": 31,
+    "id": "minecraft:iron_ingot"
+  }
+}

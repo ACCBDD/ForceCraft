@@ -1,9 +1,9 @@
-// 1.20.4	2024-01-28T23:49:44.4709458	Tags for minecraft:block mod id forcecraft
-6682e317fdf17b7ed16b01be6244689ba18716a1 data/forcecraft/tags/blocks/needs_force_tool.json
-5ec6a48a81a06d202f30aee8ebfbbb9b9564386b data/forge/tags/blocks/ores.json
-f002772c304bb8350635523d7d3bb1c4fdb5796a data/forge/tags/blocks/ores/power.json
-b73848b6920747aedc21ffb8aed7e3aa8d325f04 data/forge/tags/blocks/ores_in_ground/deepslate.json
-5b2618b88b5b044099742e91e0a5e3ed254d91cf data/forge/tags/blocks/ores_in_ground/stone.json
-d24fa89133e2e0d0fed52aec4122ab12ef2313f8 data/minecraft/tags/blocks/mineable/pickaxe.json
-bbb8aafb9fe8b2ac991b03b55e4a2bee3318a1da data/minecraft/tags/blocks/needs_diamond_tool.json
-f002772c304bb8350635523d7d3bb1c4fdb5796a data/minecraft/tags/blocks/needs_iron_tool.json
+// 1.21.1	2024-08-25T23:46:34.836315186	Tags for minecraft:block mod id forcecraft
+d964b17dbbb1870466808060f50c0991f7cfaf65 data/c/tags/block/ores.json
+f002772c304bb8350635523d7d3bb1c4fdb5796a data/c/tags/block/ores/power.json
+b73848b6920747aedc21ffb8aed7e3aa8d325f04 data/c/tags/block/ores_in_ground/deepslate.json
+5b2618b88b5b044099742e91e0a5e3ed254d91cf data/c/tags/block/ores_in_ground/stone.json
+f57a1c0d935679dbbcab3f2e8a06cae2238a6735 data/forcecraft/tags/block/needs_force_tool.json
+d24fa89133e2e0d0fed52aec4122ab12ef2313f8 data/minecraft/tags/block/mineable/pickaxe.json
+bbb8aafb9fe8b2ac991b03b55e4a2bee3318a1da data/minecraft/tags/block/needs_diamond_tool.json
+f002772c304bb8350635523d7d3bb1c4fdb5796a data/minecraft/tags/block/needs_iron_tool.json

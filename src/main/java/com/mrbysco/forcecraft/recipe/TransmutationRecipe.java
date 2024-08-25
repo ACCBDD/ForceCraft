@@ -2,29 +2,35 @@ package com.mrbysco.forcecraft.recipe;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.items.ExperienceTomeItem;
 import com.mrbysco.forcecraft.items.tools.ForceRodItem;
 import com.mrbysco.forcecraft.registry.ForceRecipeSerializers;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
 import it.unimi.dsi.fastutil.ints.IntList;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.StackedContents;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ExperienceBottleItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.util.RecipeMatcher;
 import org.jetbrains.annotations.Nullable;
@@ -55,7 +61,7 @@ public class TransmutationRecipe implements CraftingRecipe {
 	}
 
 	@Override
-	public ItemStack getResultItem(RegistryAccess registryAccess) {
+	public ItemStack getResultItem(HolderLookup.Provider registries) {
 		return this.result;
 	}
 
@@ -70,12 +76,12 @@ public class TransmutationRecipe implements CraftingRecipe {
 	}
 
 	@Override
-	public boolean matches(CraftingContainer inv, Level level) {
+	public boolean matches(CraftingInput inv, Level level) {
 		StackedContents stackedContents = new StackedContents();
 		java.util.List<ItemStack> inputs = new java.util.ArrayList<>();
 		int stacks = 0;
 
-		for (int i = 0; i < inv.getContainerSize(); ++i) {
+		for (int i = 0; i < inv.size(); ++i) {
 			ItemStack itemstack = inv.getItem(i);
 			if (!itemstack.isEmpty()) { //TEMP fix!
 				++stacks;
@@ -85,13 +91,11 @@ public class TransmutationRecipe implements CraftingRecipe {
 					else inputs.add(itemstack);
 				} else {
 					if (itemstack.getItem() instanceof ExperienceTomeItem) {
-						if (itemstack.hasTag() && itemstack.getTag().getInt("Experience") < 100) {
+						if (itemstack.has(ForceComponents.TOME_EXPERIENCE) && itemstack.getOrDefault(ForceComponents.TOME_EXPERIENCE, 0) < 100) {
 							return false;
 						} else {
 							ItemStack experienceTome = new ItemStack(ForceRegistry.EXPERIENCE_TOME.get());
-							CompoundTag tag = experienceTome.getOrCreateTag();
-							tag.putInt("Experience", 100);
-							experienceTome.setTag(tag);
+							itemstack.set(ForceComponents.TOME_EXPERIENCE, 100);
 							if (isSimple)
 								stackedContents.accountStack(experienceTome, 1);
 							else inputs.add(experienceTome);
@@ -111,21 +115,20 @@ public class TransmutationRecipe implements CraftingRecipe {
 	}
 
 	@Override
-	public ItemStack assemble(CraftingContainer inv, RegistryAccess registryAccess) {
-		ItemStack resultStack = getResultItem(registryAccess).copy();
-		for (int j = 0; j < inv.getContainerSize(); ++j) {
+	public ItemStack assemble(CraftingInput inv, HolderLookup.Provider registries) {
+		ItemStack resultStack = getResultItem(registries).copy();
+		for (int j = 0; j < inv.size(); ++j) {
 			ItemStack itemstack = inv.getItem(j);
-			if ((itemstack.getItem() instanceof ExperienceTomeItem)) {
-				CompoundTag tag = itemstack.getOrCreateTag();
-				int experience = tag.getInt("Experience");
+			if (itemstack.is(ForceRegistry.EXPERIENCE_TOME) && itemstack.has(ForceComponents.TOME_EXPERIENCE)) {
+				int experience = itemstack.getOrDefault(ForceComponents.TOME_EXPERIENCE, 0);
 				int count = Math.min((int) ((float) experience / 100f), 64);
 				resultStack.setCount(count);
 			}
 			if (itemstack.getItem() instanceof EnchantedBookItem && resultStack.getItem() instanceof ExperienceBottleItem) {
-				Map<Enchantment, Integer> enchantmentMap = EnchantmentHelper.getEnchantments(itemstack);
+				ItemEnchantments enchantmentMap = itemstack.get(DataComponents.ENCHANTMENTS);
 				if (!enchantmentMap.isEmpty()) {
 					int amount = 0;
-					for (Map.Entry<Enchantment, Integer> entry : enchantmentMap.entrySet()) {
+					for (Map.Entry<Holder<Enchantment>, Integer> entry : enchantmentMap.entrySet()) {
 						amount += entry.getValue();
 					}
 					resultStack.setCount(Mth.clamp(amount, 1, 64));
@@ -141,8 +144,8 @@ public class TransmutationRecipe implements CraftingRecipe {
 	}
 
 	@Override
-	public NonNullList<ItemStack> getRemainingItems(CraftingContainer inv) {
-		NonNullList<ItemStack> nonnulllist = NonNullList.withSize(inv.getContainerSize(), ItemStack.EMPTY);
+	public NonNullList<ItemStack> getRemainingItems(CraftingInput inv) {
+		NonNullList<ItemStack> nonnulllist = NonNullList.withSize(inv.size(), ItemStack.EMPTY);
 		for (int i = 0; i < nonnulllist.size(); ++i) {
 			ItemStack itemstack = inv.getItem(i);
 			if (itemstack.hasCraftingRemainingItem()) {
@@ -161,8 +164,7 @@ public class TransmutationRecipe implements CraftingRecipe {
 				continue;
 			} else if ((itemstack.getItem() instanceof ExperienceTomeItem)) {
 				ItemStack itemstack1 = itemstack.copy();
-				CompoundTag tag = itemstack.getOrCreateTag();
-				int experience = tag.getInt("Experience");
+				int experience = itemstack.getOrDefault(ForceComponents.TOME_EXPERIENCE, 0);
 				int count = (int) ((float) experience / 100f);
 				int newExperience;
 				if (count > 64) {
@@ -170,8 +172,7 @@ public class TransmutationRecipe implements CraftingRecipe {
 				} else {
 					newExperience = experience - (count * 100);
 				}
-				tag.putInt("Experience", newExperience);
-				itemstack1.setTag(tag);
+				itemstack1.set(ForceComponents.TOME_EXPERIENCE, newExperience);
 				nonnulllist.set(i, itemstack1);
 			}
 		}
@@ -184,12 +185,12 @@ public class TransmutationRecipe implements CraftingRecipe {
 		return CraftingBookCategory.MISC;
 	}
 
-	public static class SerializerTransmutationRecipe implements RecipeSerializer<TransmutationRecipe> {
+	public static class Serializer implements RecipeSerializer<TransmutationRecipe> {
 
-		private static final Codec<TransmutationRecipe> CODEC = RecordCodecBuilder.create(
+		private static final MapCodec<TransmutationRecipe> CODEC = RecordCodecBuilder.mapCodec(
 				instance -> instance.group(
-								ExtraCodecs.strictOptionalField(Codec.STRING, "group", "").forGetter(recipe -> recipe.group),
-								ItemStack.ITEM_WITH_COUNT_CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
+								Codec.STRING.optionalFieldOf("group", "").forGetter(recipe -> recipe.group),
+								ItemStack.STRICT_CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
 								Ingredient.CODEC_NONEMPTY
 										.listOf()
 										.fieldOf("ingredients")
@@ -210,37 +211,42 @@ public class TransmutationRecipe implements CraftingRecipe {
 						)
 						.apply(instance, TransmutationRecipe::new)
 		);
+		public static final StreamCodec<RegistryFriendlyByteBuf, TransmutationRecipe> STREAM_CODEC = StreamCodec.of(
+				TransmutationRecipe.Serializer::toNetwork, TransmutationRecipe.Serializer::fromNetwork
+		);
 
 		@Override
-		public Codec<TransmutationRecipe> codec() {
+		public MapCodec<TransmutationRecipe> codec() {
 			return CODEC;
 		}
 
-		@Nullable
 		@Override
-		public TransmutationRecipe fromNetwork(FriendlyByteBuf buffer) {
+		public StreamCodec<RegistryFriendlyByteBuf, TransmutationRecipe> streamCodec() {
+			return STREAM_CODEC;
+		}
+
+		public static TransmutationRecipe fromNetwork(RegistryFriendlyByteBuf buffer) {
 			String s = buffer.readUtf(32767);
 			int i = buffer.readVarInt();
 			NonNullList<Ingredient> nonnulllist = NonNullList.withSize(i, Ingredient.EMPTY);
 
 			for (int j = 0; j < nonnulllist.size(); ++j) {
-				nonnulllist.set(j, Ingredient.fromNetwork(buffer));
+				nonnulllist.set(j, Ingredient.CONTENTS_STREAM_CODEC.decode(buffer));
 			}
 
-			ItemStack itemstack = buffer.readItem();
+			ItemStack itemstack = ItemStack.STREAM_CODEC.decode(buffer);
 			return new TransmutationRecipe(s, itemstack, nonnulllist);
 		}
 
-		@Override
-		public void toNetwork(FriendlyByteBuf buffer, TransmutationRecipe recipe) {
+		public static void toNetwork(RegistryFriendlyByteBuf buffer, TransmutationRecipe recipe) {
 			buffer.writeUtf(recipe.group);
 			buffer.writeVarInt(recipe.ingredients.size());
 
 			for (Ingredient ingredient : recipe.ingredients) {
-				ingredient.toNetwork(buffer);
+				Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, ingredient);
 			}
 
-			buffer.writeItem(recipe.result);
+			ItemStack.STREAM_CODEC.encode(buffer, recipe.result);
 		}
 	}
 }

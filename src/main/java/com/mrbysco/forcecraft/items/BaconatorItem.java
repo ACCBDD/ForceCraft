@@ -1,11 +1,12 @@
 package com.mrbysco.forcecraft.items;
 
 import com.mrbysco.forcecraft.Reference;
+import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.registry.ForceTags;
 import com.mrbysco.forcecraft.util.ItemHandlerUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -21,7 +22,6 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ public class BaconatorItem extends BaseItem {
 			if (!isFull) {
 				//Fill with food
 				boolean extracted = ItemHandlerUtils.extractStackFromPlayer(playerIn.getInventory(), handler, (stack) -> {
-					return !stack.isEmpty() && stack.isEdible() && stack.is(ForceTags.BACONATOR_FOOD);
+					return !stack.isEmpty() && stack.has(DataComponents.FOOD) && stack.is(ForceTags.BACONATOR_FOOD);
 				});
 				boolean hasItems = ItemHandlerUtils.hasItems(handler);
 				if (!extracted) {
@@ -52,14 +52,12 @@ public class BaconatorItem extends BaseItem {
 				} else {
 					level.playSound((Player) null, playerIn.getX(), playerIn.getY(), playerIn.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1.0F, 1.0F);
 				}
-				CompoundTag tag = itemstack.getOrCreateTag();
-				tag.putBoolean(HAS_FOOD_TAG, hasItems);
 			}
 		} else {
 			if (ItemHandlerUtils.hasItems(handler)) {
 				ItemStack firstStack = ItemHandlerUtils.getFirstItem(handler);
 				if (!firstStack.isEmpty()) {
-					FoodProperties foodProperties = firstStack.getItem().getFoodProperties();
+					FoodProperties foodProperties = firstStack.getFoodProperties(playerIn);
 					if (foodProperties != null && playerIn.canEat(foodProperties.canAlwaysEat())) {
 						playerIn.startUsingItem(handIn);
 					}
@@ -84,13 +82,13 @@ public class BaconatorItem extends BaseItem {
 	public UseAnim getUseAnimation(ItemStack stack) {
 		IItemHandler handler = stack.getCapability(Capabilities.ItemHandler.ITEM);
 		ItemStack firstStack = ItemHandlerUtils.getFirstItem(handler);
-		return firstStack != null && firstStack.getItem().isEdible() ? UseAnim.EAT : UseAnim.NONE;
+		return firstStack != null && firstStack.has(DataComponents.FOOD) ? UseAnim.EAT : UseAnim.NONE;
 	}
 
 	@Override
 	public void inventoryTick(ItemStack stack, Level level, Entity entityIn, int itemSlot, boolean isSelected) {
 		if (stack.getDamageValue() == 1 && entityIn instanceof Player playerIn && level.getGameTime() % 20 == 0) {
-			if (!playerIn.getAbilities().instabuild && playerIn.canEat(false) && stack.getOrCreateTag().getBoolean(HAS_FOOD_TAG)) {
+			if (!playerIn.getAbilities().instabuild && playerIn.canEat(false) && stack.has(ForceComponents.STORED_FOOD)) {
 				IItemHandler handler = stack.getCapability(Capabilities.ItemHandler.ITEM);
 				ItemStack firstStack = ItemHandlerUtils.getFirstItem(handler);
 				if (!firstStack.isEmpty()) {
@@ -102,12 +100,12 @@ public class BaconatorItem extends BaseItem {
 	}
 
 	@Override
-	public int getUseDuration(ItemStack stack) {
+	public int getUseDuration(ItemStack stack, LivingEntity livingEntity) {
 		IItemHandler handler = stack.getCapability(Capabilities.ItemHandler.ITEM);
 		ItemStack firstStack = ItemHandlerUtils.getFirstItem(handler);
-		if (!firstStack.isEmpty() && firstStack.getItem().isEdible()) {
-			FoodProperties foodProperties = firstStack.getItem().getFoodProperties();
-			return foodProperties != null && foodProperties.isFastFood() ? 16 : 32;
+		if (!firstStack.isEmpty() && firstStack.has(DataComponents.FOOD)) {
+			FoodProperties foodProperties = firstStack.getFoodProperties(livingEntity);
+			return foodProperties.eatDurationTicks();
 		} else {
 			return 0;
 		}
@@ -119,7 +117,8 @@ public class BaconatorItem extends BaseItem {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
 		if (Screen.hasShiftDown()) {
 			tooltip.add(Component.translatable("forcecraft.baconator.shift.carrying").withStyle(ChatFormatting.DARK_RED));
 			IItemHandler handler = stack.getCapability(Capabilities.ItemHandler.ITEM);
@@ -139,6 +138,5 @@ public class BaconatorItem extends BaseItem {
 		} else {
 			tooltip.add(Component.translatable("forcecraft.baconator.shift.text").withStyle(ChatFormatting.GRAY));
 		}
-		super.appendHoverText(stack, level, tooltip, flagIn);
 	}
 }

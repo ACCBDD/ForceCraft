@@ -1,7 +1,6 @@
 package com.mrbysco.forcecraft.entities;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.EntityType;
@@ -19,11 +18,6 @@ public class ChuChuEntity extends Slime {
 
 	public ChuChuEntity(EntityType<? extends Slime> type, Level level) {
 		super(type, level);
-	}
-
-	@Override
-	protected ResourceLocation getDefaultLootTable() {
-		return this.getType().getDefaultLootTable();
 	}
 
 	@Override

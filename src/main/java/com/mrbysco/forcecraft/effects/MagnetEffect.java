@@ -33,7 +33,7 @@ public class MagnetEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity entity, int amplifier) {
+	public boolean applyEffectTick(LivingEntity entity, int amplifier) {
 		//Inspired by Botania Code
 		double x = entity.getX();
 		double y = entity.getY() + 0.75;
@@ -51,7 +51,7 @@ public class MagnetEffect extends MobEffect {
 			// constant force!
 			float strength = 0.14F;
 
-			Vec3 entityVector = new Vec3(item.getX(), item.getY() - item.getMyRidingOffset(entity) + item.getBbHeight() / 2, item.getZ());
+			Vec3 entityVector = new Vec3(item.getX(), item.getY() - item.getPassengerRidingPosition(entity).y() + item.getBbHeight() / 2, item.getZ());
 			Vec3 finalVector = new Vec3(x, y, z).subtract(entityVector);
 
 			if (Math.sqrt(finalVector.x * finalVector.x + finalVector.y * finalVector.y + finalVector.z * finalVector.z) > 1) {
@@ -60,6 +60,7 @@ public class MagnetEffect extends MobEffect {
 
 			item.setDeltaMovement(finalVector.multiply(strength, strength, strength));
 		}
+		return true;
 	}
 
 	@Override

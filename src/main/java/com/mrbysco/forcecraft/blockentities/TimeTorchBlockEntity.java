@@ -5,6 +5,7 @@ import com.mrbysco.forcecraft.blocks.torch.WallTimeTorchBlock;
 import com.mrbysco.forcecraft.config.ConfigHandler;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -70,11 +71,11 @@ public class TimeTorchBlockEntity extends BlockEntity {
 				return;
 
 
-			if (block.isRandomlyTicking(blockState) && !level.isClientSide) {
+			if (blockState.isRandomlyTicking() && !level.isClientSide) {
 				for (int i = 0; i < this.speed; i++) {
 					if (getLevel().getBlockState(pos) != blockState) break;
 					if (getLevel().random.nextBoolean())
-						block.randomTick(blockState, (ServerLevel) this.level, pos, level.random);
+						blockState.randomTick((ServerLevel) this.level, pos, level.random);
 				}
 			}
 
@@ -94,14 +95,14 @@ public class TimeTorchBlockEntity extends BlockEntity {
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag tag) {
-		super.saveAdditional(tag);
+	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.saveAdditional(tag, registries);
 		tag.putInt("Speed", this.speed);
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.loadAdditional(tag, registries);
 		if (tag.contains("Speed"))
 			this.speed = tag.getInt("Speed");
 	}
@@ -112,26 +113,26 @@ public class TimeTorchBlockEntity extends BlockEntity {
 	}
 
 	@Override
-	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket packet) {
-		this.load(packet.getTag());
+	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
+		super.onDataPacket(net, pkt, lookupProvider);
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
 		CompoundTag tag = new CompoundTag();
-		this.saveAdditional(tag);
+		this.saveAdditional(tag, registries);
 		return tag;
 	}
 
 	@Override
-	public void handleUpdateTag(CompoundTag tag) {
-		this.load(tag);
+	public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+		this.loadAdditional(tag, registries);
 	}
 
 	@Override
 	public CompoundTag getPersistentData() {
 		CompoundTag tag = new CompoundTag();
-		this.saveAdditional(tag);
+		this.saveAdditional(tag, this.level.registryAccess());
 		return tag;
 	}
 }

@@ -30,14 +30,14 @@ public class NonBurnableItemEntity extends ItemEntity {
 	}
 
 	@Override
-	public boolean hurt(DamageSource source, float amount) {
-		return source.is(DamageTypes.FELL_OUT_OF_WORLD);
+	public boolean isInvulnerableTo(DamageSource source) {
+		return !source.is(DamageTypes.FELL_OUT_OF_WORLD);
 	}
 
 	public static class EventHandler {
 		public static void onExpire(ItemExpireEvent event) {
 			if (event.getEntity() instanceof NonBurnableItemEntity) {
-				event.setCanceled(true);
+				event.setExtraLife(Integer.MAX_VALUE);
 			}
 		}
 	}

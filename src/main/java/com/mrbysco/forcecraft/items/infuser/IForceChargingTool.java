@@ -12,7 +12,6 @@ public interface IForceChargingTool {
 		ForceToolData fd = new ForceToolData(stack);
 		int actual = Math.min(fd.getForce(), forceDrain);
 		fd.setForce(fd.getForce() - actual);
-		fd.write(stack);
 
 		int diff = forceDrain - actual;
 

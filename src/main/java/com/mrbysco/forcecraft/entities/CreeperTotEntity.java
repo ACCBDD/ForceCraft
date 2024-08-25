@@ -2,6 +2,7 @@ package com.mrbysco.forcecraft.entities;
 
 import com.mrbysco.forcecraft.registry.ForceEntities;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.sounds.SoundEvents;
@@ -12,9 +13,13 @@ import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.FireworkExplosion;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CreeperTotEntity extends Creeper {
 
@@ -39,7 +44,7 @@ public class CreeperTotEntity extends Creeper {
 
 		if (!this.level().isClientSide) {
 			this.dead = true;
-			this.playSound(SoundEvents.GENERIC_EXPLODE, 4.0F, (1.0F + (this.level().random.nextFloat() - this.level().random.nextFloat()) * 0.2F) * 0.7F);
+			this.playSound(SoundEvents.GENERIC_EXPLODE.value(), 4.0F, (1.0F + (this.level().random.nextFloat() - this.level().random.nextFloat()) * 0.2F) * 0.7F);
 
 			if (this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT) && this.getRandom().nextInt(4) == 0) {
 				spawnAtLocation(new ItemStack(ForceRegistry.PILE_OF_GUNPOWDER.get(), this.getRandom().nextInt(2) + 1));
@@ -49,7 +54,7 @@ public class CreeperTotEntity extends Creeper {
 		}
 	}
 
-	public void summonFireworkParticles(CompoundTag fireworksTag, double yOffset) {
+	public void summonFireworkParticles(List<FireworkExplosion> fireworksTag, double yOffset) {
 		if (fireworksTag != null) {
 			Vec3 vector3d = this.getDeltaMovement();
 			this.level().createFireworks(this.getX(), this.getY() + yOffset, this.getZ(), vector3d.x, vector3d.y, vector3d.z, fireworksTag);
@@ -68,41 +73,37 @@ public class CreeperTotEntity extends Creeper {
 		super.handleEntityEvent(id);
 	}
 
-	public CompoundTag getFireworkTag() {
-		CompoundTag tag = new CompoundTag();
-		tag.putBoolean("Flicker", true);
+	public List<FireworkExplosion> getFireworkTag() {
+		List<FireworkExplosion> explosions = new ArrayList<>();
 
 		int[] colors = new int[16];
 		for (int i = 0; i < 16; i++) {
 			colors[i] = DyeColor.byId(i).getFireworkColor();
 		}
-		tag.putIntArray("Colors", colors);
-		tag.putByte("Type", (byte) 0);
+		FireworkExplosion explosion = new FireworkExplosion(
+				FireworkExplosion.Shape.SMALL_BALL,
+				IntList.of(colors),
+				IntList.of(colors),
+				false,
+				true
+		);
+		explosions.add(explosion);
 
-		ListTag explosions = new ListTag();
-		explosions.add(tag);
-
-		CompoundTag fireworkTag = new CompoundTag();
-		fireworkTag.put("Explosions", explosions);
-
-		return fireworkTag;
+		return explosions;
 	}
 
-	public CompoundTag getCreeperFireworkTag() {
-		CompoundTag tag = new CompoundTag();
-		tag.putBoolean("Flicker", true);
+	public List<FireworkExplosion> getCreeperFireworkTag() {
+		List<FireworkExplosion> explosions = new ArrayList<>();
 
-		int[] colors = new int[1];
-		colors[0] = DyeColor.LIME.getFireworkColor();
-		tag.putIntArray("Colors", colors);
-		tag.putByte("Type", (byte) 3);
+		FireworkExplosion explosion = new FireworkExplosion(
+				FireworkExplosion.Shape.CREEPER,
+				IntList.of(DyeColor.LIME.getFireworkColor()),
+				IntList.of(DyeColor.LIME.getFireworkColor()),
+				false,
+				true
+		);
+		explosions.add(explosion);
 
-		ListTag explosions = new ListTag();
-		explosions.add(tag);
-
-		CompoundTag fireworkTag = new CompoundTag();
-		fireworkTag.put("Explosions", explosions);
-
-		return fireworkTag;
+		return explosions;
 	}
 }

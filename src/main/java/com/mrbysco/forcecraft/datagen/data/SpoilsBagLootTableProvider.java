@@ -1,15 +1,16 @@
 package com.mrbysco.forcecraft.datagen.data;
 
 import com.mrbysco.forcecraft.registry.ForceTables;
-import net.minecraft.data.loot.packs.VanillaGiftLoot;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.loot.LootTableSubProvider;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTable.Builder;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.entries.LootTableReference;
+import net.minecraft.world.level.storage.loot.entries.NestedLootTable;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
@@ -32,10 +33,12 @@ import static com.mrbysco.forcecraft.registry.ForceRegistry.FORTUNE_COOKIE;
 import static com.mrbysco.forcecraft.registry.ForceRegistry.LIFE_CARD;
 import static com.mrbysco.forcecraft.registry.ForceRegistry.UNDEATH_CARD;
 
-public class SpoilsBagLootTableProvider extends VanillaGiftLoot {
+public class SpoilsBagLootTableProvider implements LootTableSubProvider {
+	public SpoilsBagLootTableProvider(HolderLookup.Provider provider) {
+	}
 
 	@Override
-	public void generate(BiConsumer<ResourceLocation, Builder> consumer) {
+	public void generate(BiConsumer<ResourceKey<LootTable>, Builder> consumer) {
 		consumer.accept(ForceTables.TIER_1, LootTable.lootTable()
 				.withPool(LootPool.lootPool().setRolls(UniformGenerator.between(1.0F, 4.0F))
 						.name("Force Loot")
@@ -52,9 +55,9 @@ public class SpoilsBagLootTableProvider extends VanillaGiftLoot {
 				)
 				.withPool(LootPool.lootPool()
 						.name("Other tables")
-						.add(LootTableReference.lootTableReference(BuiltInLootTables.VILLAGE_TOOLSMITH))
-						.add(LootTableReference.lootTableReference(BuiltInLootTables.VILLAGE_WEAPONSMITH))
-						.add(LootTableReference.lootTableReference(BuiltInLootTables.SPAWN_BONUS_CHEST)))
+						.add(NestedLootTable.lootTableReference(BuiltInLootTables.VILLAGE_TOOLSMITH))
+						.add(NestedLootTable.lootTableReference(BuiltInLootTables.VILLAGE_WEAPONSMITH))
+						.add(NestedLootTable.lootTableReference(BuiltInLootTables.SPAWN_BONUS_CHEST)))
 		);
 
 		consumer.accept(ForceTables.TIER_2, LootTable.lootTable()
@@ -73,10 +76,10 @@ public class SpoilsBagLootTableProvider extends VanillaGiftLoot {
 				)
 				.withPool(LootPool.lootPool()
 						.name("Other Tables")
-						.add(LootTableReference.lootTableReference(BuiltInLootTables.SIMPLE_DUNGEON))
-						.add(LootTableReference.lootTableReference(BuiltInLootTables.DESERT_PYRAMID))
-						.add(LootTableReference.lootTableReference(BuiltInLootTables.JUNGLE_TEMPLE))
-						.add(LootTableReference.lootTableReference(BuiltInLootTables.NETHER_BRIDGE))
+						.add(NestedLootTable.lootTableReference(BuiltInLootTables.SIMPLE_DUNGEON))
+						.add(NestedLootTable.lootTableReference(BuiltInLootTables.DESERT_PYRAMID))
+						.add(NestedLootTable.lootTableReference(BuiltInLootTables.JUNGLE_TEMPLE))
+						.add(NestedLootTable.lootTableReference(BuiltInLootTables.NETHER_BRIDGE))
 				)
 		);
 
@@ -99,13 +102,13 @@ public class SpoilsBagLootTableProvider extends VanillaGiftLoot {
 				)
 				.withPool(LootPool.lootPool()
 						.name("Other Tables")
-						.add(LootTableReference.lootTableReference(BuiltInLootTables.ABANDONED_MINESHAFT))
-						.add(LootTableReference.lootTableReference(BuiltInLootTables.STRONGHOLD_CORRIDOR))
-						.add(LootTableReference.lootTableReference(BuiltInLootTables.STRONGHOLD_LIBRARY))
-						.add(LootTableReference.lootTableReference(BuiltInLootTables.STRONGHOLD_CROSSING))
-						.add(LootTableReference.lootTableReference(BuiltInLootTables.BASTION_TREASURE))
-						.add(LootTableReference.lootTableReference(BuiltInLootTables.BURIED_TREASURE))
-						.add(LootTableReference.lootTableReference(BuiltInLootTables.END_CITY_TREASURE))
+						.add(NestedLootTable.lootTableReference(BuiltInLootTables.ABANDONED_MINESHAFT))
+						.add(NestedLootTable.lootTableReference(BuiltInLootTables.STRONGHOLD_CORRIDOR))
+						.add(NestedLootTable.lootTableReference(BuiltInLootTables.STRONGHOLD_LIBRARY))
+						.add(NestedLootTable.lootTableReference(BuiltInLootTables.STRONGHOLD_CROSSING))
+						.add(NestedLootTable.lootTableReference(BuiltInLootTables.BASTION_TREASURE))
+						.add(NestedLootTable.lootTableReference(BuiltInLootTables.BURIED_TREASURE))
+						.add(NestedLootTable.lootTableReference(BuiltInLootTables.END_CITY_TREASURE))
 				)
 		);
 	}

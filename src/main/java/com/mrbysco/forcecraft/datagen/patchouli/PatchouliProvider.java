@@ -2,26 +2,27 @@ package com.mrbysco.forcecraft.datagen.patchouli;
 
 import com.mrbysco.forcecraft.Reference;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import xyz.brassgoggledcoders.patchouliprovider.BookBuilder;
 import xyz.brassgoggledcoders.patchouliprovider.CategoryBuilder;
 import xyz.brassgoggledcoders.patchouliprovider.PatchouliBookProvider;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class PatchouliProvider extends PatchouliBookProvider {
-	public PatchouliProvider(PackOutput packOutput) {
-		super(packOutput, Reference.MOD_ID, "en_us");
+	public PatchouliProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+		super(packOutput, Reference.MOD_ID, "en_us", lookupProvider);
 	}
 
 	@Override
-	protected void addBooks(Consumer<BookBuilder> consumer) {
-		BookBuilder bookBuilder = createBookBuilder("force_and_you", "item.forcecraft.book.name", "info.forcecraft.book.landing")
+	protected void addBooks(Consumer<BookBuilder> consumer, HolderLookup.Provider provider) {
+		BookBuilder bookBuilder = createBookBuilder("force_and_you", "item.forcecraft.book.name", "info.forcecraft.book.landing", provider)
 				.setSubtitle("info.forcecraft.book.subtitle")
 				.setAdvancementsTab("forcecraft:root")
 				.setCreativeTab("forcecraft")
@@ -288,8 +289,7 @@ public class PatchouliProvider extends PatchouliBookProvider {
 				.addSpotlightPage(webStack).build()
 				.build();
 
-		ItemStack potionStack = new ItemStack(Items.POTION);
-		PotionUtils.setPotion(potionStack, Potions.INVISIBILITY);
+		ItemStack potionStack = PotionContents.createItemStack(Items.POTION, Potions.INVISIBILITY);
 		tierCategory.addEntry("tier_3/camo", "info.forcecraft.book.camo.entry.name", potionStack).setSecret(true)
 				.setAdvancement("forcecraft:tier3/tier")
 				.addTextPage("info.forcecraft.book.camo_info.text").build()

@@ -1,16 +1,17 @@
 package com.mrbysco.forcecraft.items;
 
 import com.mrbysco.forcecraft.Reference;
+import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.menu.SpoilsBagMenu;
 import com.mrbysco.forcecraft.registry.ForceTables;
 import com.mrbysco.forcecraft.util.ItemHandlerUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -57,7 +58,7 @@ public class SpoilsBagItem extends BaseItem {
 			if (blockInventory != null && handler instanceof ItemStackHandler itemHandler) {
 				for (int i = 0; i < itemHandler.getSlots(); i++) {
 					ItemStack bagStack = itemHandler.getStackInSlot(i);
-					ItemStack remaining = ItemHandlerHelper.copyStackWithSize(bagStack, bagStack.getCount());
+					ItemStack remaining = bagStack.copyWithCount(bagStack.getCount());
 					if (!bagStack.isEmpty()) {
 						remaining = ItemHandlerHelper.insertItem(blockInventory, bagStack, false);
 						itemHandler.setStackInSlot(i, remaining);
@@ -85,7 +86,7 @@ public class SpoilsBagItem extends BaseItem {
 		return super.use(level, playerIn, handIn);
 	}
 
-	public ResourceLocation getTable() {
+	public ResourceKey<LootTable> getTable() {
 		return switch (this.tier) {
 			default -> ForceTables.TIER_1;
 			case 2 -> ForceTables.TIER_2;
@@ -94,14 +95,13 @@ public class SpoilsBagItem extends BaseItem {
 	}
 
 	public void populateBag(Level level, ItemStack stack) {
-		if (!level.isClientSide && !stack.getOrCreateTag().getBoolean("Filled")) {
+		if (!level.isClientSide && !stack.has(ForceComponents.SPOILS_FILLED)) {
 			IItemHandler handler = stack.getCapability(Capabilities.ItemHandler.ITEM);
 			if (handler instanceof ItemStackHandler) {
 				if (ItemHandlerUtils.isEmpty(handler)) {
-					CompoundTag tag = stack.getOrCreateTag();
 					List<ItemStack> stacks = new ArrayList<>();
 					do {
-						LootTable table = level.getServer().getLootData().getLootTable(getTable());
+						LootTable table = level.getServer().reloadableRegistries().getLootTable(getTable());
 
 						LootParams.Builder lootParams = (new LootParams.Builder((ServerLevel) level));
 						List<ItemStack> lootStacks = table.getRandomItems(lootParams.create(LootContextParamSets.EMPTY));
@@ -129,8 +129,7 @@ public class SpoilsBagItem extends BaseItem {
 					for (int i = 0; i < stacks.size(); i++) {
 						stackhandler.setStackInSlot(i, stacks.get(i));
 					}
-					tag.putBoolean("Filled", true);
-					stack.setTag(tag);
+					stack.set(ForceComponents.SPOILS_FILLED, true);
 				}
 			}
 		}
@@ -140,12 +139,14 @@ public class SpoilsBagItem extends BaseItem {
 	public MenuProvider getContainer(ItemStack stack) {
 		return new SimpleMenuProvider((id, inventory, player) -> {
 			return new SpoilsBagMenu(id, inventory, stack);
-		}, stack.hasCustomHoverName() ? ((MutableComponent) stack.getHoverName()).withStyle(ChatFormatting.BLACK) : Component.translatable(Reference.MOD_ID + ".container.spoils_bag"));
+		}, stack.has(DataComponents.CUSTOM_NAME) ?
+				((MutableComponent) stack.getHoverName()).withStyle(ChatFormatting.BLACK) :
+				Component.translatable(Reference.MOD_ID + ".container.spoils_bag"));
 	}
 
 	@Override
 	public void inventoryTick(ItemStack stack, Level level, Entity entityIn, int itemSlot, boolean isSelected) {
-		if (!level.isClientSide && stack.hasTag() && stack.getTag().getBoolean("Filled")) {
+		if (!level.isClientSide && stack.has(ForceComponents.SPOILS_FILLED)) {
 			IItemHandler handler = stack.getCapability(Capabilities.ItemHandler.ITEM);
 			if (ItemHandlerUtils.isEmpty(handler)) {
 				stack.shrink(1);
@@ -154,8 +155,8 @@ public class SpoilsBagItem extends BaseItem {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, level, tooltip, flagIn);
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
+		super.appendHoverText(stack, context, tooltip, tooltipFlag);
 		tooltip.add(Component.literal("Tier: " + tier).withStyle(ChatFormatting.GRAY));
 	}
 }

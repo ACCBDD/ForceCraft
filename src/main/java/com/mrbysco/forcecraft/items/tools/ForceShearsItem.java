@@ -1,6 +1,6 @@
 package com.mrbysco.forcecraft.items.tools;
 
-import com.mrbysco.forcecraft.attachment.toolmodifier.ToolModifierAttachment;
+import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.entities.ColdChickenEntity;
 import com.mrbysco.forcecraft.entities.ColdCowEntity;
 import com.mrbysco.forcecraft.entities.ColdPigEntity;
@@ -9,6 +9,7 @@ import com.mrbysco.forcecraft.items.infuser.ForceToolData;
 import com.mrbysco.forcecraft.items.infuser.IForceChargingTool;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -41,15 +42,13 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static com.mrbysco.forcecraft.attachment.ForceAttachments.TOOL_MODIFIER;
-
 public class ForceShearsItem extends ShearsItem implements IForceChargingTool {
 
 	private static final int SET_FIRE_TIME = 10;
 	private static final int SHEARS_DMG = 238; // vanilla shears have this max damage
 
 	public ForceShearsItem(Item.Properties properties) {
-		super(properties.stacksTo(1).durability(SHEARS_DMG * 4));
+		super(properties.stacksTo(1).durability(SHEARS_DMG * 4).component(DataComponents.TOOL, createToolProperties()));
 	}
 
 	private static final Item[] WOOL = {Items.RED_WOOL, Items.BLUE_WOOL, Items.BLACK_WOOL, Items.BLUE_WOOL, Items.BROWN_WOOL, Items.WHITE_WOOL, Items.ORANGE_WOOL, Items.MAGENTA_WOOL, Items.LIGHT_BLUE_WOOL, Items.YELLOW_WOOL, Items.LIME_WOOL, Items.PINK_WOOL, Items.GRAY_WOOL, Items.LIGHT_GRAY_WOOL,
@@ -61,36 +60,35 @@ public class ForceShearsItem extends ShearsItem implements IForceChargingTool {
 
 	@Override
 	public InteractionResult interactLivingEntity(ItemStack stack, Player playerIn, LivingEntity entity, InteractionHand hand) {
-		Level world = entity.level();
-		if (world.isClientSide) {
+		Level level = entity.level();
+		if (level.isClientSide) {
 			return InteractionResult.PASS;
 		}
 
-		RandomSource rand = world.random;
+		RandomSource rand = level.random;
 
-		ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-		// dont drop wool from ALL IForgeShearable mobs, only sheep
+		// don't drop wool from ALL IForgeShearable mobs, only sheep
 		// for example: snow golems and Mooshroom are both IForgeShearable, but they
 		// should not drop rainbow wool
-		if (attachment.hasRainbow() && entity instanceof Sheep target) {
+		if (stack.has(ForceComponents.TOOL_RAINBOW) && entity instanceof Sheep target) {
 
 			BlockPos pos = BlockPos.containing(entity.getX(), entity.getY(), entity.getZ());
 
-			if (target.isShearable(stack, world, pos)) {
-				List<ItemStack> drops = target.onSheared(playerIn, stack, world, pos, EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, stack));
+			if (target.isShearable(playerIn, stack, level, pos)) {
+				List<ItemStack> drops = target.onSheared(playerIn, stack, level, pos);
 
 				// get drops to test and see the COUNT of how many we should drop
 				for (int i = 0; i < drops.size(); i++) {
-					ItemEntity ent = entity.spawnAtLocation(getRandomWool(world), 1.0F);
+					ItemEntity ent = entity.spawnAtLocation(getRandomWool(level), 1.0F);
 					if (ent != null)
 						ent.setDeltaMovement(ent.getDeltaMovement().add((double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double) (rand.nextFloat() * 0.05F), (double) ((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
 				}
 
-				stack.hurtAndBreak(1, entity, e -> e.broadcastBreakEvent(hand));
+				stack.hurtAndBreak(1, playerIn, Player.getSlotForHand(hand));
 				return InteractionResult.SUCCESS;
 			}
 		}
-		boolean hasHeat = attachment.hasHeat();
+		boolean hasHeat = stack.has(ForceComponents.TOOL_HEAT);
 
 		// part 2 :
 		if (!(entity instanceof IColdMob)) {
@@ -110,23 +108,23 @@ public class ForceShearsItem extends ShearsItem implements IForceChargingTool {
 
 				entity.playSound(SoundEvents.SHEEP_SHEAR, 1.0F, 1.0F);
 
-				Mob replacementMob = new ColdCowEntity(world, BuiltInRegistries.ENTITY_TYPE.getKey(originalCow.getType()));
+				Mob replacementMob = new ColdCowEntity(level, BuiltInRegistries.ENTITY_TYPE.getKey(originalCow.getType()));
 				replacementMob.copyPosition(originalCow);
 				UUID mobUUID = replacementMob.getUUID();
 				replacementMob.restoreFrom(originalCow);
 				replacementMob.setUUID(mobUUID);
 
 				originalCow.remove(RemovalReason.DISCARDED);
-				world.addFreshEntity(replacementMob);
+				level.addFreshEntity(replacementMob);
 				if (hasHeat) {
-					replacementMob.setSecondsOnFire(SET_FIRE_TIME);
+					replacementMob.igniteForSeconds(SET_FIRE_TIME);
 				}
 
-				stack.hurtAndBreak(1, entity, e -> e.broadcastBreakEvent(hand));
+				stack.hurtAndBreak(1, playerIn, Player.getSlotForHand(hand));
 				return InteractionResult.SUCCESS;
 			}
 			if (entity instanceof Chicken originalChicken) {
-				Level level = originalChicken.level();
+				level = originalChicken.level();
 
 				int i = 1 + rand.nextInt(3);
 
@@ -152,14 +150,14 @@ public class ForceShearsItem extends ShearsItem implements IForceChargingTool {
 				originalChicken.remove(RemovalReason.DISCARDED);
 				level.addFreshEntity(replacementMob);
 				if (hasHeat) {
-					replacementMob.setSecondsOnFire(SET_FIRE_TIME);
+					replacementMob.igniteForSeconds(SET_FIRE_TIME);
 				}
 
-				stack.hurtAndBreak(1, entity, e -> e.broadcastBreakEvent(hand));
+				stack.hurtAndBreak(1, playerIn, Player.getSlotForHand(hand));
 				return InteractionResult.SUCCESS;
 			}
 			if (entity instanceof Pig originalPig) {
-				Level level = originalPig.level();
+				level = originalPig.level();
 
 				int i = 1 + rand.nextInt(2);
 
@@ -184,10 +182,10 @@ public class ForceShearsItem extends ShearsItem implements IForceChargingTool {
 				originalPig.remove(RemovalReason.DISCARDED);
 				level.addFreshEntity(replacementMob);
 				if (hasHeat) {
-					replacementMob.setSecondsOnFire(SET_FIRE_TIME);
+					replacementMob.igniteForSeconds(SET_FIRE_TIME);
 				}
 
-				stack.hurtAndBreak(1, entity, e -> e.broadcastBreakEvent(hand));
+				stack.hurtAndBreak(1, entity, Player.getSlotForHand(hand));
 				return InteractionResult.SUCCESS;
 			}
 		}
@@ -196,15 +194,14 @@ public class ForceShearsItem extends ShearsItem implements IForceChargingTool {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> lores, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		ForceToolData fd = new ForceToolData(stack);
-		fd.attachInformation(lores);
-		ToolModifierAttachment.attachInformation(stack, lores);
-		super.appendHoverText(stack, level, lores, flagIn);
+		fd.attachInformation(tooltip);
+		super.appendHoverText(stack, context, tooltip, tooltipFlag);
 	}
 
 	@Override
-	public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
+	public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, @Nullable T entity, Consumer<Item> onBroken) {
 		return this.damageItem(stack, amount);
 	}
 

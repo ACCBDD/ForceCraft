@@ -2,13 +2,13 @@ package com.mrbysco.forcecraft.client.gui.pack;
 
 import com.mrbysco.forcecraft.Reference;
 import com.mrbysco.forcecraft.client.gui.widgets.ItemButton;
+import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.networking.message.PackChangePayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -37,8 +37,7 @@ public class RenameAndRecolorScreen extends Screen {
 	@Override
 	protected void init() {
 		super.init();
-		selectedColor = itemstack.getOrCreateTag().getInt("Color");
-
+		selectedColor = itemstack.getOrDefault(ForceComponents.PACK_COLOR, 0);
 		this.addRenderableWidget(ItemButton.builder(CommonComponents.GUI_DONE, this.itemstack, (button) -> {
 			ItemButton itemButton = (ItemButton) button;
 			this.selectedColor++;
@@ -46,9 +45,7 @@ public class RenameAndRecolorScreen extends Screen {
 				this.selectedColor = 0;
 			}
 
-			CompoundTag tag = itemButton.getButtonStack().getOrCreateTag();
-			tag.putInt("Color", this.selectedColor);
-			itemButton.getButtonStack().setTag(tag);
+			itemstack.set(ForceComponents.PACK_COLOR, selectedColor);
 
 			this.itemstack = itemButton.getButtonStack();
 		}).bounds(this.width / 2 - 89, this.height / 2 + 5, 18, 18).build());
@@ -58,7 +55,7 @@ public class RenameAndRecolorScreen extends Screen {
 		}).bounds(this.width / 2 - 34, this.height / 2 + 3, 60, 20).build());
 
 		this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, (button) -> {
-			PacketDistributor.SERVER.noArg().send(new PackChangePayload(usedHand, textfield.getValue(), this.selectedColor));
+			PacketDistributor.sendToServer(new PackChangePayload(usedHand, textfield.getValue(), this.selectedColor));
 			this.minecraft.setScreen((Screen) null);
 		}).bounds(this.width / 2 + 31, this.height / 2 + 3, 60, 20).build());
 

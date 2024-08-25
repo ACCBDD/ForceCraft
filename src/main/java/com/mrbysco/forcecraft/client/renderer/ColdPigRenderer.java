@@ -14,7 +14,8 @@ public class ColdPigRenderer extends MobRenderer<ColdPigEntity, ColdPigModel<Col
 
 	public ColdPigRenderer(EntityRendererProvider.Context context) {
 		super(context, new ColdPigModel<>(context.bakeLayer(ModelLayers.PIG)), 0.7F);
-		this.addLayer(new SaddleLayer<>(this, new ColdPigModel<>(context.bakeLayer(ModelLayers.PIG_SADDLE)), new ResourceLocation("textures/entity/pig/pig_saddle.png")));
+		this.addLayer(new SaddleLayer<>(this, new ColdPigModel<>(context.bakeLayer(ModelLayers.PIG_SADDLE)),
+				ResourceLocation.withDefaultNamespace("textures/entity/pig/pig_saddle.png")));
 	}
 
 	/**

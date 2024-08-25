@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "tag": "c:cobblestones/normal"
+    },
+    "F": {
+      "tag": "c:ingots/force"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "L": {
+      "tag": "c:leathers"
+    }
+  },
+  "pattern": [
+    "CI ",
+    "CFI",
+    "CLL"
+  ],
+  "result": {
+    "count": 1,
+    "id": "forcecraft:force_mitt"
+  }
+}

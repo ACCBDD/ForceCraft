@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "food",
+  "cookingtime": 200,
+  "experience": 0.1,
+  "ingredient": {
+    "item": "forcecraft:raw_bacon"
+  },
+  "result": {
+    "count": 1,
+    "id": "forcecraft:cooked_bacon"
+  }
+}

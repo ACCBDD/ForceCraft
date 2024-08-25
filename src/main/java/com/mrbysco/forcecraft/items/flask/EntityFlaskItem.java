@@ -1,5 +1,7 @@
 package com.mrbysco.forcecraft.items.flask;
 
+import com.mrbysco.forcecraft.components.ForceComponents;
+import com.mrbysco.forcecraft.components.flask.FlaskContent;
 import com.mrbysco.forcecraft.entities.projectile.FlaskEntity;
 import com.mrbysco.forcecraft.items.BaseItem;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
@@ -23,7 +25,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -47,11 +48,7 @@ public class EntityFlaskItem extends BaseItem {
 			BlockPos pos = context.getClickedPos().relative(context.getClickedFace());
 			storedEntity.absMoveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0, 0);
 			level.addFreshEntity(storedEntity);
-
-			CompoundTag tag = stack.getOrCreateTag();
-			tag.remove("StoredEntity");
-			tag.remove("EntityData");
-			stack.setTag(tag);
+			stack.remove(ForceComponents.FLASK_CONTENT);
 		} else {
 			if (playerIn != null)
 				playerIn.sendSystemMessage(Component.translatable("item.entity_flask.empty2").withStyle(ChatFormatting.RED));
@@ -91,34 +88,27 @@ public class EntityFlaskItem extends BaseItem {
 	}
 
 	public boolean hasEntityStored(ItemStack stack) {
-		return stack.getTag() != null && stack.getTag().contains("StoredEntity");
+		return stack.has(ForceComponents.FLASK_CONTENT);
 	}
 
 	public Entity getStoredEntity(ItemStack stack, Level level) {
-		CompoundTag tag = stack.getTag();
-		if (tag == null) return null;
-		ResourceLocation resourceLocation = ResourceLocation.tryParse(tag.getString("StoredEntity"));
+		FlaskContent content = stack.get(ForceComponents.FLASK_CONTENT);
+		if (content == null) return null;
+		ResourceLocation resourceLocation = content.storedType();
 		if (resourceLocation == null) return null;
 		EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(resourceLocation);
 		if (type != null) {
 			Entity entity = type.create(level);
 			if (entity == null) return null;
-			entity.load(tag.getCompound("EntityData"));
+			entity.load(content.entityData());
 			return entity;
 		}
 		return null;
 	}
 
 	public void storeEntity(ItemStack stack, LivingEntity livingEntity) {
-		CompoundTag tag = stack.getOrCreateTag();
-		tag.putString("StoredEntity", EntityType.getKey(livingEntity.getType()).toString());
-
-		CompoundTag entityTag = new CompoundTag();
-		livingEntity.saveWithoutId(entityTag);
-		tag.put("EntityData", entityTag);
-
-		stack.setTag(tag);
-		livingEntity.discard();
+		FlaskContent content = new FlaskContent(EntityType.getKey(livingEntity.getType()), livingEntity.saveWithoutId(new CompoundTag()));
+		stack.set(ForceComponents.FLASK_CONTENT, content);
 	}
 
 	public boolean isBlacklisted(LivingEntity livingEntity) {
@@ -127,21 +117,23 @@ public class EntityFlaskItem extends BaseItem {
 
 	@Override
 	public Component getName(ItemStack stack) {
-		if (hasEntityStored(stack))
-			return Component.translatable(super.getDescriptionId(stack), stack.getTag().getString("StoredEntity"));
+		FlaskContent content = stack.get(ForceComponents.FLASK_CONTENT);
+		if (content != null)
+			return Component.translatable(super.getDescriptionId(stack), content.storedType());
+
 		return Component.translatable(super.getDescriptionId(stack), "Empty");
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, level, tooltip, flagIn);
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
+		super.appendHoverText(stack, context, tooltip, tooltipFlag);
 		if (hasEntityStored(stack)) {
-			CompoundTag tag = stack.getOrCreateTag();
+			FlaskContent content = stack.get(ForceComponents.FLASK_CONTENT);
 			tooltip.add(Component.translatable("item.entity_flask.tooltip").withStyle(ChatFormatting.GOLD).append(
-					Component.literal(String.format("[%s]", tag.getString("StoredEntity"))).withStyle(ChatFormatting.GRAY)));
-			if (tag.contains("EntityData")) {
+					Component.literal(String.format("[%s]", content.storedType().toString())).withStyle(ChatFormatting.GRAY)));
+			if (!content.entityData().contains("Health")) {
 				tooltip.add(Component.translatable("item.entity_flask.tooltip2").withStyle(ChatFormatting.GOLD).append(
-						Component.literal(String.format("[%s]", tag.getCompound("EntityData").getDouble("Health"))).withStyle(ChatFormatting.GRAY)));
+						Component.literal(String.format("[%s]", content.entityData().getDouble("Health"))).withStyle(ChatFormatting.GRAY)));
 			}
 		}
 	}

@@ -1,38 +1,34 @@
 package com.mrbysco.forcecraft.handlers;
 
-import com.mrbysco.forcecraft.attachment.playermodifier.PlayerModifierAttachment;
-import com.mrbysco.forcecraft.attachment.toolmodifier.ToolModifierAttachment;
+import com.mrbysco.forcecraft.attachments.ForceAttachments;
+import com.mrbysco.forcecraft.attachments.playermodifier.PlayerModifierAttachment;
+import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.config.ConfigHandler;
 import com.mrbysco.forcecraft.items.ForceArmorItem;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
-
-import static com.mrbysco.forcecraft.attachment.ForceAttachments.PLAYER_MOD;
-import static com.mrbysco.forcecraft.attachment.ForceAttachments.TOOL_MODIFIER;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 public class PlayerCapHandler {
 
 	private static final int SPEED_DURATION = 200;
 
 	@SubscribeEvent
-	public void onPlayerUpdate(TickEvent.PlayerTickEvent event) {
-		if (event.phase == TickEvent.Phase.END && !event.player.level().isClientSide) {
-			Player player = event.player;
-
+	public void onPlayerUpdate(PlayerTickEvent.Post event) {
+		if (event.getEntity() instanceof ServerPlayer player) {
 			Iterable<ItemStack> armor = player.getArmorSlots();
 			int speed = 0;
 			for (ItemStack slotSelected : armor) {
 				if (slotSelected.getItem() instanceof ForceArmorItem) {
-					ToolModifierAttachment attachment = slotSelected.getData(TOOL_MODIFIER);
 					// Speed
-					speed += attachment.getSpeedLevel();
+					speed += slotSelected.getOrDefault(ForceComponents.TOOL_SPEED, 0);
 				}
 			}
 
@@ -69,32 +65,31 @@ public class PlayerCapHandler {
 
 		for (ItemStack slotSelected : armor) {
 			if (slotSelected.getItem() instanceof ForceArmorItem) {
-				ToolModifierAttachment attachment = slotSelected.getData(TOOL_MODIFIER);
 				// Pieces
 				armorPieces++;
 
 				// Damage
-				damage += (int) (attachment.getSharpLevel() * ConfigHandler.COMMON.forcePunchDamage.get());
+				damage += (int) (slotSelected.getOrDefault(ForceComponents.TOOL_SHARPNESS, 0) * ConfigHandler.COMMON.forcePunchDamage.get());
 				// Heat
-				if (attachment.hasHeat()) {
+				if (slotSelected.has(ForceComponents.TOOL_HEAT)) {
 					heat++;
 				}
 				// Luck
-				if (attachment.hasLuck()) {
+				if (slotSelected.has(ForceComponents.TOOL_LUCK)) {
 					luck++;
 				}
 				// Bane
-				if (attachment.hasBane()) {
+				if (slotSelected.has(ForceComponents.TOOL_BANE)) {
 					bane++;
 				}
 				// Bleed
-				if (attachment.hasBleed()) {
-					bleed += attachment.getBleedLevel();
+				if (slotSelected.has(ForceComponents.TOOL_BLEED)) {
+					bleed += slotSelected.getOrDefault(ForceComponents.TOOL_BLEED, 0);
 				}
 			}
 		}
 
-		PlayerModifierAttachment attachment = player.getData(PLAYER_MOD);
+		PlayerModifierAttachment attachment = player.getData(ForceAttachments.PLAYER_MOD);
 		int finalArmorPieces = armorPieces;
 		attachment.setArmorPieces(finalArmorPieces);
 
@@ -115,14 +110,14 @@ public class PlayerCapHandler {
 		attachment.setBleeding(finalBleed);
 
 		//Save the attachment data
-		player.setData(PLAYER_MOD, attachment);
+		player.setData(ForceAttachments.PLAYER_MOD, attachment);
 	}
 
 	@SubscribeEvent
 	public void harvestCheckEvent(PlayerEvent.HarvestCheck event) {
 		final Player player = event.getEntity();
-		if (player.hasData(PLAYER_MOD)) {
-			PlayerModifierAttachment attachment = player.getData(PLAYER_MOD);
+		if (player.hasData(ForceAttachments.PLAYER_MOD)) {
+			PlayerModifierAttachment attachment = player.getData(ForceAttachments.PLAYER_MOD);
 			if (attachment.hasFullSet() && player.getMainHandItem().isEmpty()) {
 				if (event.getTargetBlock().getBlock().getExplosionResistance() <= 2) {
 					event.setCanHarvest(true);
@@ -134,8 +129,8 @@ public class PlayerCapHandler {
 	@SubscribeEvent
 	public void breakSpeedEvent(PlayerEvent.BreakSpeed event) {
 		final Player player = event.getEntity();
-		if (player.hasData(PLAYER_MOD)) {
-			PlayerModifierAttachment attachment = player.getData(PLAYER_MOD);
+		if (player.hasData(ForceAttachments.PLAYER_MOD)) {
+			PlayerModifierAttachment attachment = player.getData(ForceAttachments.PLAYER_MOD);
 			if (attachment.hasFullSet() && player.getMainHandItem().isEmpty()) {
 				if (event.getOriginalSpeed() < 6) {
 					event.setNewSpeed(6);

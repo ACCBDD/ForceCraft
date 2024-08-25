@@ -26,10 +26,11 @@ public class BleedingEffect extends MobEffect {
 	}
 
 	@Override
-	public void applyEffectTick(LivingEntity target, int amplifier) {
+	public boolean applyEffectTick(LivingEntity target, int amplifier) {
 		//once per tick
 		if (target.level().getGameTime() % 20 == 0) {
 			target.hurt(Reference.causeBleedingDamage(target), 2.0F);
 		}
+		return true;
 	}
 }

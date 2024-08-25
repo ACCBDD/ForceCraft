@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "F": {
+      "tag": "c:ingots/force"
+    }
+  },
+  "pattern": [
+    "F F",
+    "FFF",
+    "FFF"
+  ],
+  "result": {
+    "count": 1,
+    "id": "forcecraft:force_chest"
+  }
+}

@@ -1,5 +1,6 @@
 package com.mrbysco.forcecraft.capability;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -26,19 +27,19 @@ public class FluidHandlerWrapper implements IFluidHandler, INBTSerializable<Comp
 	}
 
 	@Override
-	public CompoundTag serializeNBT() {
+	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
 		CompoundTag tag = new CompoundTag();
-		tag.put(NBT_INPUT, throttleTank.writeToNBT(new CompoundTag()));
-		tag.put(NBT_OUTPUT, fuelTank.writeToNBT(new CompoundTag()));
+		tag.put(NBT_INPUT, throttleTank.writeToNBT(provider, new CompoundTag()));
+		tag.put(NBT_OUTPUT, fuelTank.writeToNBT(provider, new CompoundTag()));
 		return tag;
 	}
 
 	@Override
-	public void deserializeNBT(CompoundTag tag) {
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
 		if (tag.contains(NBT_OUTPUT))
-			fuelTank.readFromNBT(tag.getCompound(NBT_OUTPUT));
+			fuelTank.readFromNBT(provider, tag.getCompound(NBT_OUTPUT));
 		if (tag.contains(NBT_INPUT))
-			throttleTank.readFromNBT(tag.getCompound(NBT_INPUT));
+			throttleTank.readFromNBT(provider, tag.getCompound(NBT_INPUT));
 	}
 
 	@Override

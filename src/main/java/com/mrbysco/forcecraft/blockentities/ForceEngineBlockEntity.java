@@ -10,6 +10,7 @@ import com.mrbysco.forcecraft.registry.ForceRegistry;
 import com.mrbysco.forcecraft.registry.ForceTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -50,7 +51,7 @@ public class ForceEngineBlockEntity extends BlockEntity implements MenuProvider 
 			}
 			if (action.simulate()) {
 				int amount = this.getFluidAmount() - resource.getAmount() < 0 ? this.getFluidAmount() : resource.getAmount();
-				return new FluidStack(this.getFluid(), amount);
+				return new FluidStack(this.getFluid().getFluid(), amount);
 			}
 			return super.drain(resource.getAmount(), action);
 		}
@@ -83,7 +84,7 @@ public class ForceEngineBlockEntity extends BlockEntity implements MenuProvider 
 			}
 			if (action.simulate()) {
 				int amount = this.getFluidAmount() - resource.getAmount() < 0 ? this.getFluidAmount() : resource.getAmount();
-				return new FluidStack(this.getFluid(), amount);
+				return new FluidStack(this.getFluid().getFluid(), amount);
 			}
 			return super.drain(resource.getAmount(), action);
 		}
@@ -187,8 +188,8 @@ public class ForceEngineBlockEntity extends BlockEntity implements MenuProvider 
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.loadAdditional(tag, registries);
 		this.processTime = tag.getInt("processTime");
 		this.maxProcessTime = tag.getInt("maxProcessTime");
 		this.throttleTime = tag.getInt("throttleTime");
@@ -197,13 +198,13 @@ public class ForceEngineBlockEntity extends BlockEntity implements MenuProvider 
 		this.generating = tag.getFloat("generating");
 
 		//Caps
-		this.stackWrapper.deserializeNBT(tag.getCompound("stackHandler"));
-		this.tankWrapper.deserializeNBT(tag.getCompound("fluid"));
+		this.stackWrapper.deserializeNBT(registries, tag.getCompound("stackHandler"));
+		this.tankWrapper.deserializeNBT(registries, tag.getCompound("fluid"));
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag compound) {
-		super.saveAdditional(compound);
+	public void saveAdditional(CompoundTag compound, HolderLookup.Provider registries) {
+		super.saveAdditional(compound, registries);
 
 		compound.putInt("processTime", this.processTime);
 		compound.putInt("maxProcessTime", this.maxProcessTime);
@@ -211,8 +212,8 @@ public class ForceEngineBlockEntity extends BlockEntity implements MenuProvider 
 		compound.putInt("maxThrottleTime", this.maxThrottleTime);
 		compound.putFloat("generating", this.generating);
 		//Caps
-		compound.put("stackHandler", stackWrapper.serializeNBT());
-		compound.put("fluid", tankWrapper.serializeNBT());
+		compound.put("stackHandler", stackWrapper.serializeNBT(registries));
+		compound.put("fluid", tankWrapper.serializeNBT(registries));
 	}
 
 	@Override
@@ -424,7 +425,7 @@ public class ForceEngineBlockEntity extends BlockEntity implements MenuProvider 
 		FluidStack resourceCopy = resource.copy();
 
 		if (action.execute()) {
-			if (tankFuel.getFluid().isEmpty() || tankFuel.getFluid().isFluidEqual(resource)) {
+			if (tankFuel.getFluid().isEmpty() || FluidStack.isSameFluidSameComponents(tankFuel.getFluid(), resource)) {
 				tankFuel.fill(resourceCopy, action);
 			}
 		}
@@ -447,7 +448,7 @@ public class ForceEngineBlockEntity extends BlockEntity implements MenuProvider 
 		FluidStack resourceCopy = resource.copy();
 
 		if (action.execute()) {
-			if (tankThrottle.getFluid().isEmpty() || tankThrottle.getFluid().isFluidEqual(resource)) {
+			if (tankThrottle.getFluid().isEmpty() || FluidStack.isSameFluidSameComponents(tankThrottle.getFluid(), resource)) {
 				tankThrottle.fill(resourceCopy, action);
 			}
 		}
@@ -512,27 +513,26 @@ public class ForceEngineBlockEntity extends BlockEntity implements MenuProvider 
 	}
 
 	@Override
-	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket packet) {
-		if (packet.getTag() != null)
-			this.load(packet.getTag());
+	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
+		super.onDataPacket(net, pkt, lookupProvider);
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
 		CompoundTag tag = new CompoundTag();
-		this.saveAdditional(tag);
+		this.saveAdditional(tag, registries);
 		return tag;
 	}
 
 	@Override
-	public void handleUpdateTag(CompoundTag tag) {
-		this.load(tag);
+	public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+		this.loadAdditional(tag, registries);
 	}
 
 	@Override
 	public CompoundTag getPersistentData() {
 		CompoundTag tag = new CompoundTag();
-		this.saveAdditional(tag);
+		this.saveAdditional(tag, this.level.registryAccess());
 		return tag;
 	}
 

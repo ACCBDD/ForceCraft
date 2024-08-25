@@ -1,7 +1,7 @@
 package com.mrbysco.forcecraft.items.infuser;
 
+import com.mrbysco.forcecraft.components.ForceComponents;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 
 public class ForceToolData {
+	private ItemStack stack;
 
 	private int force = 0;
 
@@ -21,24 +22,13 @@ public class ForceToolData {
 	}
 
 	public ForceToolData(ItemStack tool) {
-		CompoundTag tag = tool.getTag();
-		if (tag != null && tag.contains("force")) {
-			this.read(tool, tag);
-		}
-	}
-
-	private void read(ItemStack tool, CompoundTag tag) {
-		force = tag.getInt("force");
-	}
-
-	public CompoundTag write(ItemStack tool) {
-		CompoundTag tag = tool.getOrCreateTag();
-		tag.putInt("force", force);
-		return tag;
+		this.stack = tool;
+		this.force = tool.getOrDefault(ForceComponents.FORCE, 0);
 	}
 
 	public void charge(int incoming) {
-		force += incoming;
+		this.force += incoming;
+		this.stack.set(ForceComponents.FORCE, this.force);
 	}
 
 	public void attachInformation(List<Component> tooltip) {

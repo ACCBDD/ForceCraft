@@ -1,0 +1,15 @@
+{
+  "type": "forcecraft:transmutation",
+  "ingredients": [
+    {
+      "item": "forcecraft:force_rod"
+    },
+    {
+      "tag": "minecraft:saplings"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "forcecraft:force_sapling"
+  }
+}

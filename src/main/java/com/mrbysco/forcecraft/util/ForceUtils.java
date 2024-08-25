@@ -1,10 +1,13 @@
 package com.mrbysco.forcecraft.util;
 
 import com.mrbysco.forcecraft.blocks.flammable.ForceLogBlock;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.server.level.ServerLevel;
@@ -242,4 +245,18 @@ public class ForceUtils {
 		}
 	}
 
+	public static void teleportPlayerToLocation(Player player, GlobalPos globalPos) {
+		if (player.level().dimension().location().equals(globalPos.dimension().location())) {
+			BlockPos pos = globalPos.pos();
+			int x = pos.getX();
+			int y = pos.getY() + 1;
+			int z = pos.getZ();
+
+			ForceUtils.teleportToLocation(player, x, y, z, true);
+		} else {
+			if (!player.level().isClientSide) {
+				player.sendSystemMessage(Component.translatable("forcecraft.ender_rod.dimension.text").withStyle(ChatFormatting.YELLOW));
+			}
+		}
+	}
 }

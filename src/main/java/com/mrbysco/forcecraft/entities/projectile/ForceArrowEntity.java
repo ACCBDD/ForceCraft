@@ -1,7 +1,8 @@
 package com.mrbysco.forcecraft.entities.projectile;
 
 import com.mrbysco.forcecraft.ForceCraft;
-import com.mrbysco.forcecraft.attachment.banemodifier.BaneModifierAttachment;
+import com.mrbysco.forcecraft.attachments.ForceAttachments;
+import com.mrbysco.forcecraft.attachments.banemodifier.BaneModifierAttachment;
 import com.mrbysco.forcecraft.registry.ForceEntities;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
 import com.mrbysco.forcecraft.util.ForceUtils;
@@ -19,11 +20,8 @@ import net.minecraft.world.entity.ai.goal.SwellGoal;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
-
-import static com.mrbysco.forcecraft.attachment.ForceAttachments.BANE_MODIFIER;
+import org.jetbrains.annotations.Nullable;
 
 public class ForceArrowEntity extends Arrow {
 	private static final EntityDataAccessor<Boolean> ENDER = SynchedEntityData.defineId(ForceArrowEntity.class, EntityDataSerializers.BOOLEAN);
@@ -42,6 +40,10 @@ public class ForceArrowEntity extends Arrow {
 		this.setOwner(shooter);
 	}
 
+	public ForceArrowEntity(Level level, LivingEntity shooter, ItemStack itemStack, @Nullable ItemStack weapon) {
+		super(level, shooter, itemStack, weapon);
+	}
+
 	@Override
 	public void shootFromRotation(Entity projectile, float x, float y, float z, float velocity, float inaccuracy) {
 		float newVelocity = isSpeedy() ? velocity + 1.0F : velocity;
@@ -49,14 +51,14 @@ public class ForceArrowEntity extends Arrow {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		this.entityData.define(ENDER, false);
-		this.entityData.define(BANE, false);
-		this.entityData.define(LUCK, 0);
-		this.entityData.define(BLEEDING, 0);
-		this.entityData.define(SPEED, false);
-		this.entityData.define(GLOWING, false);
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(ENDER, false);
+		builder.define(BANE, false);
+		builder.define(LUCK, 0);
+		builder.define(BLEEDING, 0);
+		builder.define(SPEED, false);
+		builder.define(GLOWING, false);
 	}
 
 	public boolean isBane() {
@@ -147,14 +149,14 @@ public class ForceArrowEntity extends Arrow {
 		compound.putInt("Bleeding", getBleeding());
 	}
 
-	@Override
-	public void setEffectsFromItem(ItemStack stack) {
-		if (stack.getItem() == Items.ARROW) {
-			this.potion = Potions.EMPTY;
-			this.effects.clear();
-			this.entityData.set(ID_EFFECT_COLOR, -1);
-		}
-	}
+//	@Override
+//	public void setEffectsFromItem(ItemStack stack) {
+//		if (stack.getItem() == Items.ARROW) {
+//			this.potion = Potions.EMPTY;
+//			this.effects.clear();
+//			this.entityData.set(ID_EFFECT_COLOR, -1);
+//		}
+//	}
 
 	@Override
 	protected void doPostHurtEffects(LivingEntity living) {
@@ -174,7 +176,7 @@ public class ForceArrowEntity extends Arrow {
 
 		if (isBane()) {
 			if (living instanceof Creeper creeper) {
-				BaneModifierAttachment attachment = creeper.getData(BANE_MODIFIER);
+				BaneModifierAttachment attachment = creeper.getData(ForceAttachments.BANE_MODIFIER);
 				if (attachment.canExplode()) {
 					creeper.setSwellDir(-1);
 					creeper.getEntityData().set(Creeper.DATA_IS_IGNITED, false);
@@ -182,7 +184,7 @@ public class ForceArrowEntity extends Arrow {
 					creeper.goalSelector.getAvailableGoals().removeIf(goal -> goal.getGoal() instanceof SwellGoal);
 					ForceCraft.LOGGER.debug("Added Bane to " + living.getName());
 
-					creeper.setData(BANE_MODIFIER, attachment);
+					creeper.setData(ForceAttachments.BANE_MODIFIER, attachment);
 				}
 			}
 		}

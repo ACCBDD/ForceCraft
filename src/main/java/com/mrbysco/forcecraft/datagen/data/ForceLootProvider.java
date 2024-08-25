@@ -2,18 +2,21 @@ package com.mrbysco.forcecraft.datagen.data;
 
 import com.mrbysco.forcecraft.registry.ForceEntities;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
-import com.mrbysco.forcecraft.registry.ForceTables;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.SlimePredicate;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.WritableRegistry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.EntityLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -22,20 +25,19 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
-import net.minecraft.world.level.storage.loot.functions.LootingEnchantFunction;
+import net.minecraft.world.level.storage.loot.functions.EnchantedCountIncreaseFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.functions.SmeltItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceWithLootingCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceWithEnchantedBonusCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import static com.mrbysco.forcecraft.registry.ForceRegistry.BLACK_FORCE_FURNACE;
@@ -154,26 +156,27 @@ import static com.mrbysco.forcecraft.registry.ForceRegistry.WALL_TIME_TORCH;
 import static com.mrbysco.forcecraft.registry.ForceRegistry.WHITE_FORCE_FURNACE;
 
 public class ForceLootProvider extends LootTableProvider {
-	public ForceLootProvider(PackOutput packOutput) {
+	public ForceLootProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
 		super(packOutput, Set.of(), List.of(
 				new SubProviderEntry(ForceBlockLoot::new, LootContextParamSets.BLOCK),
 				new SubProviderEntry(ForceEntityLoot::new, LootContextParamSets.ENTITY),
 				new SubProviderEntry(SpoilsBagLootTableProvider::new, LootContextParamSets.GIFT)
-		));
+		), lookupProvider);
 	}
 
 	private static class ForceBlockLoot extends BlockLootSubProvider {
 
-		protected ForceBlockLoot() {
-			super(Set.of(), FeatureFlags.REGISTRY.allFlags());
+		protected ForceBlockLoot(HolderLookup.Provider provider) {
+			super(Set.of(), FeatureFlags.REGISTRY.allFlags(), provider);
 		}
 
 		@Override
 		public void generate() {
+			HolderLookup.RegistryLookup<Enchantment> registrylookup = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
 			add(POWER_ORE.get(), (ore) -> createSilkTouchDispatchTable(ore, applyExplosionDecay(POWER_ORE_ITEM.get(), LootItem.lootTableItem(FORCE_GEM.get())
-					.apply(SetItemCountFunction.setCount(UniformGenerator.between(2.0F, 4.0F))).apply(ApplyBonusCount.addUniformBonusCount(Enchantments.BLOCK_FORTUNE)))));
+					.apply(SetItemCountFunction.setCount(UniformGenerator.between(2.0F, 4.0F))).apply(ApplyBonusCount.addUniformBonusCount(registrylookup.getOrThrow(Enchantments.FORTUNE))))));
 			add(DEEPSLATE_POWER_ORE.get(), (ore) -> createSilkTouchDispatchTable(ore, applyExplosionDecay(POWER_ORE_ITEM.get(), LootItem.lootTableItem(FORCE_GEM.get())
-					.apply(SetItemCountFunction.setCount(UniformGenerator.between(2.0F, 4.0F))).apply(ApplyBonusCount.addUniformBonusCount(Enchantments.BLOCK_FORTUNE)))));
+					.apply(SetItemCountFunction.setCount(UniformGenerator.between(2.0F, 4.0F))).apply(ApplyBonusCount.addUniformBonusCount(registrylookup.getOrThrow(Enchantments.FORTUNE))))));
 
 			dropSelf(INFUSER.get());
 			add(FORCE_FURNACE.get(), createNameableBlockEntityTable(FORCE_FURNACE.get()));
@@ -305,8 +308,8 @@ public class ForceLootProvider extends LootTableProvider {
 
 	private static class ForceEntityLoot extends EntityLootSubProvider {
 
-		protected ForceEntityLoot() {
-			super(FeatureFlags.REGISTRY.allFlags());
+		protected ForceEntityLoot(HolderLookup.Provider provider) {
+			super(FeatureFlags.REGISTRY.allFlags(), provider);
 		}
 
 		@Override
@@ -321,11 +324,8 @@ public class ForceLootProvider extends LootTableProvider {
 											.setRolls(ConstantValue.exactly(1.0F))
 											.add(
 													LootItem.lootTableItem(Items.CHICKEN)
-															.apply(
-																	SmeltItemFunction.smelted()
-																			.when(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, ENTITY_ON_FIRE))
-															)
-															.apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
+															.apply(SmeltItemFunction.smelted().when(this.shouldSmeltLoot()))
+															.apply(EnchantedCountIncreaseFunction.lootingMultiplier(this.registries, UniformGenerator.between(0.0F, 1.0F)))
 											)
 							)
 			);
@@ -339,11 +339,8 @@ public class ForceLootProvider extends LootTableProvider {
 											.add(
 													LootItem.lootTableItem(Items.BEEF)
 															.apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F)))
-															.apply(
-																	SmeltItemFunction.smelted()
-																			.when(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, ENTITY_ON_FIRE))
-															)
-															.apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
+															.apply(SmeltItemFunction.smelted().when(this.shouldSmeltLoot()))
+															.apply(EnchantedCountIncreaseFunction.lootingMultiplier(this.registries, UniformGenerator.between(0.0F, 1.0F)))
 											)
 							)
 			);
@@ -357,11 +354,8 @@ public class ForceLootProvider extends LootTableProvider {
 											.add(
 													LootItem.lootTableItem(Items.PORKCHOP)
 															.apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 3.0F)))
-															.apply(
-																	SmeltItemFunction.smelted()
-																			.when(LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, ENTITY_ON_FIRE))
-															)
-															.apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
+															.apply(SmeltItemFunction.smelted().when(this.shouldSmeltLoot()))
+															.apply(EnchantedCountIncreaseFunction.lootingMultiplier(this.registries, UniformGenerator.between(0.0F, 1.0F)))
 											)
 							)
 			);
@@ -377,7 +371,7 @@ public class ForceLootProvider extends LootTableProvider {
 											.add(
 													LootItem.lootTableItem(Items.ENDER_PEARL)
 															.apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 1.0F)))
-															.apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
+															.apply(EnchantedCountIncreaseFunction.lootingMultiplier(this.registries, UniformGenerator.between(0.0F, 1.0F)))
 											)
 							)
 			);
@@ -391,14 +385,14 @@ public class ForceLootProvider extends LootTableProvider {
 											.add(
 													LootItem.lootTableItem(Items.ENDER_PEARL)
 															.apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 1.0F)))
-															.apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
+															.apply(EnchantedCountIncreaseFunction.lootingMultiplier(this.registries, UniformGenerator.between(0.0F, 1.0F)))
 											)
 							)
 							.withPool(
 									LootPool.lootPool()
 											.name("spoils")
 											.setRolls(ConstantValue.exactly(1.0F))
-											.when(LootItemRandomChanceWithLootingCondition.randomChanceAndLootingBoost(0.025F, 0.01F))
+											.when(LootItemRandomChanceWithEnchantedBonusCondition.randomChanceAndLootingBoost(this.registries, 0.025F, 0.01F))
 											.add(
 													LootItem.lootTableItem(ForceRegistry.SPOILS_BAG.get())
 											)
@@ -415,14 +409,14 @@ public class ForceLootProvider extends LootTableProvider {
 											.add(
 													LootItem.lootTableItem(ForceRegistry.PILE_OF_GUNPOWDER.get())
 															.apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
-															.apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
+															.apply(EnchantedCountIncreaseFunction.lootingMultiplier(this.registries, UniformGenerator.between(0.0F, 1.0F)))
 											)
 							)
 							.withPool(
 									LootPool.lootPool()
 											.name("head")
 											.setRolls(ConstantValue.exactly(1.0F))
-											.when(LootItemRandomChanceWithLootingCondition.randomChanceAndLootingBoost(0.025F, 0.01F))
+											.when(LootItemRandomChanceWithEnchantedBonusCondition.randomChanceAndLootingBoost(this.registries, 0.025F, 0.01F))
 											.add(
 													LootItem.lootTableItem(Items.CREEPER_HEAD)
 											)
@@ -431,7 +425,7 @@ public class ForceLootProvider extends LootTableProvider {
 									LootPool.lootPool()
 											.name("spoils")
 											.setRolls(ConstantValue.exactly(1.0F))
-											.when(LootItemRandomChanceWithLootingCondition.randomChanceAndLootingBoost(0.025F, 0.01F))
+											.when(LootItemRandomChanceWithEnchantedBonusCondition.randomChanceAndLootingBoost(this.registries, 0.025F, 0.01F))
 											.add(
 													LootItem.lootTableItem(ForceRegistry.SPOILS_BAG.get())
 											)
@@ -448,7 +442,7 @@ public class ForceLootProvider extends LootTableProvider {
 											.add(
 													LootItem.lootTableItem(ForceRegistry.BLUE_CHU_JELLY.get())
 															.apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
-															.apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
+															.apply(EnchantedCountIncreaseFunction.lootingMultiplier(this.registries, UniformGenerator.between(0.0F, 1.0F)))
 															.when(this.killedByFrog().invert())
 											)
 											.add(
@@ -474,7 +468,7 @@ public class ForceLootProvider extends LootTableProvider {
 											.add(
 													LootItem.lootTableItem(ForceRegistry.GOLD_CHU_JELLY.get())
 															.apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
-															.apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
+															.apply(EnchantedCountIncreaseFunction.lootingMultiplier(this.registries, UniformGenerator.between(0.0F, 1.0F)))
 															.when(this.killedByFrog().invert())
 											)
 											.add(
@@ -500,7 +494,7 @@ public class ForceLootProvider extends LootTableProvider {
 											.add(
 													LootItem.lootTableItem(ForceRegistry.GREEN_CHU_JELLY.get())
 															.apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
-															.apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
+															.apply(EnchantedCountIncreaseFunction.lootingMultiplier(this.registries, UniformGenerator.between(0.0F, 1.0F)))
 															.when(this.killedByFrog().invert())
 											)
 											.add(
@@ -526,7 +520,7 @@ public class ForceLootProvider extends LootTableProvider {
 											.add(
 													LootItem.lootTableItem(ForceRegistry.RED_CHU_JELLY.get())
 															.apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
-															.apply(LootingEnchantFunction.lootingMultiplier(UniformGenerator.between(0.0F, 1.0F)))
+															.apply(EnchantedCountIncreaseFunction.lootingMultiplier(this.registries, UniformGenerator.between(0.0F, 1.0F)))
 															.when(this.killedByFrog().invert())
 											)
 											.add(
@@ -567,17 +561,22 @@ public class ForceLootProvider extends LootTableProvider {
 	}
 
 	@Override
-	protected void validate(Map<ResourceLocation, LootTable> map, @Nonnull ValidationContext validationContext) {
-		List<ResourceLocation> ignored = List.of(
-				ForceTables.TIER_1,
-				ForceTables.TIER_2,
-				ForceTables.TIER_3
-		);
-
-		map.forEach((name, table) -> {
-			if (!ignored.contains(name)) {
-				table.validate(validationContext);
-			}
-		});
+	protected void validate(WritableRegistry<LootTable> writableregistry, ValidationContext validationcontext, ProblemReporter.Collector problemreporter$collector) {
+//		super.validate(writableregistry, validationcontext, problemreporter$collector);
 	}
+
+//	@Override
+//	protected void validate(Map<ResourceLocation, LootTable> map, @Nonnull ValidationContext validationContext) {
+//		List<ResourceLocation> ignored = List.of(
+//				ForceTables.TIER_1,
+//				ForceTables.TIER_2,
+//				ForceTables.TIER_3
+//		);
+//
+//		map.forEach((name, table) -> {
+//			if (!ignored.contains(name)) {
+//				table.validate(validationContext);
+//			}
+//		});
+//	}
 }

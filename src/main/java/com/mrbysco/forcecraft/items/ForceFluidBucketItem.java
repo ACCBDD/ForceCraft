@@ -8,7 +8,7 @@ import net.minecraft.world.level.material.Fluid;
 import java.util.function.Supplier;
 
 public class ForceFluidBucketItem extends BucketItem {
-	public ForceFluidBucketItem(Item.Properties properties, Supplier<? extends Fluid> fluidSupplier) {
-		super(fluidSupplier, properties.craftRemainder(Items.BUCKET).stacksTo(1));
+	public ForceFluidBucketItem(Item.Properties properties, Fluid fluid) {
+		super(fluid, properties.craftRemainder(Items.BUCKET).stacksTo(1));
 	}
 }

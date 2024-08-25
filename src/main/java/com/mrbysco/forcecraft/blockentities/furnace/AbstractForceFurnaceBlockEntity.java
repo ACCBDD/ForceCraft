@@ -11,6 +11,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -34,6 +35,7 @@ import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.Blocks;
@@ -48,6 +50,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -105,13 +108,13 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 	};
 
 	protected static final List<ResourceLocation> hopperBlacklist = List.of(
-			new ResourceLocation("hopper"),
-			new ResourceLocation("cyclic", "hopper"),
-			new ResourceLocation("cyclic", "hopper_gold"),
-			new ResourceLocation("cyclic", "hopper_fluid"),
-			new ResourceLocation("uppers", "upper"),
-			new ResourceLocation("goldenhopper", "golden_hopper"),
-			new ResourceLocation("woodenhopper", "wooden_hopper")
+			ResourceLocation.withDefaultNamespace("hopper"),
+			ResourceLocation.fromNamespaceAndPath("cyclic", "hopper"),
+			ResourceLocation.fromNamespaceAndPath("cyclic", "hopper_gold"),
+			ResourceLocation.fromNamespaceAndPath("cyclic", "hopper_fluid"),
+			ResourceLocation.fromNamespaceAndPath("uppers", "upper"),
+			ResourceLocation.fromNamespaceAndPath("goldenhopper", "golden_hopper"),
+			ResourceLocation.fromNamespaceAndPath("woodenhopper", "wooden_hopper")
 	);
 
 	protected int litTime;
@@ -199,10 +202,11 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 	protected RecipeHolder<? extends AbstractCookingRecipe> getRecipe() {
 		ItemStack input = this.getItem(INPUT_SLOT);
 		if (input.isEmpty() || input == failedMatch || level == null) return null;
-		if (currentRecipe != null && currentRecipe.value().matches(this, level) && currentRecipe.value().getType() == getRecipeType())
+		if (currentRecipe != null && currentRecipe.value().matches(new SingleRecipeInput(this.handler.getStackInSlot(INPUT_SLOT)), level) && currentRecipe.value().getType() == getRecipeType())
 			return currentRecipe;
 		else {
-			RecipeHolder<? extends AbstractCookingRecipe> rec = level.getRecipeManager().getRecipeFor(this.getRecipeType(), this, this.level).orElse(null);
+			RecipeHolder<? extends AbstractCookingRecipe> rec = level.getRecipeManager().getRecipeFor(this.getRecipeType(),
+					new SingleRecipeInput(this.handler.getStackInSlot(INPUT_SLOT)), this.level).orElse(null);
 			if (rec == null) failedMatch = input;
 			else failedMatch = ItemStack.EMPTY;
 			return currentRecipe = rec;
@@ -213,11 +217,11 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 		return this.litTime > 0;
 	}
 
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+		super.loadAdditional(tag, registries);
 
-		this.upgradeHandler.deserializeNBT(tag.getCompound("UpgradeHandler"));
-		this.handler.deserializeNBT(tag.getCompound("ItemStackHandler"));
+		this.upgradeHandler.deserializeNBT(registries, tag.getCompound("UpgradeHandler"));
+		this.handler.deserializeNBT(registries, tag.getCompound("ItemStackHandler"));
 
 		this.litTime = tag.getInt("BurnTime");
 		this.burnSpeed = tag.getInt("BurnSpeed");
@@ -228,13 +232,13 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 		CompoundTag recipesUsed = tag.getCompound("RecipesUsed");
 
 		for (String s : recipesUsed.getAllKeys()) {
-			this.recipes.put(new ResourceLocation(s), recipesUsed.getInt(s));
+			this.recipes.put(ResourceLocation.parse(s), recipesUsed.getInt(s));
 		}
 	}
 
 	@Override
-	protected void saveAdditional(CompoundTag compound) {
-		super.saveAdditional(compound);
+	protected void saveAdditional(CompoundTag compound, HolderLookup.Provider registries) {
+		super.saveAdditional(compound, registries);
 		compound.putInt("BurnTime", this.litTime);
 		compound.putInt("BurnSpeed", this.burnSpeed);
 		compound.putInt("CookTime", this.cookingProgress);
@@ -242,8 +246,8 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 		compound.putInt("BurnTimeTotal", this.litDuration);
 		compound.putInt("CookSpeed", this.cookingSpeed);
 
-		compound.put("UpgradeHandler", upgradeHandler.serializeNBT());
-		compound.put("ItemStackHandler", handler.serializeNBT());
+		compound.put("UpgradeHandler", upgradeHandler.serializeNBT(registries));
+		compound.put("ItemStackHandler", handler.serializeNBT(registries));
 		CompoundTag recipesUsed = new CompoundTag();
 		this.recipes.forEach((recipeId, craftedAmount) -> recipesUsed.putInt(recipeId.toString(), craftedAmount));
 		compound.put("RecipesUsed", recipesUsed);
@@ -464,7 +468,7 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 
 		RecipeHolder<? extends AbstractCookingRecipe> rec = getRecipe();
 		if (rec == null)
-			return this.level.getRecipeManager().getRecipeFor(this.getRecipeType(), this, this.level).map(RecipeHolder::value).map(AbstractCookingRecipe::getCookingTime).orElse(100);
+			return this.level.getRecipeManager().getRecipeFor(this.getRecipeType(), new SingleRecipeInput(this.handler.getStackInSlot(INPUT_SLOT)), this.level).map(RecipeHolder::value).map(AbstractCookingRecipe::getCookingTime).orElse(100);
 		return rec.value().getCookingTime();
 	}
 
@@ -507,6 +511,20 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 		return this.handler.getSlots();
 	}
 
+	protected NonNullList<ItemStack> getItems() {
+		NonNullList<ItemStack> stacks = NonNullList.withSize(this.handler.getSlots(), ItemStack.EMPTY);
+		for (int i = 0; i < this.handler.getSlots(); i++) {
+			stacks.set(i, this.handler.getStackInSlot(i));
+		}
+		return stacks;
+	}
+
+	protected void setItems(NonNullList<ItemStack> items) {
+		for (int i = 0; i < this.handler.getSlots(); i++) {
+			this.handler.setStackInSlot(i, items.get(i));
+		}
+	}
+
 	public boolean isEmpty() {
 		for (int i = 0; i < handler.getSlots(); i++) {
 			if (!handler.getStackInSlot(i).isEmpty()) {
@@ -543,7 +561,7 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 	 */
 	public void setItem(int index, ItemStack stack) {
 		ItemStack itemstack = this.handler.getStackInSlot(index);
-		boolean flag = handler.isItemValid(index, stack) && !stack.isEmpty() && ItemStack.isSameItemSameTags(stack, itemstack);
+		boolean flag = handler.isItemValid(index, stack) && !stack.isEmpty() && ItemStack.isSameItemSameComponents(stack, itemstack);
 		this.handler.setStackInSlot(index, stack);
 		if (stack.getCount() > handler.getSlotLimit(index)) {
 			stack.setCount(handler.getSlotLimit(index));

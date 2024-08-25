@@ -25,7 +25,7 @@ public class HeartHandler {
 			// killed by a real player
 			MobCategory classification = event.getEntity().getType().getCategory();
 			if (classification == MobCategory.MONSTER) {
-				// and its a monster, not sheep or squid or something
+				// and it's a monster, not sheep or squid or something
 				BlockPos pos = event.getEntity().blockPosition();
 				level.addFreshEntity(new ItemEntity(level, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, new ItemStack(ForceRegistry.RECOVERY_HEART.get())));
 			}

@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "count": 1,
-  "ingredient": {
-    "item": "forcecraft:force_brick_black"
-  },
-  "result": "forcecraft:force_brick_black_stairs"
-}

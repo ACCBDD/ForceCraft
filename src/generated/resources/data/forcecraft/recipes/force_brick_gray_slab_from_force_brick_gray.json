@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "count": 2,
-  "ingredient": {
-    "item": "forcecraft:force_brick_gray"
-  },
-  "result": "forcecraft:force_brick_gray_slab"
-}

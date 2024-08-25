@@ -4,22 +4,20 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.registry.ForceLootModifiers;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
-
-import static com.mrbysco.forcecraft.attachment.ForceAttachments.TOOL_MODIFIER;
 
 public class SmeltingModifier extends LootModifier {
 	public static final Supplier<MapCodec<SmeltingModifier>> CODEC = Suppliers.memoize(() ->
@@ -43,11 +41,12 @@ public class SmeltingModifier extends LootModifier {
 		if (ctxTool == null)
 			return stack;
 		RegistryAccess registryAccess = context.getLevel().registryAccess();
-		if (ctxTool.hasData(TOOL_MODIFIER) && ctxTool.getData(TOOL_MODIFIER).hasHeat()) {
-			return context.getLevel().getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SimpleContainer(stack), context.getLevel())
+		if (ctxTool.has(ForceComponents.TOOL_HEAT)) {
+			return context.getLevel().getRecipeManager().getRecipeFor(RecipeType.SMELTING,
+							new SingleRecipeInput(stack), context.getLevel())
 					.map(smeltRecipe -> smeltRecipe.value().getResultItem(registryAccess))
 					.filter(itemStack -> !itemStack.isEmpty())
-					.map(itemStack -> ItemHandlerHelper.copyStackWithSize(itemStack, stack.getCount() * itemStack.getCount()))
+					.map(itemStack -> itemStack.copyWithCount(stack.getCount() * itemStack.getCount()))
 					.orElse(stack);
 		}
 		return stack;

@@ -1,4 +1,4 @@
-// 1.20.4	2024-01-28T23:49:44.4694454	Item Models
+// 1.21.1	2024-08-25T23:46:34.833589688	Item Models
 38d04f9d765c05fdedcc2d4f9b2dd0c4073e699b assets/forcecraft/models/item/deepslate_power_ore.json
 1c3dbd26b63a1f340d3c8ee3bd86528ce4725b84 assets/forcecraft/models/item/force_black_torch.json
 88894b26fe4fead4fe1ddb0e752b8880310f94d1 assets/forcecraft/models/item/force_blue_torch.json
@@ -66,9 +66,9 @@ bb09f857b6278769856250e4bb9bfcf70f36e009 assets/forcecraft/models/item/force_lim
 46e6a5f824e56408b7d37a989ed59597d9994e9a assets/forcecraft/models/item/force_magenta_torch.json
 4bf248ddb919f56d691de81bf9c8522ec11f4fd4 assets/forcecraft/models/item/force_orange_torch.json
 7a52e62da08ae6c84544535f553c045281586a38 assets/forcecraft/models/item/force_pink_torch.json
-4e271f0b6074418983e9e8bacde2b7c21857a307 assets/forcecraft/models/item/force_planks.json
 ba7d8e4a6ea40e05d94731ba82bf7915dc0d8b39 assets/forcecraft/models/item/force_plank_slab.json
 53d8c4c8565b838c011814d87badd8ccc35c4415 assets/forcecraft/models/item/force_plank_stairs.json
+4e271f0b6074418983e9e8bacde2b7c21857a307 assets/forcecraft/models/item/force_planks.json
 9bffddf1042b848e34cd63c34d9b6dd0992280de assets/forcecraft/models/item/force_purple_torch.json
 6d5aded3ade8458331b06b5419dbc76b0f719d18 assets/forcecraft/models/item/force_red_torch.json
 63040ca7b337faeaec82d79b20dffb89382a6653 assets/forcecraft/models/item/force_torch.json

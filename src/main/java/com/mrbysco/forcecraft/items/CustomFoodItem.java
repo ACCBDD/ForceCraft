@@ -1,6 +1,7 @@
 package com.mrbysco.forcecraft.items;
 
 import com.mrbysco.forcecraft.registry.ForceRegistry;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -9,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
@@ -19,15 +21,16 @@ public class CustomFoodItem extends Item {
 	}
 
 	@Override
-	public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entityLiving) {
-		if (this.isEdible()) {
+	@NotNull
+	public ItemStack finishUsingItem(ItemStack stack, @NotNull Level level, @NotNull LivingEntity entityLiving) {
+		if (stack.has(DataComponents.FOOD)) {
 			Item item = stack.getItem();
 			ItemStack returnStack = entityLiving.eat(level, stack);
 			if (!level.isClientSide) {
 				if (entityLiving instanceof Player player) {
 					if (item == ForceRegistry.FORTUNE_COOKIE.get()) {
 						ItemStack fortuneItem = new ItemStack(ForceRegistry.FORTUNE.get());
-						FortuneItem.addMessage(fortuneItem, new CompoundTag());
+						FortuneItem.addMessage(fortuneItem);
 						return fortuneItem;
 					} else if (item == ForceRegistry.SOUL_WAFER.get()) {
 						this.randPotionEffect(player);
@@ -46,7 +49,6 @@ public class CustomFoodItem extends Item {
 		Player player = (Player) entityLiving;
 
 		switch (rand) {
-			default -> player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 1000, 0, false, false));
 			case 1 -> player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 1000, 0, false, false));
 			case 2 -> player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 1000, 0, false, false));
 			case 3 -> player.addEffect(new MobEffectInstance(MobEffects.JUMP, 1000, 0, false, false));
@@ -62,6 +64,7 @@ public class CustomFoodItem extends Item {
 			case 13 -> player.addEffect(new MobEffectInstance(MobEffects.GLOWING, 1000, 0, false, false));
 			case 14 -> player.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 1000, 0, false, false));
 			case 15 -> player.addEffect(new MobEffectInstance(MobEffects.LUCK, 1000, 0, false, false));
+			default -> player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 1000, 0, false, false));
 		}
 	}
 

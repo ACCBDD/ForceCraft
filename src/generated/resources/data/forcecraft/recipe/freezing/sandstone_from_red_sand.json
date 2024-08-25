@@ -1,0 +1,14 @@
+{
+  "type": "forcecraft:freezing",
+  "experience": 0.1,
+  "freezingTime": 200,
+  "ingredient": {
+    "tag": "c:sands/red"
+  },
+  "results": [
+    {
+      "count": 1,
+      "id": "minecraft:red_sandstone"
+    }
+  ]
+}

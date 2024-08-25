@@ -1,5 +1,6 @@
 package com.mrbysco.forcecraft.menu;
 
+import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.items.ForceBeltItem;
 import com.mrbysco.forcecraft.items.ForcePackItem;
 import com.mrbysco.forcecraft.menu.slot.BeltSlot;
@@ -75,10 +76,8 @@ public class ForceBeltMenu extends AbstractContainerMenu {
 	@Override
 	public void removed(Player playerIn) {
 		if (itemHandler != null) {
-			CompoundTag tag = heldStack.getOrCreateTag();
-			tag.putInt(ForcePackItem.SLOTS_USED, ItemHandlerUtils.getUsedSlots(itemHandler));
-			tag.putInt(ForcePackItem.SLOTS_TOTAL, itemHandler.getSlots());
-			heldStack.setTag(tag);
+			heldStack.set(ForceComponents.SLOTS_USED, ItemHandlerUtils.getUsedSlots(itemHandler));
+			heldStack.set(ForceComponents.SLOTS_TOTAL, itemHandler.getSlots());
 		}
 
 		super.removed(playerIn);

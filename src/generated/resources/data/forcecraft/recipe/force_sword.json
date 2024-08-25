@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "F": {
+      "tag": "c:ingots/force"
+    },
+    "S": {
+      "tag": "c:rods/force"
+    }
+  },
+  "pattern": [
+    "F",
+    "F",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "forcecraft:force_sword"
+  }
+}

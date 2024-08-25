@@ -26,13 +26,13 @@ public class ForceItemTagProvider extends ItemTagsProvider {
 		super(output, lookupProvider, blockTagProvider.contentsGetter(), Reference.MOD_ID, existingFileHelper);
 	}
 
-	public static final TagKey<Item> ORES_IN_GROUND_DEEPSLATE = forgeTag("ores_in_ground/deepslate");
-	public static final TagKey<Item> ORES_IN_GROUND_STONE = forgeTag("ores_in_ground/stone");
-	public static final TagKey<Item> ORES = forgeTag("ores");
-	public static final TagKey<Item> ORES_POWER = forgeTag("ores/power");
+	public static final TagKey<Item> ORES_IN_GROUND_DEEPSLATE = commonTag("ores_in_ground/deepslate");
+	public static final TagKey<Item> ORES_IN_GROUND_STONE = commonTag("ores_in_ground/stone");
+	public static final TagKey<Item> ORES = commonTag("ores");
+	public static final TagKey<Item> ORES_POWER = commonTag("ores/power");
 
-	private static TagKey<Item> forgeTag(String name) {
-		return ItemTags.create(new ResourceLocation("forge", name));
+	private static TagKey<Item> commonTag(String name) {
+		return ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", name));
 	}
 
 	@Override

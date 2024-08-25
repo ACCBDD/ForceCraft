@@ -111,7 +111,7 @@ public class ForceRegistry {
 	public static final DeferredBlock<FlammableBlock> FORCE_PLANKS = BLOCKS.register("force_planks", () ->
 			new FlammableBlock(BlockBehaviour.Properties.of().mapColor(MapColor.SAND).instrument(NoteBlockInstrument.BASS).strength(2.0F, 3.0F).sound(SoundType.WOOD), 5, 20));
 	public static final DeferredBlock<FlammableStairs> FORCE_PLANK_STAIRS = BLOCKS.register("force_plank_stairs", () ->
-			new FlammableStairs(() -> FORCE_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_PLANKS.get()), 5, 20));
+			new FlammableStairs(FORCE_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_PLANKS.get()), 5, 20));
 	public static final DeferredBlock<FlammableSlab> FORCE_PLANK_SLAB = BLOCKS.register("force_plank_slab",
 			() -> new FlammableSlab(BlockBehaviour.Properties.ofFullCopy(FORCE_PLANKS.get()), 5, 20));
 
@@ -124,7 +124,7 @@ public class ForceRegistry {
 			new InfuserBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops().strength(2.0F)));
 
 	public static final DeferredBlock<ForceFluidBlock> FORCE_FLUID_BLOCK = BLOCKS.register("force_fluid", () ->
-			new ForceFluidBlock(ForceFluids.FORCE_FLUID_SOURCE, BlockBehaviour.Properties.of().mapColor(MapColor.WATER).instrument(NoteBlockInstrument.BASEDRUM).noCollission().lightLevel(state -> 15).noLootTable()));
+			new ForceFluidBlock(ForceFluids.FORCE_FLUID_SOURCE.get(), BlockBehaviour.Properties.of().mapColor(MapColor.WATER).instrument(NoteBlockInstrument.BASEDRUM).noCollission().lightLevel(state -> 15).noLootTable()));
 
 	public static final DeferredBlock<ForceFurnaceBlock> FORCE_FURNACE = BLOCKS.register("force_furnace", () -> new ForceFurnaceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops().strength(4.0F, 18.0F).lightLevel(ForceFurnaceBlock.getLightValueLit(13))));
 	public static final DeferredBlock<ForceFurnaceBlock> BLACK_FORCE_FURNACE = BLOCKS.register("black_force_furnace", () -> new ForceFurnaceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops().strength(4.0F, 18.0F).lightLevel(ForceFurnaceBlock.getLightValueLit(13))));
@@ -165,23 +165,23 @@ public class ForceRegistry {
 	public static final DeferredBlock<Block> FORCE_BRICK_GRAY = BLOCKS.registerSimpleBlock("force_brick_gray", BlockBehaviour.Properties.of().mapColor(DyeColor.GRAY).strength(2.0F, 12.0F).requiresCorrectToolForDrops());
 	public static final DeferredBlock<Block> FORCE_BRICK = BLOCKS.registerSimpleBlock("force_brick", BlockBehaviour.Properties.of().mapColor(DyeColor.YELLOW).strength(2.0F, 12.0F).requiresCorrectToolForDrops());
 	//Stairs
-	public static final DeferredBlock<StairBlock> FORCE_BRICK_RED_STAIRS = BLOCKS.register("force_brick_red_stairs", () -> new StairBlock(() -> FORCE_BRICK_RED.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_RED.get())));
-	public static final DeferredBlock<StairBlock> FORCE_BRICK_YELLOW_STAIRS = BLOCKS.register("force_brick_yellow_stairs", () -> new StairBlock(() -> FORCE_BRICK_YELLOW.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_YELLOW.get())));
-	public static final DeferredBlock<StairBlock> FORCE_BRICK_GREEN_STAIRS = BLOCKS.register("force_brick_green_stairs", () -> new StairBlock(() -> FORCE_BRICK_GREEN.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_GREEN.get())));
-	public static final DeferredBlock<StairBlock> FORCE_BRICK_BLUE_STAIRS = BLOCKS.register("force_brick_blue_stairs", () -> new StairBlock(() -> FORCE_BRICK_BLUE.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_BLUE.get())));
-	public static final DeferredBlock<StairBlock> FORCE_BRICK_WHITE_STAIRS = BLOCKS.register("force_brick_white_stairs", () -> new StairBlock(() -> FORCE_BRICK_WHITE.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_WHITE.get())));
-	public static final DeferredBlock<StairBlock> FORCE_BRICK_BLACK_STAIRS = BLOCKS.register("force_brick_black_stairs", () -> new StairBlock(() -> FORCE_BRICK_BLACK.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_BLACK.get())));
-	public static final DeferredBlock<StairBlock> FORCE_BRICK_BROWN_STAIRS = BLOCKS.register("force_brick_brown_stairs", () -> new StairBlock(() -> FORCE_BRICK_BROWN.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_BROWN.get())));
-	public static final DeferredBlock<StairBlock> FORCE_BRICK_ORANGE_STAIRS = BLOCKS.register("force_brick_orange_stairs", () -> new StairBlock(() -> FORCE_BRICK_ORANGE.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_ORANGE.get())));
-	public static final DeferredBlock<StairBlock> FORCE_BRICK_LIGHT_BLUE_STAIRS = BLOCKS.register("force_brick_light_blue_stairs", () -> new StairBlock(() -> FORCE_BRICK_LIGHT_BLUE.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_LIGHT_BLUE.get())));
-	public static final DeferredBlock<StairBlock> FORCE_BRICK_MAGENTA_STAIRS = BLOCKS.register("force_brick_magenta_stairs", () -> new StairBlock(() -> FORCE_BRICK_MAGENTA.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_MAGENTA.get())));
-	public static final DeferredBlock<StairBlock> FORCE_BRICK_PINK_STAIRS = BLOCKS.register("force_brick_pink_stairs", () -> new StairBlock(() -> FORCE_BRICK_PINK.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_PINK.get())));
-	public static final DeferredBlock<StairBlock> FORCE_BRICK_LIGHT_GRAY_STAIRS = BLOCKS.register("force_brick_light_gray_stairs", () -> new StairBlock(() -> FORCE_BRICK_LIGHT_GRAY.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_LIGHT_GRAY.get())));
-	public static final DeferredBlock<StairBlock> FORCE_BRICK_LIME_STAIRS = BLOCKS.register("force_brick_lime_stairs", () -> new StairBlock(() -> FORCE_BRICK_LIME.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_LIME.get())));
-	public static final DeferredBlock<StairBlock> FORCE_BRICK_CYAN_STAIRS = BLOCKS.register("force_brick_cyan_stairs", () -> new StairBlock(() -> FORCE_BRICK_CYAN.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_CYAN.get())));
-	public static final DeferredBlock<StairBlock> FORCE_BRICK_PURPLE_STAIRS = BLOCKS.register("force_brick_purple_stairs", () -> new StairBlock(() -> FORCE_BRICK_PURPLE.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_PURPLE.get())));
-	public static final DeferredBlock<StairBlock> FORCE_BRICK_GRAY_STAIRS = BLOCKS.register("force_brick_gray_stairs", () -> new StairBlock(() -> FORCE_BRICK_GRAY.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_GRAY.get())));
-	public static final DeferredBlock<StairBlock> FORCE_BRICK_STAIRS = BLOCKS.register("force_brick_stairs", () -> new StairBlock(() -> FORCE_BRICK.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK.get())));
+	public static final DeferredBlock<StairBlock> FORCE_BRICK_RED_STAIRS = BLOCKS.register("force_brick_red_stairs", () -> new StairBlock(FORCE_BRICK_RED.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_RED.get())));
+	public static final DeferredBlock<StairBlock> FORCE_BRICK_YELLOW_STAIRS = BLOCKS.register("force_brick_yellow_stairs", () -> new StairBlock(FORCE_BRICK_YELLOW.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_YELLOW.get())));
+	public static final DeferredBlock<StairBlock> FORCE_BRICK_GREEN_STAIRS = BLOCKS.register("force_brick_green_stairs", () -> new StairBlock(FORCE_BRICK_GREEN.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_GREEN.get())));
+	public static final DeferredBlock<StairBlock> FORCE_BRICK_BLUE_STAIRS = BLOCKS.register("force_brick_blue_stairs", () -> new StairBlock(FORCE_BRICK_BLUE.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_BLUE.get())));
+	public static final DeferredBlock<StairBlock> FORCE_BRICK_WHITE_STAIRS = BLOCKS.register("force_brick_white_stairs", () -> new StairBlock(FORCE_BRICK_WHITE.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_WHITE.get())));
+	public static final DeferredBlock<StairBlock> FORCE_BRICK_BLACK_STAIRS = BLOCKS.register("force_brick_black_stairs", () -> new StairBlock(FORCE_BRICK_BLACK.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_BLACK.get())));
+	public static final DeferredBlock<StairBlock> FORCE_BRICK_BROWN_STAIRS = BLOCKS.register("force_brick_brown_stairs", () -> new StairBlock(FORCE_BRICK_BROWN.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_BROWN.get())));
+	public static final DeferredBlock<StairBlock> FORCE_BRICK_ORANGE_STAIRS = BLOCKS.register("force_brick_orange_stairs", () -> new StairBlock(FORCE_BRICK_ORANGE.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_ORANGE.get())));
+	public static final DeferredBlock<StairBlock> FORCE_BRICK_LIGHT_BLUE_STAIRS = BLOCKS.register("force_brick_light_blue_stairs", () -> new StairBlock(FORCE_BRICK_LIGHT_BLUE.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_LIGHT_BLUE.get())));
+	public static final DeferredBlock<StairBlock> FORCE_BRICK_MAGENTA_STAIRS = BLOCKS.register("force_brick_magenta_stairs", () -> new StairBlock(FORCE_BRICK_MAGENTA.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_MAGENTA.get())));
+	public static final DeferredBlock<StairBlock> FORCE_BRICK_PINK_STAIRS = BLOCKS.register("force_brick_pink_stairs", () -> new StairBlock(FORCE_BRICK_PINK.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_PINK.get())));
+	public static final DeferredBlock<StairBlock> FORCE_BRICK_LIGHT_GRAY_STAIRS = BLOCKS.register("force_brick_light_gray_stairs", () -> new StairBlock(FORCE_BRICK_LIGHT_GRAY.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_LIGHT_GRAY.get())));
+	public static final DeferredBlock<StairBlock> FORCE_BRICK_LIME_STAIRS = BLOCKS.register("force_brick_lime_stairs", () -> new StairBlock(FORCE_BRICK_LIME.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_LIME.get())));
+	public static final DeferredBlock<StairBlock> FORCE_BRICK_CYAN_STAIRS = BLOCKS.register("force_brick_cyan_stairs", () -> new StairBlock(FORCE_BRICK_CYAN.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_CYAN.get())));
+	public static final DeferredBlock<StairBlock> FORCE_BRICK_PURPLE_STAIRS = BLOCKS.register("force_brick_purple_stairs", () -> new StairBlock(FORCE_BRICK_PURPLE.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_PURPLE.get())));
+	public static final DeferredBlock<StairBlock> FORCE_BRICK_GRAY_STAIRS = BLOCKS.register("force_brick_gray_stairs", () -> new StairBlock(FORCE_BRICK_GRAY.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_GRAY.get())));
+	public static final DeferredBlock<StairBlock> FORCE_BRICK_STAIRS = BLOCKS.register("force_brick_stairs", () -> new StairBlock(FORCE_BRICK.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK.get())));
 
 	//Slabs
 	public static final DeferredBlock<SlabBlock> FORCE_BRICK_RED_SLAB = BLOCKS.register("force_brick_red_slab", () -> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(FORCE_BRICK_RED.get())));
@@ -276,13 +276,13 @@ public class ForceRegistry {
 			new CustomFoodItem(itemBuilder().food(ForceFoods.COOKED_BACON)));
 
 	public static final DeferredItem<ForceArmorItem> FORCE_HELMET = ITEMS.register("force_helmet", () ->
-			new ForceArmorItem(ModArmor.FORCE_ARMOR, ArmorItem.Type.HELMET, itemBuilder()));
+			new ForceArmorItem(ModArmor.FORCE, ArmorItem.Type.HELMET, itemBuilder()));
 	public static final DeferredItem<ForceArmorItem> FORCE_CHEST = ITEMS.register("force_chest", () ->
-			new ForceArmorItem(ModArmor.FORCE_ARMOR, ArmorItem.Type.CHESTPLATE, itemBuilder()));
+			new ForceArmorItem(ModArmor.FORCE, ArmorItem.Type.CHESTPLATE, itemBuilder()));
 	public static final DeferredItem<ForceArmorItem> FORCE_LEGS = ITEMS.register("force_legs", () ->
-			new ForceArmorItem(ModArmor.FORCE_ARMOR, ArmorItem.Type.LEGGINGS, itemBuilder()));
+			new ForceArmorItem(ModArmor.FORCE, ArmorItem.Type.LEGGINGS, itemBuilder()));
 	public static final DeferredItem<ForceArmorItem> FORCE_BOOTS = ITEMS.register("force_boots", () ->
-			new ForceArmorItem(ModArmor.FORCE_ARMOR, ArmorItem.Type.BOOTS, itemBuilder()));
+			new ForceArmorItem(ModArmor.FORCE, ArmorItem.Type.BOOTS, itemBuilder()));
 
 	public static final DeferredItem<ForceRodItem> FORCE_ROD = ITEMS.register("force_rod", () -> new ForceRodItem(itemBuilder()));
 	public static final DeferredItem<ForceWrenchItem> FORCE_WRENCH = ITEMS.register("force_wrench", () -> new ForceWrenchItem(itemBuilder()));
@@ -361,23 +361,23 @@ public class ForceRegistry {
 
 	//Bucket
 	public static final DeferredItem<ForceFluidBucketItem> BUCKET_FLUID_FORCE = ITEMS.register("force_bucket", () ->
-			new ForceFluidBucketItem(itemBuilder().craftRemainder(Items.BUCKET).stacksTo(1), () -> ForceFluids.FORCE_FLUID_SOURCE.get()));
+			new ForceFluidBucketItem(itemBuilder().craftRemainder(Items.BUCKET).stacksTo(1), ForceFluids.FORCE_FLUID_SOURCE.get()));
 
 	//Experience Tome
 	public static final DeferredItem<ExperienceTomeItem> EXPERIENCE_TOME = ITEMS.register("experience_tome", () -> new ExperienceTomeItem(itemBuilder().stacksTo(1)));
 
 	//Spawn eggs
-	public static final DeferredItem<DeferredSpawnEggItem> RED_CHU_CHU_SPAWN_EGG = ITEMS.register("red_chu_chu_spawn_egg", () -> new DeferredSpawnEggItem(() -> ForceEntities.RED_CHU_CHU.get(), 15674931, 14483465, itemBuilder()));
-	public static final DeferredItem<DeferredSpawnEggItem> GREEN_CHU_CHU_SPAWN_EGG = ITEMS.register("green_chu_chu_spawn_egg", () -> new DeferredSpawnEggItem(() -> ForceEntities.GREEN_CHU_CHU.get(), 6539935, 3190138, itemBuilder()));
-	public static final DeferredItem<DeferredSpawnEggItem> BLUE_CHU_CHU_SPAWN_EGG = ITEMS.register("blue_chu_chu_spawn_egg", () -> new DeferredSpawnEggItem(() -> ForceEntities.BLUE_CHU_CHU.get(), 2450423, 16606, itemBuilder()));
-	public static final DeferredItem<DeferredSpawnEggItem> GOLD_CHU_CHU_SPAWN_EGG = ITEMS.register("gold_chu_chu_spawn_egg", () -> new DeferredSpawnEggItem(() -> ForceEntities.GOLD_CHU_CHU.get(), 14921786, 13670157, itemBuilder()));
-	public static final DeferredItem<DeferredSpawnEggItem> COLD_CHICKEN_SPAWN_EGG = ITEMS.register("cold_chicken_spawn_egg", () -> new DeferredSpawnEggItem(() -> ForceEntities.COLD_CHICKEN.get(), 10592673, 16711680, itemBuilder()));
-	public static final DeferredItem<DeferredSpawnEggItem> COLD_COW_SPAWN_EGG = ITEMS.register("cold_cow_spawn_egg", () -> new DeferredSpawnEggItem(() -> ForceEntities.COLD_COW.get(), 4470310, 10592673, itemBuilder()));
-	public static final DeferredItem<DeferredSpawnEggItem> COLD_PIG_SPAWN_EGG = ITEMS.register("cold_pig_spawn_egg", () -> new DeferredSpawnEggItem(() -> ForceEntities.COLD_PIG.get(), 15771042, 14377823, itemBuilder()));
-	public static final DeferredItem<DeferredSpawnEggItem> FAIRY_SPAWN_EGG = ITEMS.register("fairy_spawn_egg", () -> new DeferredSpawnEggItem(() -> ForceEntities.FAIRY.get(), 11395062, 12970232, itemBuilder()));
-	public static final DeferredItem<DeferredSpawnEggItem> CREEPER_TOT_SPAWN_EGG = ITEMS.register("creeper_tot_spawn_egg", () -> new DeferredSpawnEggItem(() -> ForceEntities.CREEPER_TOT.get(), 894731, 0, itemBuilder()));
-	public static final DeferredItem<DeferredSpawnEggItem> ENDER_TOT_SPAWN_EGG = ITEMS.register("ender_tot_spawn_egg", () -> new DeferredSpawnEggItem(() -> ForceEntities.ENDER_TOT.get(), 1447446, 0, itemBuilder()));
-	public static final DeferredItem<DeferredSpawnEggItem> ANGRY_ENDERMAN_SPAWN_EGG = ITEMS.register("angry_enderman_spawn_egg", () -> new DeferredSpawnEggItem(() -> ForceEntities.ANGRY_ENDERMAN.get(), 1447446, 0, itemBuilder()));
+	public static final DeferredItem<DeferredSpawnEggItem> RED_CHU_CHU_SPAWN_EGG = ITEMS.register("red_chu_chu_spawn_egg", () -> new DeferredSpawnEggItem(ForceEntities.RED_CHU_CHU, 15674931, 14483465, itemBuilder()));
+	public static final DeferredItem<DeferredSpawnEggItem> GREEN_CHU_CHU_SPAWN_EGG = ITEMS.register("green_chu_chu_spawn_egg", () -> new DeferredSpawnEggItem(ForceEntities.GREEN_CHU_CHU, 6539935, 3190138, itemBuilder()));
+	public static final DeferredItem<DeferredSpawnEggItem> BLUE_CHU_CHU_SPAWN_EGG = ITEMS.register("blue_chu_chu_spawn_egg", () -> new DeferredSpawnEggItem(ForceEntities.BLUE_CHU_CHU, 2450423, 16606, itemBuilder()));
+	public static final DeferredItem<DeferredSpawnEggItem> GOLD_CHU_CHU_SPAWN_EGG = ITEMS.register("gold_chu_chu_spawn_egg", () -> new DeferredSpawnEggItem(ForceEntities.GOLD_CHU_CHU, 14921786, 13670157, itemBuilder()));
+	public static final DeferredItem<DeferredSpawnEggItem> COLD_CHICKEN_SPAWN_EGG = ITEMS.register("cold_chicken_spawn_egg", () -> new DeferredSpawnEggItem(ForceEntities.COLD_CHICKEN, 10592673, 16711680, itemBuilder()));
+	public static final DeferredItem<DeferredSpawnEggItem> COLD_COW_SPAWN_EGG = ITEMS.register("cold_cow_spawn_egg", () -> new DeferredSpawnEggItem(ForceEntities.COLD_COW, 4470310, 10592673, itemBuilder()));
+	public static final DeferredItem<DeferredSpawnEggItem> COLD_PIG_SPAWN_EGG = ITEMS.register("cold_pig_spawn_egg", () -> new DeferredSpawnEggItem(ForceEntities.COLD_PIG, 15771042, 14377823, itemBuilder()));
+	public static final DeferredItem<DeferredSpawnEggItem> FAIRY_SPAWN_EGG = ITEMS.register("fairy_spawn_egg", () -> new DeferredSpawnEggItem(ForceEntities.FAIRY, 11395062, 12970232, itemBuilder()));
+	public static final DeferredItem<DeferredSpawnEggItem> CREEPER_TOT_SPAWN_EGG = ITEMS.register("creeper_tot_spawn_egg", () -> new DeferredSpawnEggItem(ForceEntities.CREEPER_TOT, 894731, 0, itemBuilder()));
+	public static final DeferredItem<DeferredSpawnEggItem> ENDER_TOT_SPAWN_EGG = ITEMS.register("ender_tot_spawn_egg", () -> new DeferredSpawnEggItem(ForceEntities.ENDER_TOT, 1447446, 0, itemBuilder()));
+	public static final DeferredItem<DeferredSpawnEggItem> ANGRY_ENDERMAN_SPAWN_EGG = ITEMS.register("angry_enderman_spawn_egg", () -> new DeferredSpawnEggItem(ForceEntities.ANGRY_ENDERMAN, 1447446, 0, itemBuilder()));
 
 
 	/**

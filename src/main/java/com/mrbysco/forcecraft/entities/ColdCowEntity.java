@@ -18,7 +18,7 @@ public class ColdCowEntity extends Cow implements IColdMob {
 
 	public ColdCowEntity(EntityType<? extends Cow> type, Level level) {
 		super(type, level);
-		this.originalTypeLocation = new ResourceLocation("minecraft", "cow");
+		this.originalTypeLocation = ResourceLocation.withDefaultNamespace("cow");
 	}
 
 	public ColdCowEntity(Level level, ResourceLocation typeLocation) {
@@ -38,9 +38,9 @@ public class ColdCowEntity extends Cow implements IColdMob {
 		super.readAdditionalSaveData(compound);
 
 		if (compound.getString("OriginalMob").isEmpty()) {
-			this.originalTypeLocation = new ResourceLocation("minecraft", "cow");
+			this.originalTypeLocation = ResourceLocation.withDefaultNamespace("cow");
 		} else {
-			this.originalTypeLocation = new ResourceLocation(compound.getString("OriginalMob"));
+			this.originalTypeLocation = ResourceLocation.tryParse(compound.getString("OriginalMob"));
 		}
 	}
 

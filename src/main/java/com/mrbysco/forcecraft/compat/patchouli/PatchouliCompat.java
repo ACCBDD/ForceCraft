@@ -1,9 +1,9 @@
 package com.mrbysco.forcecraft.compat.patchouli;
 
-import net.minecraft.resources.ResourceLocation;
+import com.mrbysco.forcecraft.Reference;
 
 public class PatchouliCompat {
 	public static void openBook() {
-		vazkii.patchouli.api.PatchouliAPI.get().openBookGUI(new ResourceLocation("forcecraft:force_and_you"));
+		vazkii.patchouli.api.PatchouliAPI.get().openBookGUI(Reference.modLoc("force_and_you"));
 	}
 }

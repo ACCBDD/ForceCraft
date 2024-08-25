@@ -80,7 +80,7 @@ dependencies {
 
     localRuntime "mezz.jei:jei-${jei_minecraft}-neoforge:${jei_version}"
 
-    compileOnly "vazkii.patchouli:Patchouli:${patchouli_version}:api"
+    compileOnly "vazkii.patchouli:Patchouli:${patchouli_version}"
     runtimeOnly "vazkii.patchouli:Patchouli:${patchouli_version}"
 
     implementation "xyz.brassgoggledcoders:PatchouliProvider:${patchouli_provider_version}"

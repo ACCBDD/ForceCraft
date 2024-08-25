@@ -2,11 +2,10 @@ package com.mrbysco.forcecraft.blockentities;
 
 import com.mrbysco.forcecraft.ForceCraft;
 import com.mrbysco.forcecraft.Reference;
-import com.mrbysco.forcecraft.attachment.forcerod.ForceRodAttachment;
-import com.mrbysco.forcecraft.attachment.storage.PackStackHandler;
-import com.mrbysco.forcecraft.attachment.storage.StorageManager;
-import com.mrbysco.forcecraft.attachment.toolmodifier.ToolModifierAttachment;
 import com.mrbysco.forcecraft.blockentities.energy.ForceEnergyStorage;
+import com.mrbysco.forcecraft.components.ForceComponents;
+import com.mrbysco.forcecraft.components.storage.PackStackHandler;
+import com.mrbysco.forcecraft.components.storage.StorageManager;
 import com.mrbysco.forcecraft.config.ConfigHandler;
 import com.mrbysco.forcecraft.items.ForceArmorItem;
 import com.mrbysco.forcecraft.items.ForcePackItem;
@@ -34,7 +33,9 @@ import com.mrbysco.forcecraft.util.ItemHandlerUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -53,7 +54,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
@@ -65,6 +66,8 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -74,12 +77,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.mrbysco.forcecraft.attachment.ForceAttachments.FORCE_ROD;
-import static com.mrbysco.forcecraft.attachment.ForceAttachments.TOOL_MODIFIER;
-
 public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Container {
 	private static final Set<String> HASHES = new HashSet<>();
-	public static final Map<Integer, List<InfuseRecipe>> LEVEL_RECIPE_LIST = new HashMap<>();
+	public static final Map<Integer, List<ResourceLocation>> LEVEL_RECIPE_LIST = new HashMap<>();
 
 	private static final int FLUID_CHARGE = 1000;
 
@@ -108,7 +108,7 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 			}
 			if (action.simulate()) {
 				int amount = tank.getFluidAmount() - resource.getAmount() < 0 ? tank.getFluidAmount() : resource.getAmount();
-				return new FluidStack(tank.getFluid(), amount);
+				return new FluidStack(tank.getFluid().getFluid(), amount);
 			}
 			return super.drain(resource.getAmount(), action);
 		}
@@ -119,7 +119,8 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 		}
 
 		@Override
-		public FluidStack drain(int maxDrain, FluidAction action) {
+		@NotNull
+		public FluidStack drain(int maxDrain, @NotNull FluidAction action) {
 			return super.drain(maxDrain, action);
 		}
 
@@ -172,29 +173,29 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 	}
 
 	@Override
-	public void load(CompoundTag compound) {
+	public void loadAdditional(CompoundTag compound, HolderLookup.Provider registries) {
+		super.loadAdditional(compound, registries);
 		this.processTime = compound.getInt("processTime");
 		this.maxProcessTime = compound.getInt("maxProcessTime");
 		//Items
 		canWork = compound.getBoolean("canWork");
-		handler.deserializeNBT(compound.getCompound("ItemStackHandler"));
-		ContainerHelper.loadAllItems(compound, this.infuserContents);
+		handler.deserializeNBT(registries, compound.getCompound("ItemStackHandler"));
+		ContainerHelper.loadAllItems(compound, this.infuserContents, registries);
 		energyStorage.setEnergy(compound.getInt("EnergyHandler"));
-		tank.readFromNBT(compound);
-
-		super.load(compound);
+		tank.readFromNBT(registries, compound);
 	}
 
 	@Override
-	protected void saveAdditional(CompoundTag compound) {
+	public void saveAdditional(CompoundTag compound, HolderLookup.Provider registries) {
+		super.saveAdditional(compound, registries);
 		compound.putInt("processTime", this.processTime);
 		compound.putInt("maxProcessTime", this.maxProcessTime);
 		//Items
 		compound.putBoolean("canWork", canWork);
-		compound.put("ItemStackHandler", handler.serializeNBT());
+		compound.put("ItemStackHandler", handler.serializeNBT(registries));
 		compound.putInt("EnergyHandler", energyStorage.getEnergyStored());
-		ContainerHelper.saveAllItems(compound, this.infuserContents);
-		tank.writeToNBT(compound);
+		ContainerHelper.saveAllItems(compound, this.infuserContents, registries);
+		tank.writeToNBT(registries, compound);
 	}
 
 	public static void serverTick(Level level, BlockPos pos, BlockState state, InfuserBlockEntity infuser) {
@@ -330,7 +331,7 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 				List<RecipeHolder<InfuseRecipe>> holders = level.getRecipeManager().getAllRecipesFor(ForceRecipes.INFUSER_TYPE.get());
 				for (RecipeHolder<InfuseRecipe> holder : holders) {
 					InfuseRecipe recipe = holder.value();
-					if (recipe.matchesModifier(this, modifier, false)) {
+					if (recipe.matchesModifier(new RecipeWrapper(this.handler), modifier, false)) {
 						matchingRecipes.put(i, holder);
 						break;
 					}
@@ -369,7 +370,7 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 	protected boolean recipesStillMatch() {
 		for (Map.Entry<Integer, RecipeHolder<InfuseRecipe>> entry : currentRecipes.entrySet()) {
 			ItemStack modifier = getModifier(entry.getKey());
-			if (!entry.getValue().value().matchesModifier(this, modifier, false)) {
+			if (!entry.getValue().value().matchesModifier(new RecipeWrapper(this.handler), modifier, false)) {
 				return false;
 			}
 		}
@@ -425,14 +426,13 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 			force.charge(charge);
 		}
 		tank.drain(FLUID_CHARGE, FluidAction.EXECUTE);
-		force.write(tool);
 	}
 
 	private void processTool() {
 		for (Map.Entry<Integer, RecipeHolder<InfuseRecipe>> entry : currentRecipes.entrySet()) {
 			ItemStack modifier = getModifier(entry.getKey());
 			RecipeHolder<InfuseRecipe> recipeHolder = entry.getValue();
-			if (recipeHolder.value().matchesModifier(this, modifier, true)) {
+			if (recipeHolder.value().matchesModifier(new RecipeWrapper(this.handler), modifier, true)) {
 				ItemStack tool = getFromToolSlot();
 				boolean success = applyModifier(tool, modifier, recipeHolder);
 				ForceCraft.LOGGER.info("Applying modifier {} on tool {}, succes: {}", tool, modifier, success);
@@ -459,26 +459,26 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 	}
 
 	@Override
-	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket packet) {
-		load(packet.getTag());
+	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
+		super.onDataPacket(net, pkt, lookupProvider);
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
+	public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
 		CompoundTag tag = new CompoundTag();
-		saveAdditional(tag);
+		this.saveAdditional(tag, registries);
 		return tag;
 	}
 
 	@Override
-	public void handleUpdateTag(CompoundTag tag) {
-		super.handleUpdateTag(tag);
+	public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+		this.loadAdditional(tag, registries);
 	}
 
 	@Override
 	public CompoundTag getPersistentData() {
 		CompoundTag tag = new CompoundTag();
-		this.saveAdditional(tag);
+		this.saveAdditional(tag, this.level.registryAccess());
 		return tag;
 	}
 
@@ -532,8 +532,7 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 	}
 
 	public boolean isValidChargeableStack(ItemStack stack) {
-		CompoundTag tag = stack.getTag();
-		return stack.is(ForceTags.VALID_INFUSER_CHARGE) && tag != null && tag.contains("ForceInfused") && stack.getCount() == 1;
+		return stack.is(ForceTags.VALID_INFUSER_CHARGE) && stack.has(ForceComponents.FORCE_INFUSED) && stack.getCount() == 1;
 	}
 
 	/**
@@ -545,12 +544,12 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 	 * @return true if a modifier was applied
 	 */
 	private boolean applyModifier(ItemStack tool, ItemStack modifier, RecipeHolder<InfuseRecipe> recipeHolder) {
-		UpgradeBookData bd = new UpgradeBookData(this.getBookInSlot());
+		UpgradeBookData bd = this.getBookInSlot().getOrDefault(ForceComponents.UPGRADE_BOOK, UpgradeBookData.DEFAULT);
 		//if the recipe level does not exceed what the book has
 		//test the ingredient of this recipe, if it matches me
 
 		InfuseRecipe recipe = recipeHolder.value();
-		if (recipe.getModifier().apply(tool, modifier, bd)) {
+		if (recipe.getModifier().apply(tool, modifier, bd, this.level.registryAccess())) {
 			bd.onRecipeApply(recipeHolder, getBookInSlot());
 
 			if (recipe.getModifier() == InfuserModifierType.ITEM && recipe.hasOutput()) {
@@ -572,7 +571,7 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 	// TODO: refactor these static below into another place, possibly InfuserModifier class
 
 	static boolean applyCamo(ItemStack tool, ItemStack mod) {
-		List<MobEffectInstance> effects = PotionUtils.getMobEffects(mod);
+		List<MobEffectInstance> effects = mod.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).customEffects();
 		for (MobEffectInstance e : effects) {
 			if (e.getEffect() == MobEffects.NIGHT_VISION) {
 				return addSightModifier(tool);
@@ -587,19 +586,15 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 	static boolean addLightModifier(ItemStack stack) {
 		Item item = stack.getItem();
 		if (item instanceof ForceRodItem) {
-			ForceRodAttachment attachment = stack.getData(FORCE_ROD);
-			if (!attachment.hasLight()) {
-				attachment.setLight(true);
+			if (!stack.has(ForceComponents.ROD_LIGHT)) {
+				stack.set(ForceComponents.ROD_LIGHT, true);
 				addInfusedTag(stack);
-				stack.setData(FORCE_ROD, attachment);
 				return true;
 			}
 		} else if (item instanceof ForceBowItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (!attachment.hasLight()) {
-				attachment.setLight(true);
+			if (!stack.has(ForceComponents.TOOL_LIGHT)) {
+				stack.set(ForceComponents.TOOL_LIGHT, true);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
 				return true;
 			}
 		}
@@ -609,19 +604,15 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 	private static boolean addCamoModifier(ItemStack stack) {
 		Item item = stack.getItem();
 		if (item instanceof ForceRodItem) {
-			ForceRodAttachment attachment = stack.getData(FORCE_ROD);
-			if (!attachment.hasCamoModifier()) {
-				attachment.setCamoModifier(true);
+			if (!stack.has(ForceComponents.ROD_CAMO)) {
+				stack.set(ForceComponents.ROD_CAMO, true);
 				addInfusedTag(stack);
-				stack.setData(FORCE_ROD, attachment);
 				return true;
 			}
 		} else if (item instanceof ForceArmorItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (!attachment.hasCamo()) {
-				attachment.setCamo(true);
+			if (!stack.has(ForceComponents.TOOL_CAMO)) {
+				stack.set(ForceComponents.TOOL_CAMO, true);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
 				return true;
 			}
 		}
@@ -630,11 +621,9 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 
 	private static boolean addSightModifier(ItemStack stack) {
 		if (stack.getItem() instanceof ForceRodItem) {
-			ForceRodAttachment attachment = stack.getData(FORCE_ROD);
-			if (!attachment.hasSightModifier()) {
-				attachment.setSightModifier(true);
+			if (!stack.has(ForceComponents.ROD_SIGHT)) {
+				stack.set(ForceComponents.ROD_SIGHT, true);
 				addInfusedTag(stack);
-				stack.setData(FORCE_ROD, attachment);
 				return true;
 			}
 		}
@@ -644,19 +633,15 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 	static boolean addWingModifier(ItemStack stack) {
 		Item item = stack.getItem();
 		if (item instanceof ForceSwordItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (!attachment.hasWing()) {
-				attachment.setWing(true);
+			if (!stack.has(ForceComponents.TOOL_WING)) {
+				stack.set(ForceComponents.TOOL_WING, true);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
 				return true;
 			}
 		} else if (item instanceof ForceArmorItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (!attachment.hasWing()) {
-				attachment.setWing(true);
+			if (!stack.has(ForceComponents.TOOL_WING)) {
+				stack.set(ForceComponents.TOOL_WING, true);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
 				return true;
 			}
 		}
@@ -667,27 +652,24 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 	static boolean addBaneModifier(ItemStack stack) {
 		Item item = stack.getItem();
 		if (item instanceof ForceSwordItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (!attachment.hasBane()) {
-				attachment.setBane(1);
+			if (!stack.has(ForceComponents.TOOL_BANE)) {
+				stack.set(ForceComponents.TOOL_BANE, 1);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		} else if (item instanceof ForceBowItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (!attachment.hasBane()) {
-				attachment.setBane(1);
+			if (!stack.has(ForceComponents.TOOL_BANE)) {
+				stack.set(ForceComponents.TOOL_BANE, 1);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		} else if (item instanceof ForceArmorItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (!attachment.hasBane()) {
-				attachment.setBane(1);
+			if (!stack.has(ForceComponents.TOOL_BANE)) {
+				stack.set(ForceComponents.TOOL_BANE, 1);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		}
@@ -698,27 +680,27 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 		Item item = stack.getItem();
 		int MAX_CAP = ConfigHandler.COMMON.bleedCap.get();
 		if (item instanceof ForceSwordItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (attachment.getBleedLevel() < MAX_CAP) {
-				attachment.incrementBleed();
+			int currentBleed = stack.getOrDefault(ForceComponents.TOOL_BLEED, 0);
+			if (currentBleed < MAX_CAP) {
+				stack.set(ForceComponents.TOOL_BANE, currentBleed + 1);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		} else if (item instanceof ForceBowItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (attachment.getBleedLevel() < MAX_CAP) {
-				attachment.incrementBleed();
+			int currentBleed = stack.getOrDefault(ForceComponents.TOOL_BLEED, 0);
+			if (currentBleed < MAX_CAP) {
+				stack.set(ForceComponents.TOOL_BANE, currentBleed + 1);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		} else if (item instanceof ForceArmorItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (attachment.getBleedLevel() < MAX_CAP) {
-				attachment.incrementBleed();
+			int currentBleed = stack.getOrDefault(ForceComponents.TOOL_BLEED, 0);
+			if (currentBleed < MAX_CAP) {
+				stack.set(ForceComponents.TOOL_BANE, currentBleed + 1);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		}
@@ -728,27 +710,24 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 	static boolean addEnderModifier(ItemStack stack) {
 		Item item = stack.getItem();
 		if (item instanceof ForceRodItem) {
-			ForceRodAttachment attachment = stack.getData(FORCE_ROD);
-			if (!attachment.isRodofEnder()) {
-				attachment.setEnderModifier(true);
+			if (!stack.has(ForceComponents.ROD_ENDER)) {
+				stack.set(ForceComponents.ROD_ENDER, true);
 				addInfusedTag(stack);
-				stack.setData(FORCE_ROD, attachment);
+
 				return true;
 			}
 		} else if (item instanceof ForceSwordItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (!attachment.hasEnder()) {
-				attachment.setEnder(true);
+			if (!stack.has(ForceComponents.TOOL_ENDER)) {
+				stack.set(ForceComponents.TOOL_ENDER, true);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		} else if (item instanceof ForceBowItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (!attachment.hasEnder()) {
-				attachment.setEnder(true);
+			if (!stack.has(ForceComponents.TOOL_ENDER)) {
+				stack.set(ForceComponents.TOOL_ENDER, true);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		}
@@ -757,11 +736,10 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 
 	static boolean addFreezingModifier(ItemStack stack) {
 		if (stack.getItem() instanceof ForceBowItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (!attachment.hasFreezing()) {
-				attachment.setFreezing(true);
+			if (!stack.has(ForceComponents.TOOL_FREEZING)) {
+				stack.set(ForceComponents.TOOL_FREEZING, true);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		}
@@ -770,12 +748,12 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 
 	static boolean addHealingModifier(ItemStack stack) {
 		if (stack.getItem() instanceof ForceRodItem) {
-			ForceRodAttachment attachment = stack.getData(FORCE_ROD);
 			int MAX_CAP = ConfigHandler.COMMON.healingCap.get();
-			if (attachment.getHealingLevel() < MAX_CAP) {
-				attachment.incrementHealing();
+			int currentBleed = stack.getOrDefault(ForceComponents.ROD_HEALING, 0);
+			if (currentBleed < MAX_CAP) {
+				stack.set(ForceComponents.ROD_HEALING, currentBleed + 1);
 				addInfusedTag(stack);
-				stack.setData(FORCE_ROD, attachment);
+
 				return true;
 			}
 		}
@@ -784,11 +762,10 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 
 	static boolean addLumberjackModifier(ItemStack stack) {
 		if (stack.getItem() instanceof ForceAxeItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (!attachment.hasLumberjack()) {
-				attachment.setLumberjack(true);
+			if (!stack.has(ForceComponents.TOOL_LUMBERJACK)) {
+				stack.set(ForceComponents.TOOL_LUMBERJACK, true);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		}
@@ -797,10 +774,9 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 
 	static boolean addRainbowModifier(ItemStack stack) {
 		if (stack.getItem() instanceof ForceShearsItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			attachment.setRainbow(true);
+			stack.set(ForceComponents.TOOL_RAINBOW, true);
 			addInfusedTag(stack);
-			stack.setData(TOOL_MODIFIER, attachment);
+
 			return true;
 		}
 		return false;
@@ -808,11 +784,11 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 
 	static boolean addTreasureModifier(ItemStack stack) {
 		if (stack.getItem() instanceof ForceSwordItem || stack.getItem() instanceof ForceAxeItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (!attachment.hasTreasure()) {
-				attachment.setTreasure(true);
+
+			if (!stack.has(ForceComponents.TOOL_TREASURE)) {
+				stack.set(ForceComponents.TOOL_TREASURE, true);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		}
@@ -826,12 +802,10 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 			if (handler.canUpgrade(bd)) {
 				handler.applyUpgrade();
 
-				CompoundTag tag = stack.getOrCreateTag();
-				tag.putInt(ForcePackItem.SLOTS_USED, ItemHandlerUtils.getUsedSlots(handler));
-				tag.putInt(ForcePackItem.SLOTS_TOTAL, handler.getSlotsInUse());
-				tag.putInt("BookTier", handler.getUpgrades());
+				stack.set(ForceComponents.SLOTS_USED, ItemHandlerUtils.getUsedSlots(handler));
+				stack.set(ForceComponents.SLOTS_TOTAL, handler.getSlotsInUse());
+				stack.set(ForceComponents.PACK_TIER, handler.getUpgrades());
 
-				stack.setTag(tag);
 				return true;
 			}
 			return false;
@@ -839,199 +813,195 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 		return false;
 	}
 
-	static boolean addSturdyModifier(ItemStack stack) {
+	static boolean addSturdyModifier(ItemStack stack, HolderLookup.Provider provider) {
 		Item item = stack.getItem();
 		if (item instanceof ForceSwordItem || item instanceof ForceAxeItem || item instanceof ForceShovelItem || item instanceof ForcePickaxeItem || item instanceof ForceRodItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (attachment.getSturdyLevel() < ConfigHandler.COMMON.sturdyToolCap.get()) {
-				attachment.incrementSturdy();
-				EnchantUtils.incrementLevel(stack, Enchantments.UNBREAKING);
+			int getSturdylevel = stack.getOrDefault(ForceComponents.TOOL_STURDY, 0);
+			if (getSturdylevel < ConfigHandler.COMMON.sturdyToolCap.get()) {
+				stack.set(ForceComponents.TOOL_STURDY, getSturdylevel + 1);
+				EnchantUtils.incrementLevel(stack, provider.holderOrThrow(Enchantments.UNBREAKING));
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		} else if (item instanceof ForceArmorItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (attachment.getSturdyLevel() == 0) {
-				attachment.incrementSturdy();
+			int getSturdylevel = stack.getOrDefault(ForceComponents.TOOL_STURDY, 0);
+			if (getSturdylevel == 0) {
+				stack.set(ForceComponents.TOOL_STURDY, getSturdylevel + 1);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		}
 		return false;
 	}
 
-	static boolean addLuckModifier(ItemStack stack) {
+	static boolean addLuckModifier(ItemStack stack, HolderLookup.Provider provider) {
 		Item item = stack.getItem();
 		int MAX_CAP = ConfigHandler.COMMON.luckCap.get();
 		if (item instanceof ForcePickaxeItem || item instanceof ForceShovelItem || item instanceof ForceAxeItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (attachment.getLuckLevel() < MAX_CAP) {
-				attachment.incrementLuck();
-				EnchantUtils.incrementLevel(stack, Enchantments.BLOCK_FORTUNE);
+			int currentLuck = stack.getOrDefault(ForceComponents.TOOL_LUCK, 0);
+			if (currentLuck < MAX_CAP) {
+				stack.set(ForceComponents.TOOL_LUCK, currentLuck + 1);
+				EnchantUtils.incrementLevel(stack, provider.holderOrThrow(Enchantments.FORTUNE));
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		} else if (item instanceof ForceSwordItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (attachment.getLuckLevel() < MAX_CAP) {
-				attachment.incrementLuck();
-				EnchantUtils.incrementLevel(stack, Enchantments.MOB_LOOTING);
+			int currentLuck = stack.getOrDefault(ForceComponents.TOOL_LUCK, 0);
+			if (currentLuck < MAX_CAP) {
+				stack.set(ForceComponents.TOOL_LUCK, currentLuck + 1);
+				EnchantUtils.incrementLevel(stack, provider.holderOrThrow(Enchantments.LOOTING));
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		} else if (item instanceof ForceBowItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (attachment.getLuckLevel() < MAX_CAP) {
-				attachment.incrementLuck();
+			int currentLuck = stack.getOrDefault(ForceComponents.TOOL_LUCK, 0);
+			if (currentLuck < MAX_CAP) {
+				stack.set(ForceComponents.TOOL_LUCK, currentLuck + 1);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		} else if (item instanceof ForceArmorItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (attachment.getLuckLevel() < MAX_CAP) {
-				attachment.incrementLuck();
+			int currentLuck = stack.getOrDefault(ForceComponents.TOOL_LUCK, 0);
+			if (currentLuck < MAX_CAP) {
+				stack.set(ForceComponents.TOOL_LUCK, currentLuck + 1);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		}
 		return false;
 	}
 
-	static boolean addDamageModifier(ItemStack stack) {
+	static boolean addDamageModifier(ItemStack stack, HolderLookup.Provider provider) {
 		Item item = stack.getItem();
 		int MAX_CAP = ConfigHandler.COMMON.damageCap.get();
 		if (item instanceof ForceSwordItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (attachment.getSharpLevel() < MAX_CAP) {
-				attachment.incrementSharp();
-				EnchantUtils.incrementLevel(stack, Enchantments.SHARPNESS);
+			int currentSharpness = stack.getOrDefault(ForceComponents.TOOL_SHARPNESS, 0);
+			if (currentSharpness < MAX_CAP) {
+				stack.set(ForceComponents.TOOL_SHARPNESS, currentSharpness + 1);
+				EnchantUtils.incrementLevel(stack, provider.holderOrThrow(Enchantments.SHARPNESS));
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		} else if (item instanceof ForceBowItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (attachment.getSharpLevel() < MAX_CAP) {
-				attachment.incrementSharp();
-				EnchantUtils.incrementLevel(stack, Enchantments.POWER_ARROWS);
+			int currentSharpness = stack.getOrDefault(ForceComponents.TOOL_SHARPNESS, 0);
+			if (currentSharpness < MAX_CAP) {
+				stack.set(ForceComponents.TOOL_SHARPNESS, currentSharpness + 1);
+				EnchantUtils.incrementLevel(stack, provider.holderOrThrow(Enchantments.POWER));
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		} else if (item instanceof ForceArmorItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (attachment.getSharpLevel() < 1) {
-				attachment.incrementSharp();
+			int currentSharpness = stack.getOrDefault(ForceComponents.TOOL_SHARPNESS, 0);
+			if (currentSharpness < 1) {
+				stack.set(ForceComponents.TOOL_SHARPNESS, currentSharpness + 1);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		}
 		return false;
 	}
 
-	static boolean addSilkTouchModifier(ItemStack stack) {
+	static boolean addSilkTouchModifier(ItemStack stack, HolderLookup.Provider provider) {
 		Item item = stack.getItem();
 		if (item instanceof ForceAxeItem || item instanceof ForceShovelItem || item instanceof ForcePickaxeItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (!attachment.hasSilk()) {
-				attachment.setSilk(true);
-				stack.enchant(Enchantments.SILK_TOUCH, 1);
+			if (!stack.has(ForceComponents.TOOL_SILK)) {
+				stack.set(ForceComponents.TOOL_SILK, true);
+				stack.enchant(provider.holderOrThrow(Enchantments.SILK_TOUCH), 1);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		}
 		return false;
 	}
 
-	static boolean addForceModifier(ItemStack stack) {
+	static boolean addForceModifier(ItemStack stack, HolderLookup.Provider provider) {
 		Item item = stack.getItem();
 		int MAX_CAP = ConfigHandler.COMMON.forceCap.get();
 		if (item instanceof ForceSwordItem || item instanceof ForceAxeItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (attachment.getForceLevel() < MAX_CAP) {
-				attachment.incrementForce();
-				EnchantUtils.incrementLevel(stack, Enchantments.KNOCKBACK);
+			int currentForce = stack.getOrDefault(ForceComponents.TOOL_FORCE, 0);
+			if (currentForce < MAX_CAP) {
+				stack.set(ForceComponents.TOOL_FORCE, currentForce + 1);
+				EnchantUtils.incrementLevel(stack, provider.holderOrThrow(Enchantments.KNOCKBACK));
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		}
 		return false;
 	}
 
-	static boolean addHeatModifier(ItemStack stack) {
+	static boolean addHeatModifier(ItemStack stack, HolderLookup.Provider provider) {
 		Item item = stack.getItem();
 		if (item instanceof ForceShovelItem || item instanceof ForcePickaxeItem || item instanceof ForceShearsItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (!attachment.hasHeat()) {
-				attachment.setHeat(true);
+			if (!stack.has(ForceComponents.TOOL_HEAT)) {
+				stack.set(ForceComponents.TOOL_HEAT, true);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		} else if (item instanceof ForceSwordItem || item instanceof ForceAxeItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (!attachment.hasHeat()) {
-				stack.enchant(Enchantments.FIRE_ASPECT, 1);
-				attachment.setHeat(true);
+			if (!stack.has(ForceComponents.TOOL_HEAT)) {
+				stack.set(ForceComponents.TOOL_HEAT, true);
+				stack.enchant(provider.holderOrThrow(Enchantments.FIRE_ASPECT), 1);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		} else if (item instanceof ForceArmorItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (!attachment.hasHeat()) {
-				attachment.setHeat(true);
+			if (!stack.has(ForceComponents.TOOL_HEAT)) {
+				stack.set(ForceComponents.TOOL_HEAT, true);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		}
 		return false;
 	}
 
-	static boolean addSpeedModifier(ItemStack stack) {
+	static boolean addSpeedModifier(ItemStack stack, HolderLookup.Provider provider) {
 		Item item = stack.getItem();
 		int MAX_CAP = ConfigHandler.COMMON.speedCap.get();
 		if (item instanceof ForceShovelItem || item instanceof ForcePickaxeItem || item instanceof ForceAxeItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (attachment.getSpeedLevel() < MAX_CAP) {
-				attachment.incrementSpeed();
-				EnchantUtils.incrementLevel(stack, Enchantments.BLOCK_EFFICIENCY);
+			int currentSpeed = stack.getOrDefault(ForceComponents.TOOL_SPEED, 0);
+			if (currentSpeed < MAX_CAP) {
+				stack.set(ForceComponents.TOOL_SPEED, currentSpeed + 1);
+				EnchantUtils.incrementLevel(stack, provider.holderOrThrow(Enchantments.EFFICIENCY));
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		} else if (item instanceof ForceBowItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (attachment.getSpeedLevel() < 1) {
-				attachment.incrementSpeed();
+			int currentSpeed = stack.getOrDefault(ForceComponents.TOOL_SPEED, 0);
+			if (currentSpeed < 1) {
+				stack.set(ForceComponents.TOOL_SPEED, currentSpeed + 1);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		} else if (item instanceof ForceArmorItem) {
-			ToolModifierAttachment attachment = stack.getData(TOOL_MODIFIER);
-			if (attachment.getSpeedLevel() < 1) {
-				attachment.incrementSpeed();
+			int currentSpeed = stack.getOrDefault(ForceComponents.TOOL_SPEED, 0);
+			if (currentSpeed < 1) {
+				stack.set(ForceComponents.TOOL_SPEED, currentSpeed + 1);
 				addInfusedTag(stack);
-				stack.setData(TOOL_MODIFIER, attachment);
+
 				return true;
 			}
 		} else if (item instanceof ForceRodItem) {
-			ForceRodAttachment attachment = stack.getData(FORCE_ROD);
-			if (attachment.getSpeedLevel() < ConfigHandler.COMMON.rodSpeedCap.get()) {
-				attachment.incrementSpeed();
+			int currentSpeed = stack.getOrDefault(ForceComponents.TOOL_SPEED, 0);
+			if (currentSpeed < ConfigHandler.COMMON.rodSpeedCap.get()) {
+				stack.set(ForceComponents.TOOL_SPEED, currentSpeed + 1);
 				addInfusedTag(stack);
-				stack.setData(FORCE_ROD, attachment);
+
 				return true;
 			}
 		}
@@ -1039,18 +1009,14 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 	}
 
 	static void addInfusedTag(ItemStack stack) {
-		CompoundTag tag = stack.getOrCreateTag();
-		if (!tag.contains("ForceInfused")) {
-			tag.putBoolean("ForceInfused", true);
-			stack.setTag(tag);
-		}
+		stack.set(ForceComponents.FORCE_INFUSED, true);
 	}
 
 	public int fill(FluidStack resource, FluidAction action) {
 		FluidStack resourceCopy = resource.copy();
 
 		if (action.execute()) {
-			if (tank.getFluid().isEmpty() || tank.getFluid().isFluidEqual(resource)) {
+			if (tank.getFluid().isEmpty() || FluidStack.isSameFluidSameComponents(tank.getFluid(), resource)) {
 				tank.fill(resourceCopy, action);
 			}
 		}
@@ -1104,7 +1070,7 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 				ItemStack modifier = getModifier(i);
 				if (modifier.isEmpty()) continue;
 
-				if (recipe.matchesModifier(this, modifier, false)) {
+				if (recipe.matchesModifier(new RecipeWrapper(this.handler), modifier, false)) {
 					foundMatch = true;
 					amountFound++;
 					requiredForce += FLUID_COST_PER;
@@ -1125,7 +1091,7 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 
 	public int getBookTier() {
 		if (!getBookInSlot().isEmpty()) {
-			return new UpgradeBookData(this.getBookInSlot()).getTier().ordinal();
+			return this.getBookInSlot().getOrDefault(ForceComponents.UPGRADE_BOOK, UpgradeBookData.DEFAULT).tier().ordinal();
 		}
 		return 0;
 	}
@@ -1237,7 +1203,7 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 		if (!LEVEL_RECIPE_LIST.containsKey(thisTier)) {
 			LEVEL_RECIPE_LIST.put(thisTier, new ArrayList<>());
 		}
-		LEVEL_RECIPE_LIST.get(thisTier).add(recipe);
+		LEVEL_RECIPE_LIST.get(thisTier).add(id);
 		HASHES.add(id.toString());
 		ForceCraft.LOGGER.info("Recipe loaded {} -> {} , {}", id.toString(), recipe.getModifier(), recipe.getIngredient());
 		return true;

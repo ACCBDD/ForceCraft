@@ -70,8 +70,9 @@ public class FlaskEntity extends ThrowableItemProjectile implements ItemSupplier
 		return ForceRegistry.ENTITY_FLASK.get();
 	}
 
-	protected float getGravity() {
-		return 0.05F;
+	@Override
+	protected double getDefaultGravity() {
+		return 0.05D;
 	}
 
 	@Override
@@ -89,7 +90,9 @@ public class FlaskEntity extends ThrowableItemProjectile implements ItemSupplier
 
 					this.setItem(new ItemStack(ForceRegistry.FORCE_FLASK.get()));
 				} else {
-					if (entity.isAlive() && !entity.isInvulnerable() && !(entity instanceof Player) && entity instanceof LivingEntity livingEntity && entity.canChangeDimensions() && !forceFlask.isBlacklisted((LivingEntity) entity)) {
+					if (entity.isAlive() && !entity.isInvulnerable() && !(entity instanceof Player) &&
+							entity instanceof LivingEntity livingEntity && entity.canChangeDimensions(this.level(), entity.level()) &&
+							!forceFlask.isBlacklisted((LivingEntity) entity)) {
 						ItemStack entityFlask = null;
 						if (entity instanceof Bat) {
 							entityFlask = new ItemStack(ForceRegistry.BAT_FLASK.get());

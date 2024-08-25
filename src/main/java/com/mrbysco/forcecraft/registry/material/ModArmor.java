@@ -2,6 +2,10 @@ package com.mrbysco.forcecraft.registry.material;
 
 import com.mrbysco.forcecraft.Reference;
 import net.minecraft.Util;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.LazyLoadedValue;
@@ -11,77 +15,46 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.function.Supplier;
 
-public enum ModArmor implements ArmorMaterial {
-	FORCE_ARMOR(Reference.MOD_ID + ":force", 15, Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
-		map.put(ArmorItem.Type.BOOTS, 3);
-		map.put(ArmorItem.Type.LEGGINGS, 4);
-		map.put(ArmorItem.Type.CHESTPLATE, 6);
-		map.put(ArmorItem.Type.HELMET, 3);
-	}), 0, SoundEvents.ARMOR_EQUIP_IRON, 4.0F, 0.1F, () -> {
-		return Ingredient.of(Items.NETHERITE_INGOT);
-	});
+public class ModArmor {
 
-	private final String name;
-	private final int durabilityMultiplier;
-	private final EnumMap<ArmorItem.Type, Integer> protectionFunctionForType;
-	private final int enchantability;
-	private final SoundEvent soundEvent;
-	private final float toughness;
-	private final float knockbackResistance;
-	private final LazyLoadedValue<Ingredient> repairMaterial;
-	private static final EnumMap<ArmorItem.Type, Integer> HEALTH_FUNCTION_FOR_TYPE = Util.make(new EnumMap<>(ArmorItem.Type.class), (map) -> {
-		map.put(ArmorItem.Type.BOOTS, 13);
-		map.put(ArmorItem.Type.LEGGINGS, 15);
-		map.put(ArmorItem.Type.CHESTPLATE, 16);
-		map.put(ArmorItem.Type.HELMET, 11);
-	});
+	public static final Holder<ArmorMaterial> FORCE = register(
+			"force",
+			Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+				map.put(ArmorItem.Type.BOOTS, 3);
+				map.put(ArmorItem.Type.LEGGINGS, 4);
+				map.put(ArmorItem.Type.CHESTPLATE, 6);
+				map.put(ArmorItem.Type.HELMET, 3);
+				map.put(ArmorItem.Type.BODY, 6);
+			}),
+			0,
+			SoundEvents.ARMOR_EQUIP_IRON,
+			4.0F,
+			0.1F,
+			() -> Ingredient.of(Items.NETHERITE_INGOT)
+	);
 
-	ModArmor(String name, int durabilityMultiplier, EnumMap<ArmorItem.Type, Integer> protectionFunctionForType, int enchantability, SoundEvent soundEvent, float toughness, float knockbackResistance, Supplier<Ingredient> repairMaterial) {
-		this.name = name;
-		this.durabilityMultiplier = durabilityMultiplier;
-		this.protectionFunctionForType = protectionFunctionForType;
-		this.enchantability = enchantability;
-		this.soundEvent = soundEvent;
-		this.toughness = toughness;
-		this.knockbackResistance = knockbackResistance;
-		this.repairMaterial = new LazyLoadedValue<>(repairMaterial);
+	private static Holder<ArmorMaterial> register(String string, EnumMap<ArmorItem.Type, Integer> enumMap, int i,
+	                                              Holder<SoundEvent> arg, float f, float g,
+	                                              Supplier<Ingredient> supplier) {
+		List<ArmorMaterial.Layer> list = List.of(new ArmorMaterial.Layer(Reference.modLoc(string)));
+		return register(string, enumMap, i, arg, f, g, supplier, list);
 	}
 
-	public int getDurabilityForType(ArmorItem.Type type) {
-		return HEALTH_FUNCTION_FOR_TYPE.get(type) * this.durabilityMultiplier;
-	}
+	private static Holder<ArmorMaterial> register(String string, EnumMap<ArmorItem.Type, Integer> enumMap, int i,
+	                                              Holder<SoundEvent> arg, float f, float g,
+	                                              Supplier<Ingredient> supplier, List<ArmorMaterial.Layer> list) {
+		EnumMap<ArmorItem.Type, Integer> typeIntegerEnumMap = new EnumMap<>(ArmorItem.Type.class);
+		ArmorItem.Type[] values = ArmorItem.Type.values();
+		int var10 = values.length;
 
-	public int getDefenseForType(ArmorItem.Type type) {
-		return this.protectionFunctionForType.get(type);
-	}
+		for (int var11 = 0; var11 < var10; ++var11) {
+			ArmorItem.Type type = values[var11];
+			typeIntegerEnumMap.put(type, (Integer) enumMap.get(type));
+		}
 
-	public int getEnchantmentValue() {
-		return this.enchantability;
-	}
-
-	public SoundEvent getEquipSound() {
-		return this.soundEvent;
-	}
-
-	public Ingredient getRepairIngredient() {
-		return this.repairMaterial.get();
-	}
-
-
-	public String getName() {
-		return this.name;
-	}
-
-	public float getToughness() {
-		return this.toughness;
-	}
-
-	/**
-	 * Gets the percentage of knockback resistance provided by armor of the material.
-	 */
-	public float getKnockbackResistance() {
-		return this.knockbackResistance;
+		return Registry.registerForHolder(BuiltInRegistries.ARMOR_MATERIAL, Reference.modLoc(string), new ArmorMaterial(typeIntegerEnumMap, i, arg, supplier, list, f, g));
 	}
 }

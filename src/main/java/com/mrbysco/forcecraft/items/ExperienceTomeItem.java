@@ -1,8 +1,8 @@
 package com.mrbysco.forcecraft.items;
 
+import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.util.ForceUtils;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -12,7 +12,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -25,7 +24,8 @@ public class ExperienceTomeItem extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
+		super.appendHoverText(stack, context, tooltip, tooltipFlag);
 		if (!Screen.hasShiftDown()) {
 			tooltip.add(Component.translatable("forcecraft.tooltip.press_shift"));
 			return;
@@ -133,16 +133,11 @@ public class ExperienceTomeItem extends Item {
 		} else if (storedExp < 0) {
 			storedExp = 0;
 		}
-		CompoundTag tag = stack.getOrCreateTag();
-		tag.putInt("Experience", storedExp);
-		stack.setTag(tag);
+		stack.set(ForceComponents.TOME_EXPERIENCE, storedExp);
 	}
 
 	public static int getExperience(ItemStack stack) {
-		if (!stack.hasTag()) {
-			stack.setTag(new CompoundTag());
-		}
-		return stack.getTag().getInt("Experience");
+		return stack.getOrDefault(ForceComponents.TOME_EXPERIENCE, 0);
 	}
 
 	public static int getMaxExperience(ItemStack stack) {

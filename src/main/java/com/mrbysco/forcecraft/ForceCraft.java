@@ -1,6 +1,6 @@
 package com.mrbysco.forcecraft;
 
-import com.mrbysco.forcecraft.attachment.ForceAttachments;
+import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.capability.CapabilityHandler;
 import com.mrbysco.forcecraft.client.ClientHandler;
 import com.mrbysco.forcecraft.client.KeybindHandler;
@@ -12,8 +12,10 @@ import com.mrbysco.forcecraft.handlers.GrindstoneHandler;
 import com.mrbysco.forcecraft.handlers.HeartHandler;
 import com.mrbysco.forcecraft.handlers.LootTableHandler;
 import com.mrbysco.forcecraft.handlers.LootingHandler;
+import com.mrbysco.forcecraft.handlers.LumberHandler;
 import com.mrbysco.forcecraft.handlers.PlayerCapHandler;
 import com.mrbysco.forcecraft.handlers.ToolModifierHandler;
+import com.mrbysco.forcecraft.handlers.TooltipHandler;
 import com.mrbysco.forcecraft.items.nonburnable.NonBurnableItemEntity;
 import com.mrbysco.forcecraft.networking.PacketHandler;
 import com.mrbysco.forcecraft.recipe.condition.ForceConditions;
@@ -33,11 +35,9 @@ import net.minecraft.world.level.block.DispenserBlock;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
@@ -76,17 +76,19 @@ public class ForceCraft {
 		ForceRecipeSerializers.RECIPE_SERIALIZERS.register(eventBus);
 		ForceModifiers.BIOME_MODIFIER_SERIALIZERS.register(eventBus);
 		ForceConditions.CONDITION_CODECS.register(eventBus);
-		ForceAttachments.ATTACHMENT_TYPES.register(eventBus);
+		ForceComponents.COMPONENT_TYPE.register(eventBus);
 
 		NeoForge.EVENT_BUS.register(new HeartHandler());
 		NeoForge.EVENT_BUS.register(new ForceDeathHandler());
 		NeoForge.EVENT_BUS.register(new ForceCommands());
 		NeoForge.EVENT_BUS.register(new BaneHandler());
 		NeoForge.EVENT_BUS.register(new PlayerCapHandler());
-		NeoForge.EVENT_BUS.register(new LootingHandler());
+//		NeoForge.EVENT_BUS.register(new LootingHandler());
 		NeoForge.EVENT_BUS.register(new LootTableHandler());
 		NeoForge.EVENT_BUS.register(new ToolModifierHandler());
 		NeoForge.EVENT_BUS.register(new GrindstoneHandler());
+		NeoForge.EVENT_BUS.register(new LumberHandler());
+		NeoForge.EVENT_BUS.register(new TooltipHandler());
 		NeoForge.EVENT_BUS.addListener(NonBurnableItemEntity.EventHandler::onExpire); //Expire event of NonBurnableItemEntity
 
 		eventBus.addListener(ForceEntities::registerEntityAttributes);

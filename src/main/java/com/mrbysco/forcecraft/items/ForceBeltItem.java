@@ -1,12 +1,13 @@
 package com.mrbysco.forcecraft.items;
 
 import com.mrbysco.forcecraft.Reference;
-import com.mrbysco.forcecraft.attachment.storage.BeltStorage;
-import com.mrbysco.forcecraft.attachment.storage.StorageManager;
+import com.mrbysco.forcecraft.components.ForceComponents;
+import com.mrbysco.forcecraft.components.storage.BeltStorage;
+import com.mrbysco.forcecraft.components.storage.StorageManager;
 import com.mrbysco.forcecraft.menu.ForceBeltMenu;
 import com.mrbysco.forcecraft.registry.ForceTags;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
@@ -52,7 +53,7 @@ public class ForceBeltItem extends BaseItem {
 	@Nullable
 	public MenuProvider getContainer(ItemStack stack, IItemHandler handler) {
 		return new SimpleMenuProvider((id, inventory, player) -> new ForceBeltMenu(id, inventory, handler)
-				, stack.hasCustomHoverName() ? ((MutableComponent) stack.getHoverName()).withStyle(ChatFormatting.BLACK) : Component.translatable(Reference.MOD_ID + ".container.belt"));
+				, stack.has(DataComponents.CUSTOM_NAME) ? ((MutableComponent) stack.getHoverName()).withStyle(ChatFormatting.BLACK) : Component.translatable(Reference.MOD_ID + ".container.belt"));
 	}
 
 	@Override
@@ -61,20 +62,21 @@ public class ForceBeltItem extends BaseItem {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
-		CompoundTag tag = stack.getOrCreateTag();
-		if (tag.contains(ForcePackItem.SLOTS_USED) && tag.contains(ForcePackItem.SLOTS_TOTAL)) {
-			tooltip.add(Component.literal(String.format("%s/%s Slots", tag.getInt(ForcePackItem.SLOTS_USED), tag.getInt(ForcePackItem.SLOTS_TOTAL))));
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		super.appendHoverText(stack, context, tooltip, flagIn);
+		if (stack.has(ForceComponents.SLOTS_USED) && stack.has(ForceComponents.SLOTS_TOTAL)) {
+			tooltip.add(Component.literal(String.format("%s/%s Slots",
+					stack.getOrDefault(ForceComponents.SLOTS_USED, 0),
+					stack.getOrDefault(ForceComponents.SLOTS_TOTAL, 1))));
 		} else {
 			tooltip.add(Component.literal("0/8 Slots"));
 		}
 
-		if (flagIn.isAdvanced() && stack.getTag() != null && stack.getTag().contains("uuid")) {
-			UUID uuid = stack.getTag().getUUID("uuid");
-			tooltip.add(Component.literal("ID: " + uuid.toString().substring(0, 8)).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+		if (flagIn.isAdvanced() && stack.has(ForceComponents.UUID)) {
+			UUID uuid = stack.get(ForceComponents.UUID);
+			tooltip.add(Component.literal("ID: " + uuid.toString().substring(0, 8))
+					.withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
 		}
-
-		super.appendHoverText(stack, level, tooltip, flagIn);
 	}
 
 	@Override

@@ -4,7 +4,7 @@ import com.mrbysco.forcecraft.Reference;
 import com.mrbysco.forcecraft.networking.message.OpenInventoryPayload;
 import com.mrbysco.forcecraft.networking.message.QuickUseBeltPayload;
 import net.minecraft.client.KeyMapping;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
@@ -26,38 +26,38 @@ public class KeybindHandler {
 		return String.join(".", "key", Reference.MOD_ID, name);
 	}
 
-	public static void onClientTick(TickEvent.ClientTickEvent event) {
+	public static void onClientTick(ClientTickEvent.Post event) {
 		if (KEY_OPEN_HOTBAR_PACK.consumeClick()) {
-			PacketDistributor.SERVER.noArg().send(new OpenInventoryPayload(1));
+			PacketDistributor.sendToServer(new OpenInventoryPayload(1));
 		}
 
 		if (KEY_OPEN_HOTBAR_BELT.consumeClick()) {
-			PacketDistributor.SERVER.noArg().send(new OpenInventoryPayload(0));
+			PacketDistributor.sendToServer(new OpenInventoryPayload(0));
 		}
 
 		if (KEY_QUICK_USE_1.consumeClick()) {
-			PacketDistributor.SERVER.noArg().send(new QuickUseBeltPayload(0));
+			PacketDistributor.sendToServer(new QuickUseBeltPayload(0));
 		}
 		if (KEY_QUICK_USE_2.consumeClick()) {
-			PacketDistributor.SERVER.noArg().send(new QuickUseBeltPayload(1));
+			PacketDistributor.sendToServer(new QuickUseBeltPayload(1));
 		}
 		if (KEY_QUICK_USE_3.consumeClick()) {
-			PacketDistributor.SERVER.noArg().send(new QuickUseBeltPayload(2));
+			PacketDistributor.sendToServer(new QuickUseBeltPayload(2));
 		}
 		if (KEY_QUICK_USE_4.consumeClick()) {
-			PacketDistributor.SERVER.noArg().send(new QuickUseBeltPayload(3));
+			PacketDistributor.sendToServer(new QuickUseBeltPayload(3));
 		}
 		if (KEY_QUICK_USE_5.consumeClick()) {
-			PacketDistributor.SERVER.noArg().send(new QuickUseBeltPayload(4));
+			PacketDistributor.sendToServer(new QuickUseBeltPayload(4));
 		}
 		if (KEY_QUICK_USE_6.consumeClick()) {
-			PacketDistributor.SERVER.noArg().send(new QuickUseBeltPayload(5));
+			PacketDistributor.sendToServer(new QuickUseBeltPayload(5));
 		}
 		if (KEY_QUICK_USE_7.consumeClick()) {
-			PacketDistributor.SERVER.noArg().send(new QuickUseBeltPayload(6));
+			PacketDistributor.sendToServer(new QuickUseBeltPayload(6));
 		}
 		if (KEY_QUICK_USE_8.consumeClick()) {
-			PacketDistributor.SERVER.noArg().send(new QuickUseBeltPayload(7));
+			PacketDistributor.sendToServer(new QuickUseBeltPayload(7));
 		}
 	}
 }

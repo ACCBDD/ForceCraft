@@ -1,0 +1,15 @@
+{
+  "type": "forcecraft:grinding",
+  "experience": 0.1,
+  "ingredient": {
+    "tag": "c:gravels"
+  },
+  "processTime": 400,
+  "results": [
+    {
+      "count": 1,
+      "id": "minecraft:flint"
+    }
+  ],
+  "secondaryChance": 1.0
+}

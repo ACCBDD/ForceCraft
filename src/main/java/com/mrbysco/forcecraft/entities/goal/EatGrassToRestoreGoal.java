@@ -90,7 +90,7 @@ public class EatGrassToRestoreGoal extends Goal {
 		if (this.getEatingGrassTimer() == 4) {
 			BlockPos blockpos = this.grassEaterEntity.blockPosition();
 			if (IS_GRASS.test(this.entityWorld.getBlockState(blockpos))) {
-				if (EventHooks.getMobGriefingEvent(this.entityWorld, this.grassEaterEntity)) {
+				if (EventHooks.canEntityGrief(this.entityWorld, this.grassEaterEntity)) {
 					this.entityWorld.destroyBlock(blockpos, false);
 				}
 
@@ -98,7 +98,7 @@ public class EatGrassToRestoreGoal extends Goal {
 			} else {
 				BlockPos blockpos1 = blockpos.below();
 				if (this.entityWorld.getBlockState(blockpos1).is(Blocks.GRASS_BLOCK)) {
-					if (EventHooks.getMobGriefingEvent(this.entityWorld, this.grassEaterEntity)) {
+					if (EventHooks.canEntityGrief(this.entityWorld, this.grassEaterEntity)) {
 						this.entityWorld.levelEvent(2001, blockpos1, Block.getId(Blocks.GRASS_BLOCK.defaultBlockState()));
 						this.entityWorld.setBlock(blockpos1, Blocks.DIRT.defaultBlockState(), 2);
 					}
