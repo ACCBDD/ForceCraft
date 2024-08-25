@@ -5,8 +5,6 @@ import com.mrbysco.forcecraft.components.card.RecipeContentsData;
 import com.mrbysco.forcecraft.items.ItemCardItem;
 import com.mrbysco.forcecraft.registry.ForceMenus;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
-import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;

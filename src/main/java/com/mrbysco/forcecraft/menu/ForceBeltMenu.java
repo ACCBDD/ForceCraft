@@ -2,12 +2,10 @@ package com.mrbysco.forcecraft.menu;
 
 import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.items.ForceBeltItem;
-import com.mrbysco.forcecraft.items.ForcePackItem;
 import com.mrbysco.forcecraft.menu.slot.BeltSlot;
 import com.mrbysco.forcecraft.registry.ForceMenus;
 import com.mrbysco.forcecraft.util.FindingUtil;
 import com.mrbysco.forcecraft.util.ItemHandlerUtils;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;

@@ -2,7 +2,6 @@ package com.mrbysco.forcecraft.items;
 
 import com.mrbysco.forcecraft.registry.ForceRegistry;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;

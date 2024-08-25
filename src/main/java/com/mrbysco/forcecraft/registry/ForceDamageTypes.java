@@ -3,7 +3,6 @@ package com.mrbysco.forcecraft.registry;
 import com.mrbysco.forcecraft.Reference;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageType;
 
 public class ForceDamageTypes {

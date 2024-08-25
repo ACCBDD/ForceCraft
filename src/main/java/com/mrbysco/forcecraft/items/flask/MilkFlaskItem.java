@@ -17,7 +17,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.EffectCures;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 

@@ -10,7 +10,6 @@ import com.mrbysco.forcecraft.registry.ForceMenus;
 import com.mrbysco.forcecraft.util.FindingUtil;
 import com.mrbysco.forcecraft.util.ItemHandlerUtils;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
