@@ -1,4 +1,4 @@
-package com.mrbysco.forcecraft.handlers;
+package com.mrbysco.forcecraft.util;
 
 import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.items.ForceArmorItem;
@@ -12,18 +12,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 import java.util.List;
 
-public class TooltipHandler {
+public class TooltipUtil {
 
-	@SubscribeEvent
-	public void onTooltipEvent(ItemTooltipEvent event) {
-		final ItemStack stack = event.getItemStack();
+	public static void addForceTooltips(ItemStack stack, List<Component> tooltip) {
 		final Item item = stack.getItem();
-		List<Component> tooltip = event.getToolTip();
 		if (stack.has(ForceComponents.TOOL_SPEED)) {
 			if (item instanceof ForceBowItem || item instanceof ForceArmorItem || item instanceof ForceRodItem) {
 				tooltip.add(Component.translatable("item.infuser.tooltip.speed" + stack.get(ForceComponents.TOOL_SPEED)).withStyle(ChatFormatting.YELLOW));

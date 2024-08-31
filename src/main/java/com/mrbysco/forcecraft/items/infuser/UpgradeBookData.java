@@ -2,6 +2,7 @@ package com.mrbysco.forcecraft.items.infuser;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mrbysco.forcecraft.ForceCraft;
 import com.mrbysco.forcecraft.blockentities.InfuserBlockEntity;
 import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.recipe.InfuseRecipe;
@@ -54,7 +55,18 @@ public record UpgradeBookData(UpgradeBookTier tier, List<ResourceLocation> recip
 	public void onRecipeApply(RecipeHolder<InfuseRecipe> recipeHolder, ItemStack bookStack) {
 		UpgradeBookData data = bookStack.getOrDefault(ForceComponents.UPGRADE_BOOK, UpgradeBookData.DEFAULT);
 		if (InfuserBlockEntity.LEVEL_RECIPE_LIST.get(data.tier.asInt()).contains(recipeHolder.id())) {
-			recipesUsed.add(recipeHolder.id());
+			List<ResourceLocation> recipesUsed = new ArrayList<>(data.recipesUsed());
+			if (!recipesUsed.contains(recipeHolder.id())) {
+				recipesUsed.add(recipeHolder.id());
+				bookStack.set(ForceComponents.UPGRADE_BOOK,
+						new UpgradeBookData(
+								data.tier,
+								recipesUsed,
+								data.points,
+								data.progressCache
+						)
+				);
+			}
 		}
 		tryLevelUp(bookStack);
 	}
@@ -88,9 +100,12 @@ public record UpgradeBookData(UpgradeBookTier tier, List<ResourceLocation> recip
 		UpgradeBookData data = stack.getOrDefault(ForceComponents.UPGRADE_BOOK, UpgradeBookData.DEFAULT);
 		//Update tooltip
 		List<ResourceLocation> thisTier = InfuserBlockEntity.LEVEL_RECIPE_LIST.get(data.tier().ordinal());
-		int recipesThisTier = (thisTier == null) ? 0 : thisTier.size();
+		List<ResourceLocation> usedRecipes = data.recipesUsed();
+		ForceCraft.LOGGER.info("thisTier {}", thisTier);
+		ForceCraft.LOGGER.info("RecipesUsed {}", usedRecipes);
+		int recipesThisTier = (usedRecipes == null) ? 0 : usedRecipes.size();
 		if (!InfuserBlockEntity.LEVEL_RECIPE_LIST.isEmpty()) {
-			int totalThisTier = InfuserBlockEntity.LEVEL_RECIPE_LIST.get(data.tier().ordinal()).size();
+			int totalThisTier = thisTier.size();
 			stack.set(ForceComponents.UPGRADE_BOOK,
 					new UpgradeBookData(
 							data.tier,

@@ -4,6 +4,7 @@ import com.mrbysco.forcecraft.Reference;
 import com.mrbysco.forcecraft.items.infuser.ForceToolData;
 import com.mrbysco.forcecraft.items.infuser.IForceChargingTool;
 import com.mrbysco.forcecraft.registry.material.ModToolTiers;
+import com.mrbysco.forcecraft.util.TooltipUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
@@ -49,6 +50,7 @@ public class ForceShovelItem extends ShovelItem implements IForceChargingTool {
 
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
+		TooltipUtil.addForceTooltips(stack, tooltip);
 		ForceToolData fd = new ForceToolData(stack);
 		fd.attachInformation(tooltip);
 		super.appendHoverText(stack, context, tooltip, tooltipFlag);

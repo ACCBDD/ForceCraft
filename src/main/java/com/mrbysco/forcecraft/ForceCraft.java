@@ -15,7 +15,6 @@ import com.mrbysco.forcecraft.handlers.LootTableHandler;
 import com.mrbysco.forcecraft.handlers.LumberHandler;
 import com.mrbysco.forcecraft.handlers.PlayerCapHandler;
 import com.mrbysco.forcecraft.handlers.ToolModifierHandler;
-import com.mrbysco.forcecraft.handlers.TooltipHandler;
 import com.mrbysco.forcecraft.items.nonburnable.NonBurnableItemEntity;
 import com.mrbysco.forcecraft.networking.PacketHandler;
 import com.mrbysco.forcecraft.recipe.condition.ForceConditions;
@@ -89,7 +88,6 @@ public class ForceCraft {
 		NeoForge.EVENT_BUS.register(new ToolModifierHandler());
 		NeoForge.EVENT_BUS.register(new GrindstoneHandler());
 		NeoForge.EVENT_BUS.register(new LumberHandler());
-		NeoForge.EVENT_BUS.register(new TooltipHandler());
 		NeoForge.EVENT_BUS.addListener(NonBurnableItemEntity.EventHandler::onExpire); //Expire event of NonBurnableItemEntity
 
 		eventBus.addListener(ForceEntities::registerEntityAttributes);

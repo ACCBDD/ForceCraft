@@ -4,6 +4,7 @@ import com.mrbysco.forcecraft.Reference;
 import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.items.infuser.ForceToolData;
 import com.mrbysco.forcecraft.items.infuser.IForceChargingTool;
+import com.mrbysco.forcecraft.util.TooltipUtil;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -28,6 +29,7 @@ public class ForceArmorItem extends ArmorItem implements IForceChargingTool {
 
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
+		TooltipUtil.addForceTooltips(stack, tooltip);
 		ForceToolData fd = new ForceToolData(stack);
 		fd.attachInformation(tooltip);
 		super.appendHoverText(stack, context, tooltip, tooltipFlag);

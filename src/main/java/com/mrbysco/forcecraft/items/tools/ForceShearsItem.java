@@ -8,6 +8,7 @@ import com.mrbysco.forcecraft.entities.IColdMob;
 import com.mrbysco.forcecraft.items.infuser.ForceToolData;
 import com.mrbysco.forcecraft.items.infuser.IForceChargingTool;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
+import com.mrbysco.forcecraft.util.TooltipUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -193,6 +194,7 @@ public class ForceShearsItem extends ShearsItem implements IForceChargingTool {
 
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
+		TooltipUtil.addForceTooltips(stack, tooltip);
 		ForceToolData fd = new ForceToolData(stack);
 		fd.attachInformation(tooltip);
 		super.appendHoverText(stack, context, tooltip, tooltipFlag);

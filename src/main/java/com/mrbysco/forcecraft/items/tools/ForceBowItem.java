@@ -2,6 +2,7 @@ package com.mrbysco.forcecraft.items.tools;
 
 import com.mrbysco.forcecraft.items.infuser.ForceToolData;
 import com.mrbysco.forcecraft.items.infuser.IForceChargingTool;
+import com.mrbysco.forcecraft.util.TooltipUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -70,6 +71,7 @@ public class ForceBowItem extends BowItem implements IForceChargingTool {
 
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
+		TooltipUtil.addForceTooltips(stack, tooltip);
 		ForceToolData fd = new ForceToolData(stack);
 		fd.attachInformation(tooltip);
 		super.appendHoverText(stack, context, tooltip, tooltipFlag);
