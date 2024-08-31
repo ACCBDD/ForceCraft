@@ -37,6 +37,7 @@ import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
@@ -57,29 +58,29 @@ public class ClientHandler {
 		ItemBlockRenderTypes.setRenderLayer(ForceFluids.FORCE_FLUID_SOURCE.get(), RenderType.translucent());
 
 		event.enqueueWork(() -> {
-			ItemProperties.register(ForceRegistry.MAGNET_GLOVE.get(), ResourceLocation.withDefaultNamespace("active"), (stack, world, livingEntity, i) ->
+			ItemProperties.register(ForceRegistry.MAGNET_GLOVE.get(), Reference.modLoc("active"), (stack, level, livingEntity, i) ->
 					stack.getOrDefault(MAGNET, false) ? 1.0F : 0.0F);
 
-			ItemProperties.register(ForceRegistry.ENTITY_FLASK.get(), ResourceLocation.withDefaultNamespace("captured"), (stack, world, livingEntity, i) ->
+			ItemProperties.register(ForceRegistry.ENTITY_FLASK.get(), Reference.modLoc("captured"), (stack, level, livingEntity, i) ->
 					stack.has(ForceComponents.FLASK_CONTENT) ? 1.0F : 0.0F);
 
-			ItemProperties.register(ForceRegistry.BACONATOR.get(), ResourceLocation.withDefaultNamespace("filled"), (stack, world, livingEntity, i) ->
-					stack.has(ForceComponents.STORED_FOOD)? 1.0F : 0.0F);
+			ItemProperties.register(ForceRegistry.BACONATOR.get(), Reference.modLoc("filled"), (stack, level, livingEntity, i) ->
+					stack.has(ForceComponents.STORED_FOOD) ? 1.0F : 0.0F);
 
-			ItemProperties.register(ForceRegistry.FORCE_PACK.get(), ResourceLocation.withDefaultNamespace("color"), (stack, world, livingEntity, i) ->
+			ItemProperties.register(ForceRegistry.FORCE_PACK.get(), Reference.modLoc("color"), (stack, level, livingEntity, i) ->
 					stack.has(ForceComponents.PACK_COLOR) ? (1.0F / 16) * stack.getOrDefault(ForceComponents.PACK_COLOR, 0) : 0.9375F);
 
-			ItemProperties.register(ForceRegistry.FORCE_BELT.get(), ResourceLocation.withDefaultNamespace("color"), (stack, world, livingEntity, i) ->
+			ItemProperties.register(ForceRegistry.FORCE_BELT.get(), Reference.modLoc("color"), (stack, level, livingEntity, i) ->
 					stack.has(ForceComponents.PACK_COLOR) ? (1.0F / 16) * stack.getOrDefault(ForceComponents.PACK_COLOR, 0) : 0.9375F);
 
-			ItemProperties.register(ForceRegistry.FORCE_BOW.get(), ResourceLocation.withDefaultNamespace("pull"), (stack, world, livingEntity, i) -> {
+			ItemProperties.register(ForceRegistry.FORCE_BOW.get(), Reference.modLoc("pull"), (stack, level, livingEntity, i) -> {
 				if (livingEntity == null) {
 					return 0.0F;
 				} else {
 					return livingEntity.getUseItem() != stack ? 0.0F : (float) (stack.getUseDuration(livingEntity) - livingEntity.getUseItemRemainingTicks()) / 20.0F;
 				}
 			});
-			ItemProperties.register(ForceRegistry.FORCE_BOW.get(), ResourceLocation.withDefaultNamespace("pulling"), (stack, world, livingEntity, i) ->
+			ItemProperties.register(ForceRegistry.FORCE_BOW.get(), Reference.modLoc("pulling"), (stack, level, livingEntity, i) ->
 					livingEntity != null && livingEntity.isUsingItem() && livingEntity.getUseItem() == stack ? 1.0F : 0.0F);
 		});
 	}
@@ -140,14 +141,16 @@ public class ClientHandler {
 					SpawnEggItem info = SpawnEggItem.byId(BuiltInRegistries.ENTITY_TYPE.get(id));
 
 					if (info != null) {
-						return tintIndex == 0 ? info.getColor(0) : info.getColor(1);
+						return tintIndex == 0 ? FastColor.ARGB32.opaque(info.getColor(0)) : FastColor.ARGB32.opaque(info.getColor(1));
 					} else {
-						return tintIndex == 0 ? 10489616 : tintIndex == 1 ? 951412 : 0xFFFFFF;
+						if (tintIndex == 0)
+							return FastColor.ARGB32.opaque(10489616);
+						return FastColor.ARGB32.opaque(951412);
 					}
 				}
-				return 0xFFFFFF;
+				return 0xFFFFFFFF;
 			}
-			return 0xFFFFFF;
+			return 0xFFFFFFFF;
 		}, ForceRegistry.ENTITY_FLASK.get());
 	}
 }

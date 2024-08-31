@@ -1,10 +1,20 @@
 {
-    "parent": "minecraft:item/generated",
-    "textures": {
-        "layer0": "forcecraft:item/force_flask"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "forcecraft:item/force_flask"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "forcecraft:captured": 0.000000
+      },
+      "model": "forcecraft:item/force_flask"
     },
-    "overrides": [
-        { "predicate": { "captured": 0.000000 }, "model": "forcecraft:item/force_flask" },
-        { "predicate": { "captured": 1.0 }, "model": "forcecraft:item/entity_flask_captured" }
-    ]
+    {
+      "predicate": {
+        "forcecraft:captured": 1.0
+      },
+      "model": "forcecraft:item/entity_flask_captured"
+    }
+  ]
 }
