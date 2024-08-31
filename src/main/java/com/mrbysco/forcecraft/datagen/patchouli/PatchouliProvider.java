@@ -40,7 +40,7 @@ public class PatchouliProvider extends PatchouliBookProvider {
 				//Add leveling altar entry
 				.addEntry("infuser/infuser", "info.forcecraft.book.infuser.entry.name", "forcecraft:infuser")
 				.addTextPage("info.forcecraft.book.infuser_info.text").build()
-				.addCraftingPage(Reference.modLoc("transmutation/infuser")).setText("info.forcecraft.book.infuser_recipe.text").build().build()
+				.addCraftingPage(Reference.modLoc("transmutation/infuser_from_enchanting_table")).setText("info.forcecraft.book.infuser_recipe.text").build().build()
 
 				.addEntry("infuser/requirements", "info.forcecraft.book.requirements.entry.name", "forcecraft:infuser")
 				.addTextPage("info.forcecraft.book.requirements_info.text").build()
@@ -62,11 +62,11 @@ public class PatchouliProvider extends PatchouliBookProvider {
 
 				.addEntry("infuser/force_ingot", "info.forcecraft.book.force_ingot.entry.name", "forcecraft:force_ingot")
 				.addTextPage("info.forcecraft.book.force_ingot_info.text").build()
-				.addCraftingPage(Reference.modLoc("iron_to_force_ingot"))
+				.addCraftingPage(Reference.modLoc("force_ingot_from_iron"))
 				.setText("info.forcecraft.book.force_ingot_recipe.text").build()
-				.addCraftingPage(Reference.modLoc("gold_to_force_ingot"))
+				.addCraftingPage(Reference.modLoc("force_ingot_from_gold"))
 				.setText("info.forcecraft.book.force_ingot_recipe2.text").build()
-				.addCraftingPage(Reference.modLoc("nuggets_to_force_ingot"))
+				.addCraftingPage(Reference.modLoc("force_ingot_from_nuggets"))
 				.setText("info.forcecraft.book.force_ingot_recipe3.text").build().build()
 
 				.addEntry("infuser/force_shears", "info.forcecraft.book.force_shears.entry.name", "forcecraft:force_shears")
@@ -108,7 +108,7 @@ public class PatchouliProvider extends PatchouliBookProvider {
 				.addTextPage("info.forcecraft.book.force_flask_info.text").build()
 				.addCraftingPage(Reference.modLoc("force_flask"))
 				.setText("info.forcecraft.book.force_flask_recipe.text").build()
-				.addCraftingPage(Reference.modLoc("force_flask_from_entity"))
+				.addCraftingPage(Reference.modLoc("force_flask_from_entity_flask"))
 				.setText("info.forcecraft.book.force_flask_recipe2.text").build()
 				.build()
 

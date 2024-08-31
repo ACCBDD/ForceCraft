@@ -9,7 +9,7 @@
     },
     {
       "type": "patchouli:crafting",
-      "recipe": "forcecraft:transmutation/infuser",
+      "recipe": "forcecraft:transmutation/infuser_from_enchanting_table",
       "text": "info.forcecraft.book.infuser_recipe.text"
     }
   ]

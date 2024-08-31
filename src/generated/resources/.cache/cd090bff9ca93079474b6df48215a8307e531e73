@@ -1,4 +1,4 @@
-// 1.21.1	2024-08-25T23:46:34.829477272	Patchouli Book Provider
+// 1.21.1	2024-08-31T20:41:09.2534258	Patchouli Book Provider
 32e348ff36c416065a34159ff6ff141da1db8d45 assets/forcecraft/patchouli_books/force_and_you/en_us/categories/infuser.json
 e88d1941fc0b6d9e137df52d0a31db79d529ccd3 assets/forcecraft/patchouli_books/force_and_you/en_us/categories/tier_0.json
 4f94f2846a491b0763ff728099aa598bf7cd558d assets/forcecraft/patchouli_books/force_and_you/en_us/categories/tier_1.json
@@ -13,13 +13,13 @@ fa5e5c5e19abd4cd7033f3ef3d1d7092fb8535a0 assets/forcecraft/patchouli_books/force
 163163c343fa186b574505e3b90a152359904fe6 assets/forcecraft/patchouli_books/force_and_you/en_us/entries/infuser/bottled_wither.json
 1179b42e83752fee76d4016dd420ebad5462daa2 assets/forcecraft/patchouli_books/force_and_you/en_us/entries/infuser/claw.json
 c8c3d4a9007e8482ce3d63e3a1b1246d9b890cc0 assets/forcecraft/patchouli_books/force_and_you/en_us/entries/infuser/force_engine.json
-f064313581a2a1c71de604e4aa7a93336cf93b03 assets/forcecraft/patchouli_books/force_and_you/en_us/entries/infuser/force_flask.json
-6c91b21eb1eaa9d7360ecd9ea0751f416061e47d assets/forcecraft/patchouli_books/force_and_you/en_us/entries/infuser/force_ingot.json
+42563156a5607c1fefe6b97b28c8f2db7389f751 assets/forcecraft/patchouli_books/force_and_you/en_us/entries/infuser/force_flask.json
+704025132733f9bfef4421cac5e45330f1f3792c assets/forcecraft/patchouli_books/force_and_you/en_us/entries/infuser/force_ingot.json
 8b7ef7aa1309862cdcd2847d9b24e2c383b1b0d4 assets/forcecraft/patchouli_books/force_and_you/en_us/entries/infuser/force_rod.json
 af72369b34919f9e25db0ff210dbccf3a4e9b03d assets/forcecraft/patchouli_books/force_and_you/en_us/entries/infuser/force_shears.json
 9507ad3cf7aa40fd9842de547ab8b3fa8ed5080f assets/forcecraft/patchouli_books/force_and_you/en_us/entries/infuser/furnace.json
 2999b89c590a621a9831a774b3e2ee77cca3b80b assets/forcecraft/patchouli_books/force_and_you/en_us/entries/infuser/inert_core.json
-b6af910d26f8eb031774f936add6f60bda0bc73f assets/forcecraft/patchouli_books/force_and_you/en_us/entries/infuser/infuser.json
+d8dfabe192c24b22db0e8660a28d177fa3da89f5 assets/forcecraft/patchouli_books/force_and_you/en_us/entries/infuser/infuser.json
 ffd83228ac7eaa105fa56bce71c5ffe3c9c877a4 assets/forcecraft/patchouli_books/force_and_you/en_us/entries/infuser/requirements.json
 bcae96df58b989d97e09b4c71211151044f15622 assets/forcecraft/patchouli_books/force_and_you/en_us/entries/infuser/upgrade_core.json
 131f28f7d4acd619677f3df49422a874dc0557c6 assets/forcecraft/patchouli_books/force_and_you/en_us/entries/tier_0/damage.json

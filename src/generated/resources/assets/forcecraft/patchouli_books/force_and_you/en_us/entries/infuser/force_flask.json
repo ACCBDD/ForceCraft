@@ -14,7 +14,7 @@
     },
     {
       "type": "patchouli:crafting",
-      "recipe": "forcecraft:force_flask_from_entity",
+      "recipe": "forcecraft:force_flask_from_entity_flask",
       "text": "info.forcecraft.book.force_flask_recipe2.text"
     }
   ]
