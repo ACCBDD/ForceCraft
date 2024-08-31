@@ -31,11 +31,6 @@ public class ShapedNoRemainderRecipe extends ShapedRecipe {
 	}
 
 	@Override
-	public boolean isSpecial() {
-		return true;
-	}
-
-	@Override
 	public RecipeSerializer<?> getSerializer() {
 		return ForceRecipeSerializers.SHAPED_NO_REMAINDER_SERIALIZER.get();
 	}
