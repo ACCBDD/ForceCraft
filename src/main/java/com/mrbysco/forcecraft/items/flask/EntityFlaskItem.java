@@ -7,6 +7,8 @@ import com.mrbysco.forcecraft.items.BaseItem;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
 import com.mrbysco.forcecraft.registry.ForceTags;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -66,7 +68,7 @@ public class EntityFlaskItem extends BaseItem {
 	public InteractionResultHolder<ItemStack> use(Level level, Player playerIn, InteractionHand handIn) {
 		ItemStack itemstack = playerIn.getItemInHand(handIn);
 		if (playerIn.isShiftKeyDown()) {
-			if (!hasEntityStored(itemstack)) {
+			if (hasEntityStored(itemstack) && !level.isClientSide()) {
 				level.playSound((Player) null, playerIn.getX(), playerIn.getY(), playerIn.getZ(),
 						SoundEvents.SPLASH_POTION_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (level.random.nextFloat() * 0.4F + 0.8F));
 				if (!level.isClientSide) {
@@ -76,9 +78,7 @@ public class EntityFlaskItem extends BaseItem {
 					level.addFreshEntity(flaskEntity);
 				}
 
-				if (!playerIn.getAbilities().instabuild) {
-					itemstack.shrink(1);
-				}
+				itemstack.consume(1, playerIn);
 			} else {
 				playerIn.sendSystemMessage(Component.translatable("item.entity_flask.empty").withStyle(ChatFormatting.RED));
 			}
@@ -107,8 +107,10 @@ public class EntityFlaskItem extends BaseItem {
 	}
 
 	public void storeEntity(ItemStack stack, LivingEntity livingEntity) {
-		FlaskContent content = new FlaskContent(EntityType.getKey(livingEntity.getType()), livingEntity.saveWithoutId(new CompoundTag()));
+		CompoundTag entityData = livingEntity.saveWithoutId(new CompoundTag());
+		FlaskContent content = new FlaskContent(EntityType.getKey(livingEntity.getType()), entityData);
 		stack.set(ForceComponents.FLASK_CONTENT, content);
+		livingEntity.discard();
 	}
 
 	public boolean isBlacklisted(LivingEntity livingEntity) {
@@ -118,8 +120,10 @@ public class EntityFlaskItem extends BaseItem {
 	@Override
 	public Component getName(ItemStack stack) {
 		FlaskContent content = stack.get(ForceComponents.FLASK_CONTENT);
-		if (content != null)
-			return Component.translatable(super.getDescriptionId(stack), content.storedType());
+		if (content != null) {
+			String mobTranslation = Util.makeDescriptionId("entity", content.storedType());
+			return Component.translatable(super.getDescriptionId(stack), I18n.get(mobTranslation));
+		}
 
 		return Component.translatable(super.getDescriptionId(stack), "Empty");
 	}
@@ -131,7 +135,7 @@ public class EntityFlaskItem extends BaseItem {
 			FlaskContent content = stack.get(ForceComponents.FLASK_CONTENT);
 			tooltip.add(Component.translatable("item.entity_flask.tooltip").withStyle(ChatFormatting.GOLD).append(
 					Component.literal(String.format("[%s]", content.storedType().toString())).withStyle(ChatFormatting.GRAY)));
-			if (!content.entityData().contains("Health")) {
+			if (content.entityData().contains("Health")) {
 				tooltip.add(Component.translatable("item.entity_flask.tooltip2").withStyle(ChatFormatting.GOLD).append(
 						Component.literal(String.format("[%s]", content.entityData().getDouble("Health"))).withStyle(ChatFormatting.GRAY)));
 			}
