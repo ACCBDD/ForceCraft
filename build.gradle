@@ -81,9 +81,9 @@ dependencies {
     localRuntime "mezz.jei:jei-${jei_minecraft}-neoforge:${jei_version}"
 
     compileOnly "vazkii.patchouli:Patchouli:${patchouli_version}"
-    runtimeOnly "vazkii.patchouli:Patchouli:${patchouli_version}"
+    localRuntime "vazkii.patchouli:Patchouli:${patchouli_version}"
 
-    implementation "xyz.brassgoggledcoders:PatchouliProvider:${patchouli_provider_version}"
+    compileOnly "xyz.brassgoggledcoders:PatchouliProvider:${patchouli_provider_version}"
 
     //runtimeOnly "curse.maven:titanium-287342:3570210"
 //    runtimeOnly "curse.maven:pipez-443900:5005762"
