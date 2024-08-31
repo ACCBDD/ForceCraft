@@ -30,9 +30,14 @@ public class ForceItemTagProvider extends ItemTagsProvider {
 	public static final TagKey<Item> ORES_IN_GROUND_STONE = commonTag("ores_in_ground/stone");
 	public static final TagKey<Item> ORES = commonTag("ores");
 	public static final TagKey<Item> ORES_POWER = commonTag("ores/power");
+	public static final TagKey<Item> MEAT = mcTag("meat");
 
 	private static TagKey<Item> commonTag(String name) {
 		return ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", name));
+	}
+
+	private static TagKey<Item> mcTag(String name) {
+		return ItemTags.create(ResourceLocation.withDefaultNamespace(name));
 	}
 
 	@Override
@@ -76,5 +81,7 @@ public class ForceItemTagProvider extends ItemTagsProvider {
 						ForceRegistry.MAGENTA_FORCE_FURNACE.asItem(), ForceRegistry.ORANGE_FORCE_FURNACE.asItem(),
 						ForceRegistry.PINK_FORCE_FURNACE.asItem(), ForceRegistry.PURPLE_FORCE_FURNACE.asItem(),
 						ForceRegistry.RED_FORCE_FURNACE.asItem(), ForceRegistry.WHITE_FORCE_FURNACE.asItem());
+
+		this.tag(MEAT).add(ForceRegistry.RAW_BACON.get(), ForceRegistry.COOKED_BACON.get());
 	}
 }
