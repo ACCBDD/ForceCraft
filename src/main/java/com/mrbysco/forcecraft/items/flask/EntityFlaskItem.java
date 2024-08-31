@@ -38,6 +38,10 @@ public class EntityFlaskItem extends BaseItem {
 		super(properties);
 	}
 
+	public EntityFlaskItem(Properties properties, EntityType<?> type) {
+		this(properties.component(ForceComponents.FLASK_CONTENT, new FlaskContent(EntityType.getKey(type), new CompoundTag())));
+	}
+
 	@Override
 	public InteractionResult useOn(UseOnContext context) {
 		Level level = context.getLevel();
@@ -67,8 +71,8 @@ public class EntityFlaskItem extends BaseItem {
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player playerIn, InteractionHand handIn) {
 		ItemStack itemstack = playerIn.getItemInHand(handIn);
-		if (playerIn.isShiftKeyDown()) {
-			if (hasEntityStored(itemstack) && !level.isClientSide()) {
+		if (playerIn.isShiftKeyDown() && !level.isClientSide()) {
+			if (hasEntityStored(itemstack)) {
 				level.playSound((Player) null, playerIn.getX(), playerIn.getY(), playerIn.getZ(),
 						SoundEvents.SPLASH_POTION_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (level.random.nextFloat() * 0.4F + 0.8F));
 				if (!level.isClientSide) {
