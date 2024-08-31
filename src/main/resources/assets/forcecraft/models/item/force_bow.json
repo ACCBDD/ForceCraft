@@ -42,7 +42,7 @@
         {
             "predicate": {
                 "forcecraft:pulling": 1,
-                "forcecraft:forcecraft:pull": 0.9
+                "forcecraft:pull": 0.9
             },
             "model": "forcecraft:item/force_bow_pulling_2"
         }
