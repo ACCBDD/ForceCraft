@@ -1,1 +1,1 @@
-* Initial update to 1.21.1
+* Fixed Force Pack not saving contents (Thanks Flanks255)
