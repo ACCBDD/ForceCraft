@@ -28,9 +28,6 @@ import java.util.UUID;
 
 public class ForcePackItem extends BaseItem {
 
-	public static final String SLOTS_TOTAL = "SlotsTotal";
-	public static final String SLOTS_USED = "SlotsUsed";
-
 	public ForcePackItem(Item.Properties properties) {
 		super(properties.stacksTo(1));
 	}
