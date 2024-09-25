@@ -19,7 +19,7 @@ public final class EnchantUtils {
 	}
 
 	public static void incrementLevel(ItemStack stack, Holder<Enchantment> enchantment, int levels) {
-		ItemEnchantments itemenchantments = EnchantmentHelper.updateEnchantments(
+		EnchantmentHelper.updateEnchantments(
 				stack, mutable -> mutable.upgrade(enchantment, levels) //TODO: Test if this works!
 		);
 	}
