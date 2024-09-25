@@ -143,7 +143,7 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 		public boolean isItemValid(int slot, ItemStack stack) {
 			if (slot < SLOT_TOOL) {
 				return matchesModifier(stack);
-				// is valid modifier TODO : fixing this check will fix placing and shift-clicking
+				// is valid modifier
 				// non ingredients into the circle
 			} else if (slot == SLOT_TOOL) {
 				// don't hardcode validation here, check recipe "center" tag or item
