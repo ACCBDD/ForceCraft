@@ -87,7 +87,7 @@ public class PackStackHandler extends ItemStackHandler {
 		}
 
 		if (bd.tier().asInt() >= UpgradeBookTier.THREE.asInt() && this.upgrades == 1) {
-			//bout to become 24 slots
+			//about to become 24 slots
 			return true;
 		}
 
@@ -122,7 +122,6 @@ public class PackStackHandler extends ItemStackHandler {
 	@Override
 	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
 		setUpgrades(tag.contains(NBT_UPGRADES, CompoundTag.TAG_INT) ? tag.getInt(NBT_UPGRADES) : upgrades);
-//		setSize((getUpgrades() + 1) * 8);
 
 		ListTag tagList = tag.getList("Items", CompoundTag.TAG_COMPOUND);
 		for (int i = 0; i < tagList.size(); i++) {
