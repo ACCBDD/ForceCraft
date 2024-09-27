@@ -110,8 +110,8 @@ public class InfuserBlock extends BaseEntityBlock {
 	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (!state.is(newState.getBlock())) {
 			BlockEntity blockentity = level.getBlockEntity(pos);
-			if (blockentity instanceof InfuserBlockEntity) {
-				IItemHandler handler = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, null);
+			if (blockentity instanceof InfuserBlockEntity infuserBlockEntity) {
+				IItemHandler handler = infuserBlockEntity.getItemHandler(null);
 				if (handler != null) {
 					for (int i = 0; i < handler.getSlots(); ++i) {
 						Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), handler.getStackInSlot(i));
