@@ -12,7 +12,6 @@ import com.mrbysco.forcecraft.recipe.condition.TorchEnabledCondition;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
 import com.mrbysco.forcecraft.registry.ForceTags;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPredicate;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -1218,7 +1217,7 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.setResult(Items.RED_SANDSTONE, 1)
 				.unlockedBy("has_core", has(ForceRegistry.FREEZING_CORE))
 				.save(output, Reference.modLoc("freezing/sandstone_from_red_sand"));
-		MultipleOutputRecipeBuilder.freezing(Ingredient.of(Tags.Items.SLIMEBALLS), 0.1F, 200)
+		MultipleOutputRecipeBuilder.freezing(Ingredient.of(Tags.Items.SLIME_BALLS), 0.1F, 200)
 				.setResult(Items.SNOWBALL, 1)
 				.unlockedBy("has_core", has(ForceRegistry.FREEZING_CORE))
 				.save(output, Reference.modLoc("freezing/snowball_from_slimeball"));

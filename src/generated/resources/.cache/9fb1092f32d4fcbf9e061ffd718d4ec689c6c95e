@@ -1,4 +1,4 @@
-// 1.21.1	2024-09-27T23:03:38.4073611	Recipes
+// 1.21.1	2024-09-27T23:05:17.3373723	Recipes
 3e6d620f7add54f0a4894209d84ba72c8bebe1ca data/forcecraft/advancement/recipes/building_blocks/force_black_torch.json
 9c1f7e54da6ecd6a41cec7802d0c30a0c915b7c1 data/forcecraft/advancement/recipes/building_blocks/force_blue_torch.json
 d82ae03117d94de897534994565aceca4eafb713 data/forcecraft/advancement/recipes/building_blocks/force_brick.json
@@ -454,7 +454,7 @@ a060ef55de5307ec0158ad5af51ae9ab24ac7f5a data/forcecraft/recipe/freezing/bone_me
 e1041f9e2047d9ff054424586e68b7a939475023 data/forcecraft/recipe/freezing/obsidian_from_lava_bucket.json
 c2686d0e631105051e4223aae431e91fd062a248 data/forcecraft/recipe/freezing/sandstone_from_red_sand.json
 53d85a3004092208657873063de230e9a7dcb874 data/forcecraft/recipe/freezing/sandstone_from_sand.json
-72cc93614fe1a4204a567d335ca2cca8f6119b38 data/forcecraft/recipe/freezing/snowball_from_slimeball.json
+cce949f34b0ae3b27fad424ed93bb6407f6e7da4 data/forcecraft/recipe/freezing/snowball_from_slimeball.json
 97d6847b44cd2b948664deddf0f043a1b84fd11f data/forcecraft/recipe/freezing/stone_bricks_from_stone.json
 943d7b408f1d7f56d63a6b7dbcdc0a176078079c data/forcecraft/recipe/freezing/stone_from_cobblestone.json
 f28f7e10e3d752e393cfed8ae740c2a0b791f884 data/forcecraft/recipe/golden_power_source.json
