@@ -235,7 +235,7 @@ public class ForceComponents {
 					.build());
 	public static final Supplier<DataComponentType<Integer>> TOME_EXPERIENCE = COMPONENT_TYPE.register("tome_experience", () ->
 			DataComponentType.<Integer>builder()
-					.persistent(ExtraCodecs.POSITIVE_INT)
+					.persistent(ExtraCodecs.NON_NEGATIVE_INT)
 					.networkSynchronized(ByteBufCodecs.INT)
 					.build());
 	public static final Supplier<DataComponentType<ForceWrenchData>> WRENCH = COMPONENT_TYPE.register("wrench", () ->
