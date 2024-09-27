@@ -1,1 +1,3 @@
-* Fixed Force Pack not saving contents (Thanks Flanks255)
+* Fix some recipes expecting more components than they should (should fix Camo infusing)
+* Fix Force Wrench crashing on use
+* Fix Force Infuser not dropping upgrade tome when broken
