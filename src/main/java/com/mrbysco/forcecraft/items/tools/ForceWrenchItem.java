@@ -37,7 +37,7 @@ import static com.mrbysco.forcecraft.components.ForceComponents.WRENCH;
 public class ForceWrenchItem extends BaseItem implements IForceChargingTool {
 
 	public ForceWrenchItem(Item.Properties name) {
-		super(name.stacksTo(1));
+		super(name.stacksTo(1).component(WRENCH, ForceWrenchData.EMPTY));
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class ForceWrenchItem extends BaseItem implements IForceChargingTool {
 		InteractionHand hand = context.getHand();
 		if (stack.getItem() instanceof ForceWrenchItem) {
 			if (player != null && player.isCrouching()) {
-				ForceWrenchData attachment = stack.get(WRENCH);
+				ForceWrenchData attachment = stack.getOrDefault(WRENCH, ForceWrenchData.EMPTY);
 				if (level.getBlockEntity(pos) instanceof BlockEntity && !attachment.canStoreBlock()) {
 					return serializeNBT(level, pos, player, hand);
 				} else if (attachment.canStoreBlock())
