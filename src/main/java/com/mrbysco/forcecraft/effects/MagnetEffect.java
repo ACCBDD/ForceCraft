@@ -63,6 +63,7 @@ public class MagnetEffect extends MobEffect {
 		return true;
 	}
 
+	@SuppressWarnings("removal")
 	@Override
 	public void initializeClient(Consumer<IClientMobEffectExtensions> consumer) {
 		consumer.accept(new IClientMobEffectExtensions() {
