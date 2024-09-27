@@ -12,6 +12,9 @@ import com.mrbysco.forcecraft.recipe.condition.TorchEnabledCondition;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
 import com.mrbysco.forcecraft.registry.ForceTags;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPredicate;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -1069,9 +1072,9 @@ public class ForceRecipeProvider extends RecipeProvider {
 						20
 				).modifierType(InfuserModifierType.SILK)
 				.save(output, Reference.modLoc("infuser/infuse_silk"));
-		final ItemStack invisibility = PotionContents.createItemStack(Items.POTION, Potions.INVISIBILITY);
 		InfuseRecipeBuilder.infuse(
-						DataComponentIngredient.of(false, invisibility),
+						DataComponentIngredient.of(false, DataComponentPredicate.builder()
+								.expect(DataComponents.POTION_CONTENTS, new PotionContents(Potions.INVISIBILITY)).build(), Items.POTION),
 						Ingredient.of(ForceTags.VALID_CAMO_TOOLS),
 						UpgradeBookTier.THREE,
 						20
@@ -1187,8 +1190,8 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.setResult(Items.LEATHER, 1)
 				.unlockedBy("has_core", has(ForceRegistry.FREEZING_CORE))
 				.save(output, Reference.modLoc("freezing/leather_from_rotten_flesh"));
-		final ItemStack waterBottle = PotionContents.createItemStack(Items.POTION, Potions.WATER);
-		MultipleOutputRecipeBuilder.freezing(DataComponentIngredient.of(false, waterBottle), 0.1F, 200)
+		MultipleOutputRecipeBuilder.freezing(DataComponentIngredient.of(false, DataComponentPredicate.builder()
+						.expect(DataComponents.POTION_CONTENTS, new PotionContents(Potions.WATER)).build(), Items.POTION), 0.1F, 200)
 				.setResult(Items.ICE, 1)
 				.setResult(Items.GLASS_BOTTLE, 1)
 				.unlockedBy("has_core", has(ForceRegistry.FREEZING_CORE))
@@ -1770,10 +1773,9 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.unlockedBy("has_book", has(Items.BOOK))
 				.save(output, Reference.modLoc("transmutation/upgrade_tome"));
 
-		ItemStack experienceTomeStack = new ItemStack(ForceRegistry.EXPERIENCE_TOME.get());
-		experienceTomeStack.set(ForceComponents.TOME_EXPERIENCE, 100);
 		TransmutationRecipeBuilder.transmutation(ForceRegistry.UPGRADE_CORE.get())
-				.requires(DataComponentIngredient.of(false, experienceTomeStack))
+				.requires(DataComponentIngredient.of(false, DataComponentPredicate.builder()
+						.expect(ForceComponents.TOME_EXPERIENCE.get(), 100).build(), ForceRegistry.EXPERIENCE_TOME.get()))
 				.unlockedBy("has_experience_tome", has(ForceRegistry.EXPERIENCE_TOME.get()))
 				.save(output, Reference.modLoc("transmutation/upgrade_core"));
 
