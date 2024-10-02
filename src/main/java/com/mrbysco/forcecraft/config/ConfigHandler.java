@@ -91,7 +91,7 @@ public class ConfigHandler {
 			furnaceOutputBlacklist = builder
 					.comment("An additional list of tile entities the Force Furnace can NOT insert into [Syntax: modid:tile_name]\n" +
 							"Examples: \"minecraft:shulker_box\" would stop it inserting into shulkers")
-					.defineListAllowEmpty(Collections.singletonList("furnaceOutputBlacklist"), () -> Collections.singletonList(""), o -> (o instanceof String));
+					.defineListAllowEmpty("furnaceOutputBlacklist", () -> List.of(""), () -> "", o -> (o instanceof String));
 
 			String[] fortunes = new String[]
 					{
@@ -290,7 +290,7 @@ public class ConfigHandler {
 
 			fortuneMessages = builder
 					.comment("Adding lines / removing lines specifies what the fortunes can say")
-					.defineList("fortuneMessages", Arrays.asList(fortunes), o -> (o instanceof String));
+					.defineListAllowEmpty("fortuneMessages", List.of(fortunes), () -> "", o -> (o instanceof String));
 
 			builder.pop();
 			builder.comment("Infusion settings")
