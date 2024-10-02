@@ -5,6 +5,7 @@ import com.mrbysco.forcecraft.registry.ForceEffects;
 import com.mrbysco.forcecraft.registry.ForceEntities;
 import com.mrbysco.forcecraft.registry.ForceRegistry;
 import com.mrbysco.forcecraft.registry.ForceSounds;
+import com.mrbysco.forcecraft.registry.ForceTags;
 import net.minecraft.data.PackOutput;
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.neoforge.common.data.LanguageProvider;
@@ -292,6 +293,55 @@ public class ForceLanguageProvider extends LanguageProvider {
 		//Fluid
 		add("fluid.forcecraft.fluid_force_source", "Liquid Force");
 		add("fluid_type.forcecraft.force", "Liquid Force");
+
+		//Tags
+		addTag(() -> ForceTags.INCORRECT_FOR_FORCE, "Incorrect for Force");
+		addTag(() -> ForceTags.MINEABLE_WITH_MITTS, "Mineable with Mitts");
+		addTag(() -> ForceTags.FORCE_BRICKS, "Force Bricks");
+
+		addTag(() -> ForceTags.VALID_INFUSER_MODIFIERS, "Valid Infuser Modifiers");
+		addTag(() -> ForceTags.VALID_INFUSER_TOOLS, "Valid Infuser Tools");
+		addTag(() -> ForceTags.VALID_INFUSER_CHARGE, "Valid Infuser Charge");
+		addTag(() -> ForceTags.TOOLS, "Tools");
+		addTag(() -> ForceTags.FORCE_FUELS, "Force Fuels");
+		addTag(() -> ForceTags.BACONATOR_FOOD, "Baconator Food");
+		addTag(() -> ForceTags.FORTUNE, "Fortune");
+		addTag(() -> ForceTags.VALID_FORCE_BELT, "Valid Force Belt");
+		addTag(() -> ForceTags.VALID_BANE_TOOLS, "Valid Bane Tools");
+		addTag(() -> ForceTags.VALID_HEALING_TOOLS, "Valid Healing Tools");
+		addTag(() -> ForceTags.VALID_WING_TOOLS, "Valid Wing Tools");
+		addTag(() -> ForceTags.VALID_STURDY_TOOLS, "Valid Sturdy Tools");
+		addTag(() -> ForceTags.VALID_ENDER_TOOLS, "Valid Ender Tools");
+		addTag(() -> ForceTags.VALID_LIGHT_TOOLS, "Valid Light Tools");
+		addTag(() -> ForceTags.VALID_TREASURE_TOOLS, "Valid Treasure Tools");
+		addTag(() -> ForceTags.VALID_BLEEDING_TOOLS, "Valid Bleeding Tools");
+		addTag(() -> ForceTags.VALID_SILKY_TOOLS, "Valid Silky Tools");
+		addTag(() -> ForceTags.VALID_CAMO_TOOLS, "Valid Camo Tools");
+		addTag(() -> ForceTags.VALID_DAMAGE_TOOLS, "Valid Damage Tools");
+		addTag(() -> ForceTags.VALID_LUCKY_TOOLS, "Valid Lucky Tools");
+		addTag(() -> ForceTags.VALID_FREEZING_TOOLS, "Valid Freezing Tools");
+		addTag(() -> ForceTags.VALID_HEAT_TOOLS, "Valid Heat Tools");
+		addTag(() -> ForceTags.VALID_LUMBER_TOOLS, "Valid Lumber Tools");
+		addTag(() -> ForceTags.VALID_SPEED_TOOLS, "Valid Speed Tools");
+		addTag(() -> ForceTags.VALID_KNOCKBACK_TOOLS, "Valid Knockback Tools");
+		addTag(() -> ForceTags.ENDER, "Ender");
+		addTag(() -> ForceTags.FORCE_LOGS, "Force Logs");
+		addTag(() -> ForceTags.ENTITY_FLASKS, "Entity Flasks");
+		addTag(() -> ForceTags.CHU_JELLY, "Chu Jelly");
+		addTag(() -> ForceTags.FORCE_INGOT, "Force Ingots");
+		addTag(() -> ForceTags.FORCE_NUGGET, "Force Nuggets");
+		addTag(() -> ForceTags.FORCE_FURNACES, "Force Furnaces");
+		addTag(() -> ForceTags.FORCE_GEM, "Force Gems");
+		addTag(() -> ForceTags.FORCE_ROD, "Force Rods");
+		addTag(() -> ForceTags.FORCE_GEAR, "Force Gears");
+		addTag(() -> ForceTags.HOLDS_ITEMS, "Holds Items");
+		addTag(() -> ForceTags.FORCE, "Force");
+		addTag(() -> ForceTags.MILK, "Milk");
+		addTag(() -> ForceTags.FUEL, "Fuel");
+		addTag(() -> ForceTags.BIOFUEL, "Bio Fuel");
+		addTag(() -> ForceTags.ENDERTOT_HOLDABLE, "Endertot Holdable");
+		addTag(() -> ForceTags.FLASK_BLACKLIST, "Flask Blacklist");
+
 
 		//Info Text
 		add("forcecraft.tooltip.press_shift", "Press Shift for Details");

@@ -9,7 +9,6 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 
@@ -17,7 +16,7 @@ public class ForceTags {
 
 	public static final TagKey<Block> INCORRECT_FOR_FORCE = forceBlockTag("needs_force_tool");
 	public static final TagKey<Block> MINEABLE_WITH_MITTS = forceBlockTag("mineable_with_mitts");
-	public static final TagKey<Block> FORCE_BRICK = forceBlockTag("force_brick");
+	public static final TagKey<Block> FORCE_BRICKS = forceBlockTag("force_bricks");
 
 	public static final TagKey<Item> VALID_INFUSER_MODIFIERS = ItemTags.create(Reference.modLoc("valid_infuser_modifiers"));
 	public static final TagKey<Item> VALID_INFUSER_TOOLS = ItemTags.create(Reference.modLoc("valid_infuser_tools"));
@@ -68,8 +67,6 @@ public class ForceTags {
 
 	public static final TagKey<EntityType<?>> FLASK_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, Reference.modLoc("flask_blacklist"));
 
-	public static final TagKey<Biome> IS_PEACEFUL = forceBiomeTag("is_peaceful");
-
 
 	private static TagKey<Item> commonItemTag(String name) {
 		return ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", name));
@@ -85,10 +82,6 @@ public class ForceTags {
 
 	private static TagKey<Fluid> optionalCommonFluidTag(String name) {
 		return FluidTags.create(ResourceLocation.fromNamespaceAndPath("c", name));
-	}
-
-	private static TagKey<Biome> forceBiomeTag(String name) {
-		return TagKey.create(Registries.BIOME, Reference.modLoc(name));
 	}
 
 }
