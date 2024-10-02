@@ -571,8 +571,8 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 	// TODO: refactor these static below into another place, possibly InfuserModifier class
 
 	static boolean applyCamo(ItemStack tool, ItemStack mod) {
-		List<MobEffectInstance> effects = mod.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).customEffects();
-		for (MobEffectInstance e : effects) {
+		PotionContents potionContents = mod.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+		for (MobEffectInstance e : potionContents.getAllEffects()) {
 			if (e.getEffect() == MobEffects.NIGHT_VISION) {
 				return addSightModifier(tool);
 			}
