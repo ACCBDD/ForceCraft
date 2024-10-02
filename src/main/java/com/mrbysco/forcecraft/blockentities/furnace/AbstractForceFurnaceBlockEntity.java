@@ -53,7 +53,6 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -71,7 +70,7 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 
 	public final ItemStackHandler handler = new ItemStackHandler(3) {
 		@Override
-		public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+		public boolean isItemValid(int slot, @NotNull ItemStack stack) {
 			if (slot == FUEL_SLOT) {
 				ItemStack itemstack = getStackInSlot(FUEL_SLOT);
 				return isFuel(stack) || stack.getItem() == Items.BUCKET && itemstack.getItem() != Items.BUCKET;
@@ -99,7 +98,7 @@ public abstract class AbstractForceFurnaceBlockEntity extends BaseContainerBlock
 			return getStackInSlot(slot).isEmpty() && stack.getItem() instanceof UpgradeCoreItem && stack.getCount() == 1;
 		}
 
-		@Nonnull
+		@NotNull
 		@Override
 		public ItemStack extractItem(int slot, int amount, boolean simulate) {
 			return ItemStack.EMPTY;

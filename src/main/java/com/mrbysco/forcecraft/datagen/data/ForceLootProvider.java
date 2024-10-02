@@ -566,7 +566,7 @@ public class ForceLootProvider extends LootTableProvider {
 	}
 
 //	@Override
-//	protected void validate(Map<ResourceLocation, LootTable> map, @Nonnull ValidationContext validationContext) {
+//	protected void validate(Map<ResourceLocation, LootTable> map, @NotNull ValidationContext validationContext) {
 //		List<ResourceLocation> ignored = List.of(
 //				ForceTables.TIER_1,
 //				ForceTables.TIER_2,

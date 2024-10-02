@@ -16,8 +16,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class SmeltingModifier extends LootModifier {
 	public static final Supplier<MapCodec<SmeltingModifier>> CODEC = Suppliers.memoize(() ->
@@ -28,7 +27,7 @@ public class SmeltingModifier extends LootModifier {
 		super(conditionsIn);
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
 		ObjectArrayList<ItemStack> ret = new ObjectArrayList<>();

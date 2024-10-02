@@ -4,8 +4,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class FuelSlot extends SlotItemHandler {
 
@@ -19,7 +18,7 @@ public class FuelSlot extends SlotItemHandler {
 	}
 
 	@Override
-	public int getMaxStackSize(@Nonnull ItemStack stack) {
+	public int getMaxStackSize(@NotNull ItemStack stack) {
 		if (stack.getCapability(Capabilities.FluidHandler.ITEM) != null) {
 			if (stack.getMaxStackSize() > 1) {
 				return 1;

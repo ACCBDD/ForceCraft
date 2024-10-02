@@ -10,8 +10,8 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.fluids.capability.templates.FluidHandlerItemStackSimple;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
 public class FlaskFluidHandler extends FluidHandlerItemStackSimple {
@@ -25,13 +25,13 @@ public class FlaskFluidHandler extends FluidHandlerItemStackSimple {
 		return 1000;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public FluidStack getFluidInTank(int tank) {
 		return getFluid();
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public FluidStack getFluid() {
 		Item item = container.getItem();
@@ -50,7 +50,7 @@ public class FlaskFluidHandler extends FluidHandlerItemStackSimple {
 	}
 
 	@Override
-	public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
+	public boolean isFluidValid(int tank, @NotNull FluidStack stack) {
 		return canFillFluidType(stack);
 	}
 

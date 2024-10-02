@@ -19,8 +19,8 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.SlotItemHandler;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +62,7 @@ public class ForcePackMenu extends AbstractContainerMenu {
 			for (int k = 0; k < 8; ++k) {
 				this.addSlot(new SlotItemHandler(inventory, k + j * 8, xPosC + k * 18, yPosC + j * 18) {
 					@Override
-					public boolean mayPlace(@Nonnull ItemStack stack) {
+					public boolean mayPlace(@NotNull ItemStack stack) {
 						return !(stack.getItem() instanceof ForcePackItem || stack.getItem() instanceof ForceBeltItem);
 					}
 				});

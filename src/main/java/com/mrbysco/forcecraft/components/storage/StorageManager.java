@@ -14,8 +14,8 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.neoforged.fml.util.thread.SidedThreadGroups;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
@@ -179,7 +179,7 @@ public class StorageManager {
 		}
 
 		@Override
-		@Nonnull
+		@NotNull
 		public CompoundTag save(CompoundTag compound, HolderLookup.Provider provider) {
 			ListTag packs = new ListTag();
 			PACKS.forEach(((uuid, data) -> packs.add(data.toNBT(provider))));
@@ -223,7 +223,7 @@ public class StorageManager {
 		}
 
 		@Override
-		@Nonnull
+		@NotNull
 		public CompoundTag save(CompoundTag compound, HolderLookup.Provider provider) {
 			ListTag belts = new ListTag();
 			BELTS.forEach(((uuid, data) -> belts.add(data.toNBT(provider))));
