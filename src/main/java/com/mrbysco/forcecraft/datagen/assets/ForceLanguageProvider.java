@@ -342,6 +342,36 @@ public class ForceLanguageProvider extends LanguageProvider {
 		addTag(() -> ForceTags.ENDERTOT_HOLDABLE, "Endertot Holdable");
 		addTag(() -> ForceTags.FLASK_BLACKLIST, "Flask Blacklist");
 
+		//Config
+		addConfig("title", "Forcecraft Config", null);
+		// General settings
+		addConfig("general", "General", "General Settings");
+		addConfig("generateForceOre", "Generate Force Ore", "Enable Force Ore generation [Default: true]");
+		addConfig("generateForceTree", "Generate Force Tree", "Enable Force Tree generation [Default: true]");
+		addConfig("timeTorchEnabled", "Time Torch Enabled", "Enable Time Torch [Default: true]");
+		addConfig("timeTorchLogging", "Time Torch Logging", "Print in Log when Time Torch is placed and by who [Default: true]");
+		addConfig("timeTorchRate", "Time Torch Rate", "How many ticks in between ticking neighbour blocks [Default: 5]");
+		addConfig("timeTorchAmount", "Time Torch Amount", "The amount of ticks the Time Torch applies to neighbour blocks [Default: 3]");
+		addConfig("disableRecoveryHearts", "Disable Recovery Hearts", "Disable recovery hearts from dropping [Default: false]");
+		addConfig("enableForceShake", "Enable Force Shake", "Enables screen shake when in Liquid Force [Default: false]");
+		addConfig("sturdyDamageReduction", "Sturdy Damage Reduction", "The max amount of damage blocked when all armor pieces have the Sturdy infusion [Default: 0.75]");
+		addConfig("forcePunchDamage", "Force Punch Damage", "The amount of half hearts of damage given by Force Punch given by the Damage infusion on armor [Default: 2]");
+		addConfig("forceInfusingTime", "Force Infusing Time", "The max amount of ticks it takes to charge a tool with Force [Default: 120 (6 seconds)]");
+		addConfig("furnaceOutputBlacklist", "Furnace Output Blacklist", "An additional list of tile entities the Force Furnace can NOT insert into [Syntax: modid:tile_name]\nExamples: \"minecraft:shulker_box\" would stop it inserting into shulkers");
+		// Fortune messages
+		addConfig("fortunes", "Fortunes", "Fortune Settings");
+		addConfig("fortuneMessages", "Fortune Messages", "Adding lines / removing lines specifies what the fortunes can say");
+		// Infusion settings
+		addConfig("infusion", "Infusion", "Infusion Settings");
+		addConfig("bleedCap", "Bleed Cap", "The max level of Bleeding that can be applied [Default: 3]");
+		addConfig("healingCap", "Healing Cap", "The max level of Healing that can be applied [Default: 3]");
+		addConfig("sturdyToolCap", "Sturdy Tool Cap", "The max level of Sturdy that can be applied on force tools [Default: 3]");
+		addConfig("luckCap", "Luck Cap", "The max level of Luck that can be applied [Default: 4]");
+		addConfig("damageCap", "Damage Cap", "The max level of Damage that can be applied [Default: 5]");
+		addConfig("forceCap", "Force Cap", "The max level of Force that can be applied [Default: 2]");
+		addConfig("speedCap", "Speed Cap", "The max level of Speed that can be applied [Default: 5]");
+		addConfig("rodSpeedCap", "Rod Speed Cap", "The max level of Speed that can be applied to a Force Rod [Default: 3]");
+		addConfig("liquidRegenLevel", "Liquid Regen Level", "The level of Regeneration given to the player when standing in Liquid Force (0 = Regeneration 1) [Default: 0]");
 
 		//Info Text
 		add("forcecraft.tooltip.press_shift", "Press Shift for Details");
