@@ -435,7 +435,7 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 			if (recipeHolder.value().matchesModifier(new RecipeWrapper(this.handler), modifier, true)) {
 				ItemStack tool = getFromToolSlot();
 				boolean success = applyModifier(tool, modifier, recipeHolder);
-				ForceCraft.LOGGER.info("Applying modifier {} on tool {}, succes: {}", tool, modifier, success);
+				ForceCraft.LOGGER.debug("Applying modifier {} on tool {}, succes: {}", modifier, tool, success);
 				if (success) {
 
 					// for EACH modifier
