@@ -42,7 +42,7 @@ public class MagnetEffect extends MobEffect {
 
 		range += amplifier * 0.3f;
 
-		List<ItemEntity> items = entity.getCommandSenderWorld().getEntitiesOfClass(ItemEntity.class, new AABB(x - range, y - range, z - range, x + range, y + range, z + range));
+		List<ItemEntity> items = entity.level().getEntitiesOfClass(ItemEntity.class, new AABB(x - range, y - range, z - range, x + range, y + range, z + range));
 		for (ItemEntity item : items) {
 			if (item.getItem().isEmpty() || !item.isAlive()) {
 				continue;
