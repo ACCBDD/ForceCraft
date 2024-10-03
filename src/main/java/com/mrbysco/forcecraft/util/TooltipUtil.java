@@ -49,6 +49,10 @@ public class TooltipUtil {
 		if (stack.has(ForceComponents.TOOL_BLEED)) {
 			tooltip.add(Component.translatable("item.infuser.tooltip.bleed" + stack.get(ForceComponents.TOOL_BLEED)).withStyle(ChatFormatting.RED));
 		}
+		if (stack.has(ForceComponents.TOOL_BANE)) {
+			tooltip.add(Component.translatable("item.infuser.tooltip.bane").append(" ")
+					.append(Component.translatable("enchantment.level." + stack.get(ForceComponents.TOOL_BANE))).withStyle(ChatFormatting.RED));
+		}
 		if (stack.has(ForceComponents.TOOL_RAINBOW)) {
 			tooltip.add(Component.translatable("item.infuser.tooltip.rainbow").withStyle(ChatFormatting.GOLD));
 		}
