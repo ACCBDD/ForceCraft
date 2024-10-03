@@ -87,14 +87,16 @@ public class TransmutationRecipe implements CraftingRecipe {
 					else inputs.add(itemstack);
 				} else {
 					if (itemstack.getItem() instanceof ExperienceTomeItem) {
-						if (itemstack.has(ForceComponents.TOME_EXPERIENCE) && itemstack.getOrDefault(ForceComponents.TOME_EXPERIENCE, 0) < 100) {
+						int experience = itemstack.getOrDefault(ForceComponents.TOME_EXPERIENCE, 0);
+
+						if (itemstack.has(ForceComponents.TOME_EXPERIENCE) && experience < 100) {
 							return false;
 						} else {
 							ItemStack experienceTome = new ItemStack(ForceRegistry.EXPERIENCE_TOME.get());
-							itemstack.set(ForceComponents.TOME_EXPERIENCE, 100);
+							itemstack.set(ForceComponents.TOME_EXPERIENCE, experience);
 							if (isSimple)
 								stackedContents.accountStack(experienceTome, 1);
-							else inputs.add(experienceTome);
+							else inputs.add(itemstack);
 						}
 					} else {
 						if (!itemstack.isDamaged()) {
@@ -107,7 +109,10 @@ public class TransmutationRecipe implements CraftingRecipe {
 			}
 		}
 
-		return stacks == this.ingredients.size() && (isSimple ? stackedContents.canCraft(this, (IntList) null) : RecipeMatcher.findMatches(inputs, this.ingredients) != null);
+		return stacks == this.ingredients.size() && (isSimple ?
+				stackedContents.canCraft(this, (IntList) null) :
+				RecipeMatcher.findMatches(inputs, this.ingredients) != null
+		);
 	}
 
 	@Override

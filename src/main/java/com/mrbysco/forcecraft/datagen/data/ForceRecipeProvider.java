@@ -1773,8 +1773,8 @@ public class ForceRecipeProvider extends RecipeProvider {
 				.save(output, Reference.modLoc("transmutation/upgrade_tome"));
 
 		TransmutationRecipeBuilder.transmutation(ForceRegistry.UPGRADE_CORE.get())
-				.requires(DataComponentIngredient.of(false, DataComponentPredicate.builder()
-						.expect(ForceComponents.TOME_EXPERIENCE.get(), 100).build(), ForceRegistry.EXPERIENCE_TOME.get()))
+				.requires(DataComponentIngredient.of(false, DataComponentPredicate.builder().build(),
+						ForceRegistry.EXPERIENCE_TOME.get()))
 				.unlockedBy("has_experience_tome", has(ForceRegistry.EXPERIENCE_TOME.get()))
 				.save(output, Reference.modLoc("transmutation/upgrade_core"));
 

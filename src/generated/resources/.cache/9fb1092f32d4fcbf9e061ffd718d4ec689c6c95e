@@ -1,4 +1,4 @@
-// 1.21.1	2024-09-27T23:05:17.3373723	Recipes
+// 1.21.1	2024-10-03T21:15:00.664536	Recipes
 3e6d620f7add54f0a4894209d84ba72c8bebe1ca data/forcecraft/advancement/recipes/building_blocks/force_black_torch.json
 9c1f7e54da6ecd6a41cec7802d0c30a0c915b7c1 data/forcecraft/advancement/recipes/building_blocks/force_blue_torch.json
 d82ae03117d94de897534994565aceca4eafb713 data/forcecraft/advancement/recipes/building_blocks/force_brick.json
@@ -630,7 +630,7 @@ c33a3ca56210bbe9f112551d612e3a365fd391be data/forcecraft/recipe/transmutation/st
 8e8ad90aa1dd22b531e26eb610da20d2e5d1bd8c data/forcecraft/recipe/transmutation/stick_from_wooden_sword.json
 e29e842cc19006d27f61ec181abd1c73f98e3f8e data/forcecraft/recipe/transmutation/string_from_bow.json
 6ea4032498758de24d685a9ad0afcead6fbb762a data/forcecraft/recipe/transmutation/tripwire_hook_from_crossbow.json
-73e50e1fd1ce94f55236bc21a06a71b65516eae9 data/forcecraft/recipe/transmutation/upgrade_core.json
+b2ac238f265edc5d2d7a4dc9ebb29c154abbff45 data/forcecraft/recipe/transmutation/upgrade_core.json
 49d7fe867a7c70e5ff289e7220f74a67bd81d3d7 data/forcecraft/recipe/transmutation/upgrade_tome.json
 e0dfc55d30600af7fe71289e372f2cf255025e4d data/forcecraft/recipe/treasure_core.json
 2f986aa5a44c0cde4b444444f28c194879ab9068 data/forcecraft/recipe/white_force_furnace_from_dye.json

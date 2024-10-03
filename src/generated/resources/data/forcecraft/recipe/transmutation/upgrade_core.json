@@ -6,9 +6,7 @@
     },
     {
       "type": "neoforge:components",
-      "components": {
-        "forcecraft:tome_experience": 100
-      },
+      "components": {},
       "items": "forcecraft:experience_tome"
     }
   ],
