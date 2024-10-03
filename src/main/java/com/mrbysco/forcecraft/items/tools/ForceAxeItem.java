@@ -36,7 +36,7 @@ public class ForceAxeItem extends AxeItem implements IForceChargingTool {
 	}
 
 	public static boolean fellTree(ItemStack stack, BlockPos pos, Player player) {
-		if (player.getCommandSenderWorld().isClientSide) {
+		if (player.level().isClientSide) {
 			return true;
 		}
 		NeoForge.EVENT_BUS.register(new TreeChopTask(stack, pos, player, 10));
@@ -53,23 +53,22 @@ public class ForceAxeItem extends AxeItem implements IForceChargingTool {
 		public Set<BlockPos> visited = new HashSet<>();
 
 		public TreeChopTask(ItemStack tool, BlockPos start, Player player, int blocksPerTick) {
-			this.level = player.getCommandSenderWorld();
+			this.level = player.level();
 			this.player = player;
 			this.tool = tool;
 			this.blocksPerTick = blocksPerTick;
 
-			this.blocks.add(start);
+			this.blocks.add(start.above());
 		}
 
 		@SubscribeEvent
 		public void chop(LevelTickEvent.Post event) {
 			Level level = event.getLevel();
 			if (level.isClientSide()) {
-				finish();
 				return;
 			}
 			// only if same dimension
-			if (level.dimension().location().equals(level.dimension().location())) {
+			if (!this.level.dimension().location().equals(level.dimension().location())) {
 				return;
 			}
 
