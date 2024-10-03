@@ -2,7 +2,6 @@ package com.mrbysco.forcecraft.datagen.data;
 
 import com.mrbysco.forcecraft.Reference;
 import com.mrbysco.forcecraft.blockentities.InfuserModifierType;
-import com.mrbysco.forcecraft.components.ForceComponents;
 import com.mrbysco.forcecraft.datagen.data.recipe.InfuseRecipeBuilder;
 import com.mrbysco.forcecraft.datagen.data.recipe.MultipleOutputRecipeBuilder;
 import com.mrbysco.forcecraft.datagen.data.recipe.NoRemainderShapedBuilder;
