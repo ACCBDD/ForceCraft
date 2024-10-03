@@ -435,7 +435,7 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 			if (recipeHolder.value().matchesModifier(new RecipeWrapper(this.handler), modifier, true)) {
 				ItemStack tool = getFromToolSlot();
 				boolean success = applyModifier(tool, modifier, recipeHolder);
-				ForceCraft.LOGGER.debug("Applying modifier {} on tool {}, succes: {}", modifier, tool, success);
+				ForceCraft.LOGGER.debug("Applying modifier {} on tool {}, success: {}", modifier, tool, success);
 				if (success) {
 
 					// for EACH modifier
@@ -682,7 +682,7 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 		if (item instanceof ForceSwordItem) {
 			int currentBleed = stack.getOrDefault(ForceComponents.TOOL_BLEED, 0);
 			if (currentBleed < MAX_CAP) {
-				stack.set(ForceComponents.TOOL_BANE, currentBleed + 1);
+				stack.set(ForceComponents.TOOL_BLEED, currentBleed + 1);
 				addInfusedTag(stack);
 
 				return true;
@@ -690,7 +690,7 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 		} else if (item instanceof ForceBowItem) {
 			int currentBleed = stack.getOrDefault(ForceComponents.TOOL_BLEED, 0);
 			if (currentBleed < MAX_CAP) {
-				stack.set(ForceComponents.TOOL_BANE, currentBleed + 1);
+				stack.set(ForceComponents.TOOL_BLEED, currentBleed + 1);
 				addInfusedTag(stack);
 
 				return true;
@@ -698,7 +698,7 @@ public class InfuserBlockEntity extends BlockEntity implements MenuProvider, Con
 		} else if (item instanceof ForceArmorItem) {
 			int currentBleed = stack.getOrDefault(ForceComponents.TOOL_BLEED, 0);
 			if (currentBleed < MAX_CAP) {
-				stack.set(ForceComponents.TOOL_BANE, currentBleed + 1);
+				stack.set(ForceComponents.TOOL_BLEED, currentBleed + 1);
 				addInfusedTag(stack);
 
 				return true;
