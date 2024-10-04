@@ -8,7 +8,6 @@ import com.mrbysco.forcecraft.registry.ForceRegistry;
 import com.mrbysco.forcecraft.registry.ForceTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -126,7 +125,7 @@ public class EntityFlaskItem extends BaseItem {
 		FlaskContent content = stack.get(ForceComponents.FLASK_CONTENT);
 		if (content != null) {
 			String mobTranslation = Util.makeDescriptionId("entity", content.storedType());
-			return Component.translatable(super.getDescriptionId(stack), I18n.get(mobTranslation));
+			return Component.translatable(super.getDescriptionId(stack), Component.translatable(mobTranslation));
 		}
 
 		return Component.translatable(super.getDescriptionId(stack), "Empty");
