@@ -1,4 +1,1 @@
-* Fix Upgrade Core recipe
-* Fix Bane not having a tooltip
-* Fix Bleeding infusion adding Bane instead of Bleeding
-* Fix Lumberjack behavior
+* Fix Force Flasks trying to use a client class for getting a mob name causing crashes with some mods
