@@ -13,6 +13,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.util.concurrent.CompletableFuture;
@@ -83,5 +84,29 @@ public class ForceItemTagProvider extends ItemTagsProvider {
 						ForceRegistry.RED_FORCE_FURNACE.asItem(), ForceRegistry.WHITE_FORCE_FURNACE.asItem());
 
 		this.tag(MEAT).add(ForceRegistry.RAW_BACON.get(), ForceRegistry.COOKED_BACON.get());
+
+//		this.tag(Tags.Items.TOOLS)
+//				.add(ForceRegistry.FORCE_AXE.get(), ForceRegistry.FORCE_PICKAXE.get(),
+//						ForceRegistry.FORCE_SHOVEL.get(), ForceRegistry.FORCE_SWORD.get(),
+//						ForceRegistry.FORCE_BOW.get(), ForceRegistry.FORCE_SHEARS.get());
+
+		this.tag(ItemTags.PICKAXES)
+				.add(ForceRegistry.FORCE_PICKAXE.get());
+
+		this.tag(ItemTags.SHOVELS)
+				.add(ForceRegistry.FORCE_SHOVEL.get());
+
+		this.tag(ItemTags.AXES)
+				.add(ForceRegistry.FORCE_AXE.get());
+
+		this.tag(Tags.Items.TOOLS_BOW)
+				.add(ForceRegistry.FORCE_BOW.get());
+
+		this.tag(ItemTags.SWORDS)
+				.add(ForceRegistry.FORCE_SWORD.get());
+
+		this.tag(Tags.Items.TOOLS_SHEAR)
+				.add(ForceRegistry.FORCE_SHEARS.get());
+
 	}
 }
