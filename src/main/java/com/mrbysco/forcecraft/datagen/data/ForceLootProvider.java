@@ -24,11 +24,13 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.minecraft.world.level.storage.loot.functions.EnchantedCountIncreaseFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.functions.SmeltItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceWithEnchantedBonusCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
@@ -40,120 +42,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-import static com.mrbysco.forcecraft.registry.ForceRegistry.BLACK_FORCE_FURNACE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.BLUE_FORCE_FURNACE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.BROWN_FORCE_FURNACE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.CYAN_FORCE_FURNACE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.DEEPSLATE_POWER_ORE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BLACK_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BLUE_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_BLACK;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_BLACK_SLAB;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_BLACK_STAIRS;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_BLUE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_BLUE_SLAB;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_BLUE_STAIRS;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_BROWN;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_BROWN_SLAB;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_BROWN_STAIRS;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_CYAN;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_CYAN_SLAB;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_CYAN_STAIRS;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_GRAY;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_GRAY_SLAB;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_GRAY_STAIRS;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_GREEN;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_GREEN_SLAB;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_GREEN_STAIRS;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_LIGHT_BLUE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_LIGHT_BLUE_SLAB;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_LIGHT_BLUE_STAIRS;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_LIGHT_GRAY;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_LIGHT_GRAY_SLAB;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_LIGHT_GRAY_STAIRS;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_LIME;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_LIME_SLAB;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_LIME_STAIRS;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_MAGENTA;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_MAGENTA_SLAB;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_MAGENTA_STAIRS;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_ORANGE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_ORANGE_SLAB;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_ORANGE_STAIRS;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_PINK;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_PINK_SLAB;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_PINK_STAIRS;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_PURPLE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_PURPLE_SLAB;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_PURPLE_STAIRS;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_RED;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_RED_SLAB;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_RED_STAIRS;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_SLAB;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_STAIRS;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_WHITE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_WHITE_SLAB;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_WHITE_STAIRS;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_YELLOW;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_YELLOW_SLAB;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BRICK_YELLOW_STAIRS;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_BROWN_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_CYAN_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_ENGINE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_FURNACE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_GEM;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_GRAY_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_GREEN_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_LEAVES;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_LIGHT_BLUE_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_LIGHT_GRAY_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_LIME_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_LOG;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_MAGENTA_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_ORANGE_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_PINK_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_PLANKS;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_PLANK_SLAB;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_PLANK_STAIRS;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_PURPLE_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_RED_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_SAPLING;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_WHITE_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.FORCE_WOOD;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.GRAY_FORCE_FURNACE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.GREEN_FORCE_FURNACE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.INFUSER;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.LIGHT_BLUE_FORCE_FURNACE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.LIGHT_GRAY_FORCE_FURNACE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.LIME_FORCE_FURNACE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.MAGENTA_FORCE_FURNACE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.ORANGE_FORCE_FURNACE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.PINK_FORCE_FURNACE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.POWER_ORE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.POWER_ORE_ITEM;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.PURPLE_FORCE_FURNACE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.RED_FORCE_FURNACE;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.TIME_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.WALL_FORCE_BLACK_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.WALL_FORCE_BLUE_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.WALL_FORCE_BROWN_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.WALL_FORCE_CYAN_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.WALL_FORCE_GRAY_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.WALL_FORCE_GREEN_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.WALL_FORCE_LIGHT_BLUE_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.WALL_FORCE_LIGHT_GRAY_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.WALL_FORCE_LIME_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.WALL_FORCE_MAGENTA_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.WALL_FORCE_ORANGE_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.WALL_FORCE_PINK_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.WALL_FORCE_PURPLE_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.WALL_FORCE_RED_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.WALL_FORCE_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.WALL_FORCE_WHITE_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.WALL_TIME_TORCH;
-import static com.mrbysco.forcecraft.registry.ForceRegistry.WHITE_FORCE_FURNACE;
+import static com.mrbysco.forcecraft.registry.ForceRegistry.*;
 
 public class ForceLootProvider extends LootTableProvider {
 	public ForceLootProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
@@ -202,7 +91,25 @@ public class ForceLootProvider extends LootTableProvider {
 			dropSelf(FORCE_LOG.get());
 			dropSelf(FORCE_WOOD.get());
 			dropSelf(FORCE_PLANKS.get());
-			add(FORCE_LEAVES.get(), (leaves) -> createOakLeavesDrops(leaves, FORCE_SAPLING.get(), NORMAL_LEAVES_SAPLING_CHANCES));
+			add(FORCE_LEAVES.get(), (leaves) -> {
+				var pool = createOakLeavesDrops(leaves, FORCE_SAPLING.get(), NORMAL_LEAVES_SAPLING_CHANCES);
+				//add a loot pool for nuggets, base chance 0.025 (as in og dartcraft), + 0.005 per level of fortune
+				pool.withPool(
+							LootPool.lootPool()
+									.setRolls(ConstantValue.exactly(1.0F))
+									.when(HAS_SHEARS.or(this.hasSilkTouch()).invert())
+									.add(
+											((LootPoolSingletonContainer.Builder) this.applyExplosionCondition(leaves, LootItem.lootTableItem(FORCE_NUGGET)))
+													.when(
+															BonusLevelTableCondition.bonusLevelFlatChance(
+																	registrylookup.getOrThrow(Enchantments.FORTUNE), 0.025f, 0.03f, 0.035f, 0.04f, 0.045f
+															)
+													)
+									)
+
+				);
+				return pool;
+			});
 
 			dropSelf(FORCE_TORCH.get());
 			dropSelf(FORCE_RED_TORCH.get());
